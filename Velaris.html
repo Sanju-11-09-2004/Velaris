@@ -1,0 +1,821 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fdf4f8;font-family:'DM Sans',sans-serif;color:#3a1f2e;min-height:100vh;padding-bottom:40px}
+
+.header{background:#fff;border-bottom:1.5px solid #f2d6e4;padding:14px 16px 10px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.couple-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:#993556}
+.couple-sub{font-size:11px;color:#c0849a;margin-top:1px}
+.streaks-row{display:flex;gap:6px}
+.spill{border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;text-align:center;border:1.5px solid}
+.spill-p{background:#fbeaf0;border-color:#f4c0d1;color:#993556}
+.spill-s{background:#eeedfe;border-color:#cecbf6;color:#3c3489}
+.spill .sn{font-size:1.1rem;font-weight:700;display:block;line-height:1.2}
+
+.both-prog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.prog-lbl{font-size:11px;color:#c0849a;margin-bottom:3px}
+.prog-track{height:5px;background:#f2d6e4;border-radius:50px;overflow:hidden}
+.prog-fill-p{height:100%;background:#D4537E;border-radius:50px;transition:width .4s}
+.prog-fill-s{height:100%;background:#7F77DD;border-radius:50px;transition:width .4s}
+.prog-pct{font-size:11px;font-weight:600;margin-top:2px}
+.pct-p{color:#D4537E}.pct-s{color:#7F77DD}
+
+.person-tabs{display:grid;grid-template-columns:1fr 1fr;background:#fff;border-bottom:1.5px solid #f2d6e4;padding:4px 12px;gap:6px}
+.ptab{padding:9px;border-radius:50px;cursor:pointer;font-size:0.88rem;font-weight:600;color:#c0849a;text-align:center;transition:all .2s;border:1.5px solid transparent}
+.ptab.ap{background:#fbeaf0;color:#993556;border-color:#f4c0d1}
+.ptab.as{background:#eeedfe;color:#3c3489;border-color:#cecbf6}
+
+.nav-tabs{display:flex;background:#fff;border-bottom:1px solid #f2d6e4;padding:0 8px;overflow-x:auto}
+.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{padding:8px 11px;font-size:10.5px;font-weight:600;color:#c0849a;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
+.ntab.active-p{color:#D4537E;border-bottom-color:#D4537E}
+.ntab.active-s{color:#7F77DD;border-bottom-color:#7F77DD}
+
+.motto{padding:10px 16px;font-size:12px;font-style:italic;text-align:center;border-bottom:1px solid #f2d6e4}
+.motto-p{background:#fbeaf0;color:#993556}
+.motto-s{background:#eeedfe;color:#534AB7}
+
+.main{padding:12px 14px;max-width:640px;margin:0 auto}
+.tab-content{display:none}
+
+.sec-label{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#c0849a;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:#f2d6e4}
+
+.block{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;margin-bottom:6px;cursor:pointer;transition:all .2s}
+.block:hover{border-color:#f4c0d1}
+.block.done{opacity:.55;border-color:#f0e8ec}
+.block.done-s{border-color:#ded9f7}
+.block-inner{display:flex;align-items:center;gap:10px;padding:11px 12px}
+.bcheck{width:20px;height:20px;border-radius:50%;border:1.5px solid #e0c0ce;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;color:white}
+.bcheck.cp{background:#D4537E;border-color:#D4537E}
+.bcheck.cs{background:#7F77DD;border-color:#7F77DD}
+.baccent{width:3px;height:30px;border-radius:50px;flex-shrink:0}
+.binfo{flex:1;min-width:0}
+.btime{font-size:10px;color:#c0849a;margin-bottom:1px}
+.btitle{font-size:13px;font-weight:600;color:#3a1f2e;line-height:1.3}
+.block.done .btitle{text-decoration:line-through;color:#c0849a}
+.btag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:50px;flex-shrink:0}
+
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.skill-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:10px;padding:10px;text-align:center}
+.skill-icon{font-size:15px;margin-bottom:2px}
+.skill-name{font-size:9px;color:#c0849a;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.skill-streak{font-family:'Playfair Display',serif;font-size:1.6rem;line-height:1}
+.skill-days{font-size:9px;color:#c0849a}
+
+.note-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;padding:12px;margin-bottom:8px}
+.note-lbl{font-size:10px;font-weight:600;color:#c0849a;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.note-ta{width:100%;background:#fdf4f8;border:1.5px solid #f2d6e4;border-radius:8px;padding:8px 10px;color:#3a1f2e;font-family:'DM Sans',sans-serif;font-size:12.5px;resize:none;outline:none;min-height:52px;transition:border-color .2s}
+.note-ta:focus{border-color:#f4c0d1}
+.note-ta::placeholder{color:#d0a0b4}
+.note-display{font-size:12.5px;color:#5a2040;font-style:italic;min-height:32px;line-height:1.5}
+
+.btn-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.save-btn-p{background:#D4537E;color:white;border:none;padding:7px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.save-btn-s{background:#7F77DD;color:white;border:none;padding:7px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.save-btn-p:hover,.save-btn-s:hover{opacity:.85}
+.reset-btn{background:transparent;border:1.5px solid #f2d6e4;color:#c0849a;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.reset-btn:hover{border-color:#D4537E;color:#D4537E}
+.soft-btn{background:#eeedfe;border:1.5px solid #cecbf6;color:#534AB7;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.soft-btn:hover{background:#dddaf8}
+.night-btn{background:#2d2245;border:none;color:#c9c3f5;padding:8px 18px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;margin-top:6px}
+.night-btn:hover{background:#3d3060}
+
+.other-card{background:#fdf4f8;border:1.5px dashed #f2d6e4;border-radius:12px;padding:12px;margin-bottom:8px}
+.other-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f2d6e4}
+.other-item:last-child{border-bottom:none}
+.odot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.otext{font-size:12px;color:#5a2040}
+.otext.done{text-decoration:line-through;color:#c0849a}
+
+.day-dots{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.ddot{width:17px;height:17px;border-radius:50%;border:1.5px solid #f0d0dc;background:#fff;cursor:default;transition:all .2s}
+.ddot.dp{background:#D4537E;border-color:#D4537E}
+.ddot.ds{background:#7F77DD;border-color:#7F77DD}
+.ddot.td{box-shadow:0 0 0 2px rgba(212,83,126,.35)}
+.ddot.tds{box-shadow:0 0 0 2px rgba(127,119,221,.35)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#D4537E;color:white;padding:9px 20px;border-radius:50px;font-size:12px;font-weight:600;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.roadmap-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;padding:14px;margin-bottom:8px}
+.roadmap-step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f2d6e4;align-items:flex-start}
+.roadmap-step:last-child{border-bottom:none}
+.rnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.rnum-s{background:#eeedfe;color:#3c3489}
+.rtitle{font-size:12.5px;font-weight:600;color:#3a1f2e;margin-bottom:2px}
+.rdesc{font-size:11px;color:#c0849a;line-height:1.5}
+
+.weekend-badge{font-size:9px;background:#eaf4e8;color:#3B6D11;border:1px solid #b8ddb0;border-radius:50px;padding:2px 7px;font-weight:700;letter-spacing:.5px;margin-left:4px}
+
+.mini-love{background:rgba(255,255,255,0.7);border:1.5px solid #f2d6e4;padding:14px 16px;border-radius:16px;margin-top:10px;margin-bottom:4px;text-align:center;font-size:12.5px;line-height:2;color:#8b6172;font-style:italic}
+.mini-love .ml-icon{font-size:18px;display:block;margin-bottom:4px}
+
+.open-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.open-grid button{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:12px;font-size:12px;color:#7c5a69;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
+.open-grid button:hover{background:#eeedfe;border-color:#cecbf6}
+.letter-box{background:rgba(255,255,255,0.75);border:1.5px solid #e8d0f0;border-radius:18px;padding:20px 18px;line-height:2.1;font-size:13px;color:#7c5a69;font-style:italic;min-height:140px;transition:opacity .2s ease;white-space:pre-line}
+
+.msg-bubble{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.msg-meta{font-size:10px;color:#c0849a;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
+.msg-from-p{color:#D4537E;font-weight:700}
+.msg-from-s{color:#7F77DD;font-weight:700}
+.msg-text{font-size:13px;color:#5a2040;line-height:1.7}
+
+.rough-day-active{background:#f0eeff;border:1.5px solid #c9c3f5;border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center;font-size:12px;color:#534AB7;line-height:1.8}
+
+.why-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:16px;margin-bottom:10px;font-size:13px;color:#5a2040;line-height:2}
+.why-card p{margin-bottom:10px}
+.why-card p:last-child{margin-bottom:0}
+.why-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:#993556;margin-bottom:12px;text-align:center}
+
+/* PIN LOCK */
+#pin-overlay{position:fixed;inset:0;background:#fdf4f8;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.pin-logo{font-family:'Playfair Display',serif;font-size:2rem;color:#993556;margin-bottom:4px;letter-spacing:1px}
+.pin-sub{font-size:12px;color:#c0849a;margin-bottom:32px;text-align:center}
+.pin-dots{display:flex;gap:12px;margin-bottom:28px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #f4c0d1;background:transparent;transition:all .2s}
+.pin-dot.filled{background:#D4537E;border-color:#D4537E}
+.pin-dot.filled-s{background:#7F77DD;border-color:#7F77DD}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:10px}
+.pin-btn{width:72px;height:72px;border-radius:50%;border:1.5px solid #f2d6e4;background:#fff;font-size:1.4rem;font-weight:600;color:#3a1f2e;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pin-btn:active{background:#fbeaf0;border-color:#f4c0d1;transform:scale(.93)}
+.pin-btn.zero{grid-column:2}
+.pin-del{background:transparent;border:none;font-size:1.3rem;cursor:pointer;color:#c0849a;width:72px;height:72px;display:flex;align-items:center;justify-content:center}
+.pin-error{font-size:12px;color:#D4537E;margin-top:16px;min-height:18px;text-align:center}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pin-shake{animation:shake .35s ease}
+.pin-who{display:flex;gap:10px;margin-bottom:20px}
+.pin-who-btn{padding:8px 20px;border-radius:50px;border:1.5px solid #f4c0d1;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#993556;transition:all .2s;font-family:'DM Sans',sans-serif}
+.pin-who-btn.active-p{background:#fbeaf0;border-color:#D4537E;color:#D4537E}
+.pin-who-btn.active-s{background:#eeedfe;border-color:#7F77DD;color:#534AB7}
+</style>
+
+<!-- PIN LOCK OVERLAY -->
+<div id="pin-overlay">
+  <div class="pin-logo">VELARIS 💕</div>
+  <div class="pin-sub">hidden city, just for us</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <button class="pin-del zero" onclick="pinDel()">⌫</button>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+</div>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="couple-name">Sanjana &amp; Sanjay 💕</div>
+      <div class="couple-sub" id="hdate">growing together, one day at a time</div>
+    </div>
+    <div class="streaks-row">
+      <div class="spill spill-p"><span class="sn" id="streak-p">0</span>🩷 days</div>
+      <div class="spill spill-s"><span class="sn" id="streak-s">0</span>💜 days</div>
+    </div>
+  </div>
+  <div class="both-prog">
+    <div>
+      <div class="prog-lbl">Sanjana 🩷 today</div>
+      <div class="prog-track"><div class="prog-fill-p" id="prog-p" style="width:0%"></div></div>
+      <div class="prog-pct pct-p" id="pct-p">0 / 18 (0%)</div>
+    </div>
+    <div>
+      <div class="prog-lbl">Sanjay 💜 today</div>
+      <div class="prog-track"><div class="prog-fill-s" id="prog-s" style="width:0%"></div></div>
+      <div class="prog-pct pct-s" id="pct-s">0 / 4 (0%)</div>
+    </div>
+  </div>
+</div>
+
+<div class="person-tabs">
+  <div class="ptab ap" id="ptab-p" onclick="switchPerson('sanjana')">🩷 Sanjana</div>
+  <div class="ptab" id="ptab-s" onclick="switchPerson('sanjay')">💜 Sanjay</div>
+</div>
+
+<div class="nav-tabs" id="nav-tabs">
+  <button class="ntab active-p" onclick="switchTab('today',this)">📋 Today</button>
+  <button class="ntab" onclick="switchTab('history',this)">📅 Log</button>
+  <button class="ntab" onclick="switchTab('partner',this)">👀 Partner</button>
+  <button class="ntab" onclick="switchTab('messages',this)">💌 Notes</button>
+  <button class="ntab" onclick="switchTab('why',this)">💍 Why</button>
+  <button class="ntab" onclick="switchTab('roadmap',this)">🗺 Roadmap</button>
+</div>
+
+<div class="motto motto-p" id="motto">Your future EY manager doesn't know you yet — let your skills introduce you.</div>
+
+<div class="main">
+
+  <div class="tab-content" id="tab-today" style="display:block"></div>
+
+  <div class="tab-content" id="tab-history">
+    <div class="sec-label">30-day log</div>
+    <div class="day-dots" id="day-dots"></div>
+    <div id="hist-list"></div>
+  </div>
+
+  <div class="tab-content" id="tab-partner">
+    <div class="sec-label" id="partner-head">💜 Sanjay's tasks</div>
+    <div class="other-card" id="partner-tasks"></div>
+    <div class="sec-label" id="partner-note-head">💜 Sanjay's note</div>
+    <div class="other-card"><div class="note-display" id="partner-note">—</div></div>
+  </div>
+
+  <div class="tab-content" id="tab-messages">
+    <div class="sec-label">send a note 💌</div>
+    <div class="note-card">
+      <div class="note-lbl" id="msg-send-lbl">Write something caring...</div>
+      <textarea class="note-ta" id="msg-input" rows="3" placeholder="Eat properly okay? / I'm proud of you. / Sleep early tonight."></textarea>
+      <div class="btn-row">
+        <button class="save-btn-p" id="msg-send-btn" onclick="sendMessage()">Send 💌</button>
+      </div>
+    </div>
+    <div class="sec-label">messages</div>
+    <div id="messages-list"></div>
+  </div>
+
+  <div class="tab-content" id="tab-why">
+    <div class="sec-label">why we're doing all this 💍</div>
+    <div class="why-card">
+      <div class="why-title">💜 Hey love.</div>
+      <p>I know life feels really tiring right now. Every day feels the same. Early mornings, long travel, coming home exhausted, overthinking everything at night... it all feels heavy sometimes.</p>
+      <p>But please remember why we started okay?</p>
+      <p>We're not doing all this to survive. We're building our future slowly — together. A future where we don't have to fear life. Where we can take care of our family. Where we can sleep peacefully. Where we can look back at these hard nights and say — we made it.</p>
+      <p>Right now I'm also studying, preparing, planning — trying to build something for both of us. We're both tired. And that's okay. We're doing this together.</p>
+      <p>This space exists not to pressure you. Just to remind you — you're not alone in this anymore.</p>
+      <p>Even small effort matters. Even tired effort matters.</p>
+      <p>One day all these late nights, overthinking sessions, tiny study habits, and soft encouragements will become memories we smile at together.</p>
+      <p style="color:#993556;font-style:italic">So whenever you feel low — come here and read this okay?<br><br>I'm not going anywhere. 🫂<br>I love you so much.<br><br>— me 💗</p>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-roadmap">
+    <div class="sec-label" id="roadmap-head">Roadmap 🗺</div>
+    <div class="roadmap-card" id="roadmap-content"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PIN LOCK ──────────────────────────────────────────────
+const PIN = '1109';
+let pinBuffer = '';
+
+function pinPress(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updatePinDots();
+  if (pinBuffer.length === 4) setTimeout(checkPin, 120);
+}
+
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === PIN) {
+    document.getElementById('pin-overlay').style.display = 'none';
+  } else {
+    document.getElementById('pin-error').textContent = 'Wrong PIN — try again 💗';
+    const dots = document.getElementById('pin-dots');
+    dots.classList.add('pin-shake');
+    setTimeout(() => dots.classList.remove('pin-shake'), 400);
+    pinBuffer = '';
+    updatePinDots();
+  }
+}
+// ─────────────────────────────────────────────────────────
+const TODAY = new Date().toISOString().split('T')[0];
+const SKEY = 'couple_v8';
+const SUPABASE_URL = 'https://dvqplyfzhqftwjeiithd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cXBseWZ6aHFmdHdqZWlpdGhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzkyNjEsImV4cCI6MjA5NDA1NTI2MX0.NL6ckzPzm2EnvcDzFuE2_7giKUyE_6xfz4gpCnYB2R8';
+
+async function sbGet(key) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/couple_data?key=eq.${encodeURIComponent(key)}&select=value`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const data = await res.json();
+    return data && data[0] ? data[0].value : null;
+  } catch(e) { return null; }
+}
+
+async function sbSet(key, value) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/couple_data`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+    });
+  } catch(e) {}
+}
+const IS_WEEKEND = [0,6].includes(new Date().getDay());
+
+const SANJANA_TASKS = [
+  {id:'p0',time:'8:00–9:00 AM',name:'Wake + freshen + breakfast',tag:'LIFE',tc:'#c0849a',bg:'rgba(192,132,154,.15)',block:'Morning'},
+  {id:'p1',time:'9:00–9:30 AM · fixed',name:"Sister's business",tag:'FIXED',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Morning'},
+  {id:'p2',time:'9:30–10:00 AM',name:'English — speak + write 3 sentences',tag:'ENGLISH',tc:'#7F77DD',bg:'rgba(127,119,221,.12)',block:'Morning',skill:'english'},
+  {id:'p3',time:'10:00–10:30 AM',name:'Excel — build something',tag:'EXCEL',tc:'#3B6D11',bg:'rgba(59,109,17,.12)',block:'Morning',skill:'excel'},
+  {id:'p4',time:'10:30–11:00 AM',name:'SAP — study + explore',tag:'SAP',tc:'#185FA5',bg:'rgba(24,95,165,.12)',block:'Morning',skill:'sap'},
+  {id:'p5',time:'11:00–11:30 AM',name:'Household chores / free buffer',tag:'CHORES',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Morning'},
+  {id:'p6',time:'11:30 AM–12:30 PM',name:'SQL — study + practice (first hour)',tag:'SQL',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Mid-morning',skill:'sql'},
+  {id:'p7',time:'12:30–1:30 PM',name:'SQL — continued (second hour)',tag:'SQL',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Mid-morning',skill:'sql'},
+  {id:'p8',time:'1:30–2:30 PM',name:'Lunch + rest',tag:'REST',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Afternoon'},
+  {id:'p9',time:'2:30–4:00 PM',name:'Python — study + practice',tag:'PYTHON',tc:'#854F0B',bg:'rgba(133,79,11,.12)',block:'Afternoon',skill:'python'},
+  {id:'p10',time:'4:00–4:30 PM',name:'Chores / nap if needed',tag:'CHORES',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Afternoon'},
+  {id:'p11',time:'4:30–5:30 PM',name:'Python — continued',tag:'PYTHON',tc:'#854F0B',bg:'rgba(133,79,11,.12)',block:'Evening',skill:'python'},
+  {id:'p12',time:'5:30–6:00 PM',name:'Power BI — build something',tag:'POWER BI',tc:'#085041',bg:'rgba(8,80,65,.12)',block:'Evening',skill:'powerbi'},
+  {id:'p13',time:'6:00–7:00 PM',name:'Free time / household chores',tag:'FREE',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Evening'},
+  {id:'p14',time:'7:00–7:30 PM',name:'Light review — revise today',tag:'REVIEW',tc:'#0F6E56',bg:'rgba(15,110,86,.12)',block:'Evening'},
+  {id:'p15',time:'7:30–8:30 PM',name:'Dinner + wind down',tag:'LIFE',tc:'#c0849a',bg:'rgba(192,132,154,.15)',block:'Evening'},
+  {id:'p16',time:'8:30–9:00 PM · fixed',name:"Sister's business (evening)",tag:'FIXED',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Evening'},
+  {id:'p17',time:'9:00–9:30 PM',name:'English show — Friends / Ted Lasso',tag:'ENGLISH',tc:'#7F77DD',bg:'rgba(127,119,221,.12)',block:'Evening',skill:'english'},
+];
+
+const SANJAY_TASKS = [
+  {id:'s0',time:'10:00–10:45 PM',name:'Omega exam prep — anatomy, terminology, coding concepts',tag:'OMEGA',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Night study'},
+  {id:'s1',time:'10:45–11:15 PM',name:'PV / Clinical research — AE vs SAE, GCP, CRF basics',tag:'PV',tc:'#0F6E56',bg:'rgba(15,110,86,.12)',block:'Night study',skill:'pv'},
+  {id:'s2',time:'11:15–11:45 PM',name:'Excel — VLOOKUP, pivot tables, filters',tag:'EXCEL',tc:'#3B6D11',bg:'rgba(59,109,17,.12)',block:'Night study',skill:'excel',weekendOnly:true},
+  {id:'s3',time:'11:45 PM–12:00 AM',name:'Interview speaking — self intro / why healthcare?',tag:'SPEAK',tc:'#534AB7',bg:'rgba(83,74,183,.12)',block:'Night study'},
+  {id:'s4',time:'Non-negotiable',name:'Sleep before 12:30 AM — rest properly okay?',tag:'HEALTH',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Non-negotiable'},
+];
+
+const SANJANA_SKILLS = [
+  {id:'sap',name:'SAP',icon:'⚙️',color:'#185FA5'},
+  {id:'python',name:'Python',icon:'🐍',color:'#854F0B'},
+  {id:'sql',name:'SQL',icon:'🗄️',color:'#993C1D'},
+  {id:'excel',name:'Excel',icon:'📗',color:'#3B6D11'},
+  {id:'powerbi',name:'Power BI',icon:'📊',color:'#085041'},
+  {id:'english',name:'English',icon:'💬',color:'#534AB7'},
+];
+
+const SANJAY_SKILLS = [
+  {id:'pv',name:'PV/CRM',icon:'💊',color:'#0F6E56'},
+  {id:'excel',name:'Excel',icon:'📗',color:'#3B6D11'},
+];
+
+const MOTTOS_P = [
+  "Your future EY manager doesn't know you yet — let your skills introduce you.",
+  "Every SAP session today is confidence walking into EY on August 24th.",
+  "Tamil to English. Comfort zone to confidence. One day at a time.",
+  "Don't skip — shrink. 15 minutes always beats zero.",
+  "The girl who shows up daily always beats the girl with talent.",
+  "Small consistent effort compounds quietly into something big.",
+  "You built this schedule. Now just follow it, one hour at a time.",
+];
+
+const MOTTOS_S = [
+  "🌸 Don't skip food again okay?",
+  "💜 Finish today's small goals then rest.",
+  "🌸 Slow progress is still progress.",
+  "💗 I'm here. Don't stress too much.",
+  "🌸 Sleep matters too.",
+  "💜 One step at a time okay?",
+  "🌸 I'm proud of your consistency.",
+  "💗 It's okay to feel tired sometimes.",
+  "💜 We're not racing anyone.",
+  "🌸 Small habits build big futures.",
+  "💗 Drink water. Eat properly. Rest.",
+  "💜 You don't have to be perfect. Just consistent.",
+  "🌸 Today counts even if it felt small.",
+  "💗 Hard phases don't last forever.",
+  "💜 You're doing better than you think.",
+  "🌸 Rest is part of the process too.",
+  "💗 I believe in you quietly every single day.",
+  "💜 Don't overthink tonight okay?",
+  "🌸 Slow and steady is still moving forward.",
+  "💗 I'm here. Always.",
+];
+
+let state = {
+  sanjana:{checked:{},streakDays:[],skillDays:{},note:''},
+  sanjay:{checked:{},streakDays:[],skillDays:{},note:''},
+  messages:[],
+  roughDay:{}
+};
+let activePerson = 'sanjana';
+let activeTab = 'today';
+
+async function load(){
+  try{const v=await sbGet(SKEY);if(v)state=JSON.parse(v);}catch(e){}
+  if(!state.sanjana)state.sanjana={checked:{},streakDays:[],skillDays:{},note:''};
+  if(!state.sanjay)state.sanjay={checked:{},streakDays:[],skillDays:{},note:''};
+  if(!state.messages)state.messages=[];
+  if(!state.roughDay)state.roughDay={};
+  ['sanjana','sanjay'].forEach(p=>{
+    if(!state[p].checked)state[p].checked={};
+    if(!state[p].streakDays)state[p].streakDays=[];
+    if(!state[p].skillDays)state[p].skillDays={};
+    if(state[p].note===undefined)state[p].note='';
+  });
+  const d=new Date();
+  document.getElementById('hdate').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  render();
+}
+
+async function save(){try{await sbSet(SKEY,JSON.stringify(state));}catch(e){}}
+
+function calcStreak(person){
+  const days=[...(state[person].streakDays||[])].sort().reverse();
+  if(!days.length)return 0;
+  let s=0,c=new Date(TODAY);
+  for(const d of days){const dd=new Date(d),diff=Math.round((c-dd)/86400000);if(diff===0||diff===1){s++;c=dd;}else break;}
+  return s;
+}
+
+function calcSkillStreak(person,skillId){
+  const days=[...((state[person].skillDays||{})[skillId]||[])].sort().reverse();
+  if(!days.length)return 0;
+  let s=0,c=new Date(TODAY);
+  for(const d of days){const dd=new Date(d),diff=Math.round((c-dd)/86400000);if(diff===0||diff===1){s++;c=dd;}else break;}
+  return s;
+}
+
+function switchPerson(p){
+  activePerson=p;activeTab='today';
+  document.getElementById('ptab-p').className='ptab'+(p==='sanjana'?' ap':'');
+  document.getElementById('ptab-s').className='ptab'+(p==='sanjay'?' as':'');
+  document.querySelectorAll('.ntab').forEach((b,i)=>{b.className='ntab'+(i===0?' active-'+(p==='sanjana'?'p':'s'):'');});
+  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
+  document.getElementById('tab-today').style.display='block';
+  render();
+}
+
+function switchTab(tab,el){
+  activeTab=tab;
+  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
+  document.getElementById('tab-'+tab).style.display='block';
+  document.querySelectorAll('.ntab').forEach(b=>b.className='ntab');
+  el.className='ntab active-'+(activePerson==='sanjana'?'p':'s');
+  if(tab==='history')renderHistory();
+  if(tab==='partner')renderPartner();
+  if(tab==='roadmap')renderRoadmap();
+  if(tab==='messages')renderMessages();
+}
+
+function render(){
+  const p=activePerson;
+  const isPink=p==='sanjana';
+  const isRoughDay=!!state.roughDay[TODAY+'-sanjay'];
+  const allTasks=isPink?SANJANA_TASKS:SANJAY_TASKS;
+  const tasks=(!isPink&&isRoughDay)
+    ? allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND).slice(0,3)
+    : allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const skills=isPink?SANJANA_SKILLS:SANJAY_SKILLS;
+  const checked=state[p].checked[TODAY]||{};
+
+  const doneP=SANJANA_TASKS.filter(t=>(state.sanjana.checked[TODAY]||{})[t.id]).length;
+  const pctP=Math.round(doneP/SANJANA_TASKS.length*100);
+  const sActiveTasks=SANJAY_TASKS.filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const doneS=sActiveTasks.filter(t=>(state.sanjay.checked[TODAY]||{})[t.id]).length;
+  const pctS=Math.round(doneS/sActiveTasks.length*100);
+
+  document.getElementById('prog-p').style.width=pctP+'%';
+  document.getElementById('pct-p').textContent=doneP+' / '+SANJANA_TASKS.length+' ('+pctP+'%)';
+  document.getElementById('prog-s').style.width=pctS+'%';
+  document.getElementById('pct-s').textContent=doneS+' / '+sActiveTasks.length+' ('+pctS+'%) · '+(IS_WEEKEND?'5 hrs possible 🎉':'max 2 hrs');
+  document.getElementById('streak-p').textContent=calcStreak('sanjana');
+  document.getElementById('streak-s').textContent=calcStreak('sanjay');
+
+  const mottos=isPink?MOTTOS_P:MOTTOS_S;
+  const mottoEl=document.getElementById('motto');
+  mottoEl.textContent=mottos[new Date().getDay()%mottos.length];
+  mottoEl.className='motto '+(isPink?'motto-p':'motto-s');
+
+  const container=document.getElementById('tab-today');
+  container.innerHTML='';
+
+  // Rough day banner
+  if(!isPink&&isRoughDay){
+    const rb=document.createElement('div');
+    rb.className='rough-day-active';
+    rb.innerHTML='🌸 Taking it slow today. That\'s okay.<br><span style="font-size:11px;opacity:.75">Streak is safe. Only 3 tasks showing. Rest properly.</span>';
+    container.appendChild(rb);
+  }
+
+  // Weekday/weekend banner for Sanjay
+  if(!isPink&&!isRoughDay){
+    const banner=document.createElement('div');
+    banner.style.cssText='background:'+(IS_WEEKEND?'#eaf4e8':'#fbeaf0')+';border:1.5px solid '+(IS_WEEKEND?'#b8ddb0':'#f4c0d1')+';border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:11.5px;font-weight:600;color:'+(IS_WEEKEND?'#3B6D11':'#993556')+';text-align:center';
+    banner.textContent=IS_WEEKEND?'🎉 Weekend — Excel unlocked. Up to 5 hrs today.':'💜 Weekday mode — max 2 hrs. Quality over quantity.';
+    container.appendChild(banner);
+  }
+
+  // Tasks
+  let lastBlock='';
+  tasks.forEach(t=>{
+    if(t.block!==lastBlock){
+      const sh=document.createElement('div');sh.className='sec-label';sh.textContent=t.block;
+      container.appendChild(sh);lastBlock=t.block;
+    }
+    const div=document.createElement('div');
+    const isDone=!!checked[t.id];
+    div.className='block'+(isDone?(isPink?' done':' done-s'):'');
+    div.onclick=()=>toggleTask(t.id,t.skill);
+    const wb=t.weekendOnly?'<span class="weekend-badge">weekend only</span>':'';
+    div.innerHTML=`<div class="block-inner">
+      <div class="bcheck ${isDone?(isPink?'cp':'cs'):''}">${isDone?'✓':''}</div>
+      <div class="baccent" style="background:${t.tc}"></div>
+      <div class="binfo"><div class="btime">${t.time}</div><div class="btitle">${t.name}${wb}</div></div>
+      <span class="btag" style="background:${t.bg};color:${t.tc}">${t.tag}</span>
+    </div>`;
+    container.appendChild(div);
+  });
+
+  // Skill streaks
+  const slbl=document.createElement('div');slbl.className='sec-label';slbl.textContent='Skill streaks';container.appendChild(slbl);
+  const sg=document.createElement('div');sg.className='skills-grid';
+  skills.forEach(sk=>{
+    const streak=calcSkillStreak(p,sk.id);
+    sg.innerHTML+=`<div class="skill-card"><div class="skill-icon">${sk.icon}</div><div class="skill-name">${sk.name}</div><div class="skill-streak" style="color:${sk.color}">${streak}</div><div class="skill-days">day streak</div></div>`;
+  });
+  container.appendChild(sg);
+
+  // Mini love box — Sanjay only
+  if(!isPink){
+    const ml=document.createElement('div');ml.className='mini-love';
+    ml.innerHTML='<span class="ml-icon">💌</span>I love you.<br>Keep going slowly okay?<br>I\'m here with you.';
+    container.appendChild(ml);
+  }
+
+  // Note
+  const nlbl=document.createElement('div');nlbl.className='sec-label';nlbl.textContent="Today's note";container.appendChild(nlbl);
+  const nc=document.createElement('div');nc.className='note-card';
+  nc.innerHTML=`
+    <div class="note-lbl">${isPink?"What did you learn today? (write in English 🩷)":"What went well tonight? (30-second reflection)"}</div>
+    <textarea class="note-ta" id="my-note" placeholder="${isPink?'Even 1 sentence in English counts. What did you study?':'Omega topic done? Phrase practiced? Just write anything.'}">${state[p].note||''}</textarea>
+    <div class="btn-row">
+      <button class="${isPink?'save-btn-p':'save-btn-s'}" onclick="saveNote()">Save ✓</button>
+      <button class="reset-btn" onclick="resetDay()">Reset today</button>
+    </div>`;
+  container.appendChild(nc);
+
+  // Sanjay-only extras
+  if(!isPink){
+
+    // Rough day button
+    const rdlbl=document.createElement('div');rdlbl.className='sec-label';rdlbl.textContent='rough day?';container.appendChild(rdlbl);
+    const rdcard=document.createElement('div');rdcard.className='note-card';rdcard.style.textAlign='center';
+    if(isRoughDay){
+      rdcard.innerHTML=`<div style="font-size:12.5px;color:#534AB7;line-height:2;font-style:italic">🌸 It's okay. Rest first.<br>Tomorrow is another day.<br><span style="font-size:11px;opacity:.7">Streak is protected. I'm proud of you for showing up at all.</span></div>`;
+    } else {
+      rdcard.innerHTML=`<button class="soft-btn" onclick="enableRoughDay()" style="width:100%">😔 Taking it slow today</button>
+      <div style="font-size:11px;color:#c0849a;margin-top:8px">Streak protected · Only 3 tasks · No guilt</div>`;
+    }
+    container.appendChild(rdcard);
+
+    // Open When
+    const owlbl=document.createElement('div');owlbl.className='sec-label';owlbl.textContent='open when... 💌';container.appendChild(owlbl);
+    const og=document.createElement('div');og.className='open-grid';
+    og.innerHTML=`
+      <button onclick="openLetter('stress')">😔 stressed</button>
+      <button onclick="openLetter('overthinking')">🌙 overthinking</button>
+      <button onclick="openLetter('low')">💔 feeling low</button>
+      <button onclick="openLetter('tired')">😴 tired</button>
+      <button onclick="openLetter('miss')" style="grid-column:1/-1">💗 missing me</button>`;
+    container.appendChild(og);
+    const lb=document.createElement('div');lb.className='letter-box';lb.id='letter-box';lb.textContent='Tap a letter above 💌';container.appendChild(lb);
+
+    // Good Night
+    const gnlbl=document.createElement('div');gnlbl.className='sec-label';gnlbl.textContent='end the day';container.appendChild(gnlbl);
+    const gncard=document.createElement('div');gncard.className='note-card';gncard.style.textAlign='center';
+    gncard.innerHTML=`<button class="night-btn" onclick="goodNight()">🌙 Good Night</button><div style="font-size:11px;color:#c0849a;margin-top:8px">Logs today's effort. Sleep peacefully.</div>`;
+    container.appendChild(gncard);
+  }
+
+  // 30-day dots
+  const dllbl=document.createElement('div');dllbl.className='sec-label';dllbl.textContent='30-day log';container.appendChild(dllbl);
+  const dd=document.createElement('div');dd.className='day-dots';
+  for(let i=29;i>=0;i--){
+    const d2=new Date();d2.setDate(d2.getDate()-i);
+    const dStr=d2.toISOString().split('T')[0];
+    const ch=state[p].checked[dStr]||{};
+    const t2=isPink?SANJANA_TASKS:SANJAY_TASKS;
+    const hasDone=t2.some(t=>ch[t.id]);
+    const dot=document.createElement('div');
+    dot.className='ddot'+(hasDone?(isPink?' dp':' ds'):'')+(dStr===TODAY?(isPink?' td':' tds'):'');
+    dot.title=dStr;dd.appendChild(dot);
+  }
+  container.appendChild(dd);
+}
+
+function toggleTask(id,skill){
+  const p=activePerson;
+  if(!state[p].checked[TODAY])state[p].checked[TODAY]={};
+  const was=state[p].checked[TODAY][id];
+  state[p].checked[TODAY][id]=!was;
+  if(!was){
+    if(skill){
+      if(!state[p].skillDays[skill])state[p].skillDays[skill]=[];
+      if(!state[p].skillDays[skill].includes(TODAY))state[p].skillDays[skill].push(TODAY);
+    }
+    if(!state[p].streakDays.includes(TODAY))state[p].streakDays.push(TODAY);
+    showToast(p==='sanjana'?'🩷 Done':'💜 Done');
+  }
+  save();render();
+}
+
+function saveNote(){
+  state[activePerson].note=document.getElementById('my-note').value;
+  save();showToast('Saved 🌸');
+}
+
+function resetDay(){
+  if(!confirm("Reset today's ticks?"))return;
+  state[activePerson].checked[TODAY]={};
+  save();render();
+}
+
+function enableRoughDay(){
+  state.roughDay[TODAY+'-sanjay']=true;
+  if(!state.sanjay.streakDays.includes(TODAY))state.sanjay.streakDays.push(TODAY);
+  save();render();
+  showToast('🌸 Taking it slow. That\'s okay.');
+}
+
+function goodNight(){
+  if(!state.sanjay.streakDays.includes(TODAY))state.sanjay.streakDays.push(TODAY);
+  save();render();
+  showToast('🌙 Good night. Today was enough.');
+  setTimeout(()=>{
+    const lb=document.getElementById('letter-box');
+    if(lb){
+      lb.style.opacity='0';
+      setTimeout(()=>{lb.textContent='Good night love 💗\n\nToday was enough.\nRest properly okay?\n\nI\'m proud of you.\n\n🌙';lb.style.opacity='1';},200);
+    }
+  },700);
+}
+
+function sendMessage(){
+  const input=document.getElementById('msg-input');
+  const text=input.value.trim();
+  if(!text)return;
+  if(!state.messages)state.messages=[];
+  state.messages.unshift({
+    from:activePerson,text,
+    time:new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}),
+    date:TODAY
+  });
+  input.value='';save();renderMessages();showToast('💌 Sent');
+}
+
+function renderMessages(){
+  const lbl=document.getElementById('msg-send-lbl');
+  const btn=document.getElementById('msg-send-btn');
+  if(lbl)lbl.textContent=activePerson==='sanjana'?'Write something for Sanjay 💗':'Write something for Sanjana 💜';
+  if(btn)btn.className=activePerson==='sanjana'?'save-btn-p':'save-btn-s';
+  const list=document.getElementById('messages-list');
+  if(!list)return;
+  const msgs=state.messages||[];
+  if(!msgs.length){
+    list.innerHTML='<div class="other-card" style="text-align:center;color:#c0849a;font-size:12.5px;font-style:italic;padding:20px">No messages yet 🌸<br>Send the first one above.</div>';
+    return;
+  }
+  list.innerHTML='';
+  msgs.forEach(msg=>{
+    const isSanjana=msg.from==='sanjana';
+    const div=document.createElement('div');div.className='msg-bubble';
+    div.innerHTML=`
+      <div class="msg-meta">
+        <span class="${isSanjana?'msg-from-p':'msg-from-s'}">${isSanjana?'🩷 Sanjana':'💜 Sanjay'}</span>
+        <span>${msg.date===TODAY?'Today':msg.date} · ${msg.time}</span>
+      </div>
+      <div class="msg-text">${msg.text.replace(/\n/g,'<br>')}</div>`;
+    list.appendChild(div);
+  });
+}
+
+function renderHistory(){
+  const p=activePerson;const isPink=p==='sanjana';
+  const tasks=isPink?SANJANA_TASKS:SANJAY_TASKS;
+  const dots=document.getElementById('day-dots');
+  const list=document.getElementById('hist-list');
+  dots.innerHTML='';list.innerHTML='';
+  for(let i=29;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const dStr=d.toISOString().split('T')[0];
+    const ch=state[p].checked[dStr]||{};
+    const hasDone=tasks.some(t=>ch[t.id]);
+    const dot=document.createElement('div');
+    dot.className='ddot'+(hasDone?(isPink?' dp':' ds'):'')+(dStr===TODAY?(isPink?' td':' tds'):'');
+    dot.title=dStr;dots.appendChild(dot);
+  }
+  const histDays=Object.keys(state[p].checked).filter(d=>Object.values(state[p].checked[d]).some(Boolean)).sort().reverse().slice(0,20);
+  if(!histDays.length){list.innerHTML='<div style="text-align:center;padding:2rem;color:#c0849a;font-size:13px">No history yet 🌸</div>';return;}
+  histDays.forEach(dStr=>{
+    const ch=state[p].checked[dStr]||{};
+    const dayIsWeekend=[0,6].includes(new Date(dStr).getDay());
+    const dayTasks=tasks.filter(t=>!t.weekendOnly||dayIsWeekend);
+    const done=dayTasks.filter(t=>ch[t.id]).length;
+    const pct=Math.round(done/dayTasks.length*100);
+    const d=new Date(dStr);
+    const lbl=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    const color=pct>=80?'#0F6E56':pct>=50?'#854F0B':'#993C1D';
+    const roughMark=state.roughDay&&state.roughDay[dStr+'-'+p]?' 🌸':'';
+    const row=document.createElement('div');
+    row.style.cssText='background:#fff;border:1.5px solid #f2d6e4;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center';
+    row.innerHTML=`<span style="font-size:13px;font-weight:600;color:#3a1f2e">${lbl}${roughMark}</span><div style="display:flex;align-items:center;gap:10px"><div style="width:100px;height:5px;background:#f2d6e4;border-radius:50px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${isPink?'#D4537E':'#7F77DD'};border-radius:50px"></div></div><span style="font-size:13px;font-weight:700;color:${color}">${pct}%</span></div>`;
+    list.appendChild(row);
+  });
+}
+
+function renderPartner(){
+  const other=activePerson==='sanjana'?'sanjay':'sanjana';
+  const isPink=other==='sanjana';
+  const tasks=(isPink?SANJANA_TASKS:SANJAY_TASKS).filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const emoji=isPink?'🩷':'💜';const name=isPink?'Sanjana':'Sanjay';
+  document.getElementById('partner-head').textContent=emoji+' '+name+"'s tasks today";
+  document.getElementById('partner-note-head').textContent=emoji+' '+name+"'s note";
+  const ch=state[other].checked[TODAY]||{};
+  const pt=document.getElementById('partner-tasks');pt.innerHTML='';
+  tasks.forEach(t=>{
+    const isDone=!!ch[t.id];
+    const row=document.createElement('div');row.className='other-item';
+    row.innerHTML=`<div class="odot" style="background:${isDone?(isPink?'#D4537E':'#7F77DD'):'#f2d6e4'}"></div><div class="otext${isDone?' done':''}">${t.name}</div>`;
+    pt.appendChild(row);
+  });
+  const note=state[other].note||'';
+  document.getElementById('partner-note').textContent=note||'No note yet 🌸';
+  document.getElementById('partner-note').style.fontStyle=note?'italic':'normal';
+}
+
+function renderRoadmap(){
+  const isSanjay=activePerson==='sanjay';
+  document.getElementById('roadmap-head').textContent=isSanjay?'💜 Sanjay\'s roadmap':'🩷 Sanjana\'s roadmap';
+  const rc=document.getElementById('roadmap-content');
+  if(!isSanjay){
+    rc.innerHTML=`
+      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">1</div><div><div class="rtitle">Now → Aug 24, 2026</div><div class="rdesc">SAP, Python, SQL, Excel, Power BI — 5 hrs/day. English daily. Walk in ready.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">2</div><div><div class="rtitle">Aug 24, 2026 — first day at EY GDS</div><div class="rdesc">SAP + data analytics role. All this preparation will make sense on that morning.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">3</div><div><div class="rtitle">6–12 months in</div><div class="rdesc">Real project experience. SAP certification. English confidence growing at work.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">4</div><div><div class="rtitle">Year 2+</div><div class="rdesc">Senior analyst → AI/ML → higher CTC. Already on track.</div></div></div>`;
+  } else {
+    rc.innerHTML=`
+      <div class="roadmap-step"><div class="rnum rnum-s">1</div><div><div class="rtitle">Right now — one goal at a time</div><div class="rdesc">Omega exam prep. 45 minutes daily is enough. Just show up. I'm proud of you for even trying.</div></div></div>
+      <div class="roadmap-step"><div class="rnum rnum-s">2</div><div><div class="rtitle">Build confidence &amp; healthcare experience</div><div class="rdesc">Learn slowly. Gain real experience. Grow stronger. One day at a time — we'll get there.</div></div></div>
+      <div class="roadmap-step"><div class="rnum rnum-s">3</div><div><div class="rtitle">Parallel PV learning (30 min/night)</div><div class="rdesc">AE vs SAE, GCP, CRF. Small daily habit. Big difference over 6 months. Excel on weekends adds to this quietly.</div></div></div>
+      <div class="roadmap-step"><div class="rnum rnum-s">4</div><div><div class="rtitle">4–6 months: PV / Clinical research path</div><div class="rdesc">Drug Safety Associate, PV Associate, Clinical Data roles. Experience + PV knowledge = a profile that stands out.</div></div></div>
+      <div class="roadmap-step"><div class="rnum rnum-s">5</div><div><div class="rtitle">Year 1–2: growing steadily</div><div class="rdesc">CRC → CRA → Senior CRA. You're already in the right direction. That's enough. I'm waiting at every milestone. 🌸</div></div></div>`;
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=activePerson==='sanjana'?'#D4537E':'#7F77DD';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function openLetter(type){
+  const box=document.getElementById('letter-box');
+  const letters={
+    stress:`Hey.\n\nI know things feel heavy right now.\n\nBut please don't carry everything alone in your head okay? You don't have to solve everything tonight.\n\nEat properly. Drink water. Do one small thing.\n\nI'm here. Come talk to me if it gets too much.\n\nOne step at a time okay?\n\n— me 💗`,
+
+    overthinking:`Hey love.\n\nStop imagining the worst-case okay?\n\nYou're not failing. You're not behind. You're not falling apart.\n\nYou're just tired and your brain is doing too much.\n\nSleep first. Think tomorrow.\n\nNot everything needs to be solved tonight. I promise.\n\n💜`,
+
+    low:`Hi 💗\n\nI know today felt rough.\n\nBut one bad day doesn't change who you are. One hard phase doesn't decide your future.\n\nWe said we'll build something beautiful together right? Then let's get there slowly.\n\nI don't need you to be perfect. I just need you to not give up.\n\nI'm not going anywhere. We'll handle this together. 🫂\n\nI love you so much okay?\n\n— me 💗`,
+
+    tired:`Hey.\n\nYou did enough for today.\n\nPlease rest without guilt okay? Seriously.\n\nI'm already proud of you — not for finishing everything, but for still trying even when you're this tired.\n\nSleep properly. I'll be here tomorrow.\n\n💗`,
+
+    miss:`Hi love 💗\n\nMissing you.\n\nDrink water okay?\nEat something proper.\nFinish today's small goals if you can — and if you can't, that's fine too.\n\nJust rest.\n\nI miss you too. Come talk to me when you can.\n\nWe're going to be okay. 🫂`
+  };
+  if(box){
+    box.style.opacity='0';
+    setTimeout(()=>{box.textContent=letters[type];box.style.opacity='1';},200);
+  }
+}
+
+load();
+</script>
