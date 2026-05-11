@@ -1,169 +1,524 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VELARIS</title>
+<link rel="manifest" id="pwa-manifest">
+<meta name="theme-color" content="#080810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VELARIS">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#fdf4f8;font-family:'DM Sans',sans-serif;color:#3a1f2e;min-height:100vh;padding-bottom:40px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;
+  --surface:#0e0e1a;
+  --card:#13131f;
+  --card2:#17172a;
+  --border:#1e1e35;
+  --border2:#252540;
+  --text:#e8e4f0;
+  --muted:#4a4a6a;
+  --muted2:#6a6a8a;
+  --pink:#c97aaa;
+  --pink-dim:rgba(201,122,170,0.12);
+  --pink-glow:rgba(201,122,170,0.25);
+  --purple:#8b7dd8;
+  --purple-dim:rgba(139,125,216,0.12);
+  --gold:#c4a96a;
+  --gold-dim:rgba(196,169,106,0.1);
+  --star:#9b8ec4;
+  --r:12px;
+  --r2:8px;
+}
+body.light-mode{
+  --bg:#fdf8f5;
+  --surface:#f5ede8;
+  --card:#ffffff;
+  --card2:#faf0ec;
+  --border:#e8d5cc;
+  --border2:#d9bfb5;
+  --text:#2a1520;
+  --muted:#9a7a85;
+  --muted2:#7a5a65;
+  --pink:#c9507a;
+  --pink-dim:rgba(201,80,122,0.1);
+  --pink-glow:rgba(201,80,122,0.2);
+  --purple:#6b5dd8;
+  --purple-dim:rgba(107,93,216,0.1);
+  --gold:#9a7230;
+  --gold-dim:rgba(154,114,48,0.1);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
 
-.header{background:#fff;border-bottom:1.5px solid #f2d6e4;padding:14px 16px 10px;position:sticky;top:0;z-index:100}
-.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.couple-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:#993556}
-.couple-sub{font-size:11px;color:#c0849a;margin-top:1px}
+/* ── STARFIELD ── */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:var(--min,.1);transform:scale(1)}50%{opacity:var(--max,.6);transform:scale(1.3)}}
+
+/* ── PIN SCREEN ── */
+#pin-screen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);
+  padding:32px 24px;
+}
+.pin-bg-glow{position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(139,125,216,0.08) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.pin-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:3rem;font-weight:300;letter-spacing:0.3em;
+  color:var(--text);text-align:center;margin-bottom:6px;
+  position:relative;z-index:1;
+}
+.pin-logo span{color:var(--gold)}
+.pin-sub{
+  font-size:12px;color:var(--muted2);letter-spacing:0.15em;
+  text-align:center;margin-bottom:40px;font-style:italic;
+  position:relative;z-index:1;
+}
+.pin-dots{display:flex;gap:14px;margin-bottom:36px;position:relative;z-index:1}
+.pin-dot{
+  width:10px;height:10px;border-radius:50%;
+  border:1px solid var(--border2);background:transparent;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px var(--gold)}
+.pin-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;width:220px;position:relative;z-index:1;
+}
+.pin-btn{
+  height:58px;border-radius:var(--r2);
+  border:1px solid var(--border);background:var(--card);
+  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
+  color:var(--text);cursor:pointer;
+  transition:all .15s ease;display:flex;align-items:center;justify-content:center;
+}
+.pin-btn:hover{background:var(--card2);border-color:var(--border2)}
+.pin-btn:active{transform:scale(0.94);background:var(--border)}
+.pin-btn.del{font-size:1rem;color:var(--muted2);font-family:'DM Sans',sans-serif}
+.pin-btn.empty{border:none;background:transparent;cursor:default}
+.pin-error{font-size:11px;color:#c97a7a;height:16px;text-align:center;margin-top:14px;letter-spacing:.05em;position:relative;z-index:1}
+.pin-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.8;letter-spacing:.03em;position:relative;z-index:1}
+@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.shake{animation:pinShake .4s ease}
+
+/* ── APP BODY ── */
+#app{display:none;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.header{
+  background:rgba(8,8,16,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:18px 18px 14px;
+  position:sticky;top:0;z-index:100;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.velaris-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:300;letter-spacing:.2em;color:var(--text);
+}
+.velaris-date{font-size:10px;color:var(--muted2);margin-top:2px;letter-spacing:.05em}
+.header-right{display:flex;align-items:center;gap:8px}
+.lock-btn{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted2);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.lock-btn:hover{border-color:var(--border2);color:var(--text)}
 .streaks-row{display:flex;gap:6px}
-.spill{border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;text-align:center;border:1.5px solid}
-.spill-p{background:#fbeaf0;border-color:#f4c0d1;color:#993556}
-.spill-s{background:#eeedfe;border-color:#cecbf6;color:#3c3489}
-.spill .sn{font-size:1.1rem;font-weight:700;display:block;line-height:1.2}
+.streak-pill{
+  padding:5px 12px;border-radius:100px;
+  font-size:11px;font-weight:600;text-align:center;
+  border:1px solid;
+}
+.streak-pill.pink{background:var(--pink-dim);border-color:rgba(201,122,170,.3);color:var(--pink)}
+.streak-pill.purple{background:var(--purple-dim);border-color:rgba(139,125,216,.3);color:var(--purple)}
+.streak-pill .snum{font-family:'Cormorant Garamond',serif;font-size:1.1rem;display:block;line-height:1.1}
+.both-prog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prog-lbl{font-size:10px;color:var(--muted2);margin-bottom:3px;letter-spacing:.03em}
+.prog-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.prog-fill-p{height:100%;background:var(--pink);border-radius:2px;transition:width .5s ease}
+.prog-fill-s{height:100%;background:var(--purple);border-radius:2px;transition:width .5s ease}
+.prog-pct{font-size:10px;margin-top:3px;font-weight:500}
+.pct-p{color:var(--pink)}.pct-s{color:var(--purple)}
 
-.both-prog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-.prog-lbl{font-size:11px;color:#c0849a;margin-bottom:3px}
-.prog-track{height:5px;background:#f2d6e4;border-radius:50px;overflow:hidden}
-.prog-fill-p{height:100%;background:#D4537E;border-radius:50px;transition:width .4s}
-.prog-fill-s{height:100%;background:#7F77DD;border-radius:50px;transition:width .4s}
-.prog-pct{font-size:11px;font-weight:600;margin-top:2px}
-.pct-p{color:#D4537E}.pct-s{color:#7F77DD}
+/* ── PERSON TABS ── */
+.person-tabs{
+  display:grid;grid-template-columns:1fr 1fr;
+  background:rgba(8,8,16,0.9);
+  border-bottom:1px solid var(--border);
+  padding:6px 14px;gap:6px;
+}
+.ptab{
+  padding:8px;border-radius:100px;cursor:pointer;
+  font-size:12px;font-weight:500;color:var(--muted2);
+  text-align:center;transition:all .2s;
+  border:1px solid transparent;letter-spacing:.05em;
+  background:none;font-family:'DM Sans',sans-serif;
+}
+.ptab.ap{background:var(--pink-dim);color:var(--pink);border-color:rgba(201,122,170,.2)}
+.ptab.as{background:var(--purple-dim);color:var(--purple);border-color:rgba(139,125,216,.2)}
 
-.person-tabs{display:grid;grid-template-columns:1fr 1fr;background:#fff;border-bottom:1.5px solid #f2d6e4;padding:4px 12px;gap:6px}
-.ptab{padding:9px;border-radius:50px;cursor:pointer;font-size:0.88rem;font-weight:600;color:#c0849a;text-align:center;transition:all .2s;border:1.5px solid transparent}
-.ptab.ap{background:#fbeaf0;color:#993556;border-color:#f4c0d1}
-.ptab.as{background:#eeedfe;color:#3c3489;border-color:#cecbf6}
-
-.nav-tabs{display:flex;background:#fff;border-bottom:1px solid #f2d6e4;padding:0 8px;overflow-x:auto}
+/* ── NAV TABS ── */
+.nav-tabs{
+  display:flex;background:rgba(8,8,16,.9);
+  border-bottom:1px solid var(--border);
+  padding:0 10px;overflow-x:auto;
+  scrollbar-width:none;
+}
 .nav-tabs::-webkit-scrollbar{display:none}
-.ntab{padding:8px 11px;font-size:10.5px;font-weight:600;color:#c0849a;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
-.ntab.active-p{color:#D4537E;border-bottom-color:#D4537E}
-.ntab.active-s{color:#7F77DD;border-bottom-color:#7F77DD}
+.ntab{
+  padding:9px 12px;font-size:10px;font-weight:600;
+  color:var(--muted);cursor:pointer;border-bottom:1px solid transparent;
+  transition:all .2s;background:none;
+  border-top:none;border-left:none;border-right:none;
+  font-family:'DM Sans',sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap;flex-shrink:0;
+}
+.ntab.ap{color:var(--pink);border-bottom-color:var(--pink)}
+.ntab.as{color:var(--purple);border-bottom-color:var(--purple)}
 
-.motto{padding:10px 16px;font-size:12px;font-style:italic;text-align:center;border-bottom:1px solid #f2d6e4}
-.motto-p{background:#fbeaf0;color:#993556}
-.motto-s{background:#eeedfe;color:#534AB7}
+/* ── MOTTO ── */
+.motto{
+  padding:10px 18px;font-size:11px;font-style:italic;
+  text-align:center;border-bottom:1px solid var(--border);
+  letter-spacing:.03em;line-height:1.6;
+}
+.motto.mp{background:var(--pink-dim);color:var(--pink)}
+.motto.ms{background:var(--purple-dim);color:var(--purple)}
 
-.main{padding:12px 14px;max-width:640px;margin:0 auto}
+/* ── MAIN ── */
+.main{padding:14px 16px;max-width:600px;margin:0 auto}
 .tab-content{display:none}
 
-.sec-label{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#c0849a;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
-.sec-label::after{content:'';flex:1;height:1px;background:#f2d6e4}
+/* ── SECTION LABEL ── */
+.sec-lbl{
+  font-size:8px;font-weight:700;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--muted);
+  margin:18px 0 8px;display:flex;align-items:center;gap:8px;
+}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
 
-.block{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;margin-bottom:6px;cursor:pointer;transition:all .2s}
-.block:hover{border-color:#f4c0d1}
-.block.done{opacity:.55;border-color:#f0e8ec}
-.block.done-s{border-color:#ded9f7}
-.block-inner{display:flex;align-items:center;gap:10px;padding:11px 12px}
-.bcheck{width:20px;height:20px;border-radius:50%;border:1.5px solid #e0c0ce;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;color:white}
-.bcheck.cp{background:#D4537E;border-color:#D4537E}
-.bcheck.cs{background:#7F77DD;border-color:#7F77DD}
-.baccent{width:3px;height:30px;border-radius:50px;flex-shrink:0}
+/* ── TASK BLOCKS ── */
+.block{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);margin-bottom:6px;cursor:pointer;
+  transition:border-color .2s,opacity .2s;overflow:hidden;
+}
+.block:hover{border-color:var(--border2)}
+.block.done{opacity:.5;border-color:var(--border)}
+.block-inner{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.bcheck{
+  width:18px;height:18px;border-radius:50%;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;font-size:9px;color:white;
+}
+.bcheck.cp{background:var(--pink);border-color:var(--pink)}
+.bcheck.cs{background:var(--purple);border-color:var(--purple)}
+.baccent{width:2px;height:28px;border-radius:2px;flex-shrink:0}
 .binfo{flex:1;min-width:0}
-.btime{font-size:10px;color:#c0849a;margin-bottom:1px}
-.btitle{font-size:13px;font-weight:600;color:#3a1f2e;line-height:1.3}
-.block.done .btitle{text-decoration:line-through;color:#c0849a}
-.btag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:50px;flex-shrink:0}
+.btime{font-size:9px;color:var(--muted);margin-bottom:1px;letter-spacing:.03em}
+.btitle{font-size:12px;font-weight:500;color:var(--text);line-height:1.3}
+.block.done .btitle{text-decoration:line-through;color:var(--muted)}
+.btag{
+  font-size:8px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:2px 7px;border-radius:100px;flex-shrink:0;
+}
 
-.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
-.skill-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:10px;padding:10px;text-align:center}
-.skill-icon{font-size:15px;margin-bottom:2px}
-.skill-name{font-size:9px;color:#c0849a;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
-.skill-streak{font-family:'Playfair Display',serif;font-size:1.6rem;line-height:1}
-.skill-days{font-size:9px;color:#c0849a}
+/* ── SKILL CARDS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.skill-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:10px;text-align:center;
+}
+.skill-icon{font-size:14px;margin-bottom:2px}
+.skill-name{font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.skill-streak{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:300;line-height:1;
+}
+.skill-days{font-size:8px;color:var(--muted)}
 
-.note-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;padding:12px;margin-bottom:8px}
-.note-lbl{font-size:10px;font-weight:600;color:#c0849a;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.note-ta{width:100%;background:#fdf4f8;border:1.5px solid #f2d6e4;border-radius:8px;padding:8px 10px;color:#3a1f2e;font-family:'DM Sans',sans-serif;font-size:12.5px;resize:none;outline:none;min-height:52px;transition:border-color .2s}
-.note-ta:focus{border-color:#f4c0d1}
-.note-ta::placeholder{color:#d0a0b4}
-.note-display{font-size:12.5px;color:#5a2040;font-style:italic;min-height:32px;line-height:1.5}
-
+/* ── NOTE CARD ── */
+.note-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:13px;margin-bottom:8px;
+}
+.note-lbl{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.note-ta{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  border-radius:6px;padding:8px 10px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:12px;resize:none;
+  outline:none;min-height:50px;transition:border-color .2s;
+}
+.note-ta:focus{border-color:var(--border2)}
+.note-ta::placeholder{color:var(--muted)}
 .btn-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.save-btn-p{background:#D4537E;color:white;border:none;padding:7px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.save-btn-s{background:#7F77DD;color:white;border:none;padding:7px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.save-btn-p:hover,.save-btn-s:hover{opacity:.85}
-.reset-btn{background:transparent;border:1.5px solid #f2d6e4;color:#c0849a;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
-.reset-btn:hover{border-color:#D4537E;color:#D4537E}
-.soft-btn{background:#eeedfe;border:1.5px solid #cecbf6;color:#534AB7;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.soft-btn:hover{background:#dddaf8}
-.night-btn{background:#2d2245;border:none;color:#c9c3f5;padding:8px 18px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;margin-top:6px}
-.night-btn:hover{background:#3d3060}
+.save-btn{
+  padding:7px 16px;border-radius:6px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  transition:opacity .2s;letter-spacing:.05em;
+}
+.save-btn.p{background:var(--pink);color:#0a0415}
+.save-btn.s{background:var(--purple);color:#0a0415}
+.save-btn:hover{opacity:.85}
+.ghost-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:7px 13px;border-radius:6px;
+  font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;
+  transition:all .2s;
+}
+.ghost-btn:hover{border-color:var(--border2);color:var(--text)}
 
-.other-card{background:#fdf4f8;border:1.5px dashed #f2d6e4;border-radius:12px;padding:12px;margin-bottom:8px}
-.other-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f2d6e4}
-.other-item:last-child{border-bottom:none}
-.odot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.otext{font-size:12px;color:#5a2040}
-.otext.done{text-decoration:line-through;color:#c0849a}
+/* ── PARTNER TAB ── */
+.partner-task{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.partner-task:last-child{border-bottom:none}
+.pdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ptext{font-size:12px;color:var(--text)}
+.ptext.done{text-decoration:line-through;color:var(--muted)}
+.partner-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:12px;margin-bottom:8px;
+}
+.note-display{font-size:12px;color:var(--muted2);font-style:italic;line-height:1.7;min-height:30px}
 
-.day-dots{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
-.ddot{width:17px;height:17px;border-radius:50%;border:1.5px solid #f0d0dc;background:#fff;cursor:default;transition:all .2s}
-.ddot.dp{background:#D4537E;border-color:#D4537E}
-.ddot.ds{background:#7F77DD;border-color:#7F77DD}
-.ddot.td{box-shadow:0 0 0 2px rgba(212,83,126,.35)}
-.ddot.tds{box-shadow:0 0 0 2px rgba(127,119,221,.35)}
+/* ── MESSAGES ── */
+.msg-bubble{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:11px 13px;margin-bottom:7px;
+}
+.msg-meta{font-size:9px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between}
+.msg-from-p{color:var(--pink);font-weight:700}
+.msg-from-s{color:var(--purple);font-weight:700}
+.msg-text{font-size:12px;color:var(--text);line-height:1.7}
 
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#D4537E;color:white;padding:9px 20px;border-radius:50px;font-size:12px;font-weight:600;transition:transform .3s;z-index:999;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0)}
+/* ── WHY TAB ── */
+.why-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;margin-bottom:10px;
+}
+.why-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:300;color:var(--gold);
+  margin-bottom:16px;text-align:center;letter-spacing:.05em;
+}
+.why-p{font-size:12.5px;color:var(--muted2);line-height:2;margin-bottom:12px}
+.why-p:last-child{margin-bottom:0}
+.why-sign{color:var(--pink);font-style:italic;font-size:13px}
 
-.roadmap-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:12px;padding:14px;margin-bottom:8px}
-.roadmap-step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f2d6e4;align-items:flex-start}
+/* ── ROADMAP ── */
+.roadmap-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;margin-bottom:8px;
+}
+.roadmap-step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .roadmap-step:last-child{border-bottom:none}
-.rnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
-.rnum-s{background:#eeedfe;color:#3c3489}
-.rtitle{font-size:12.5px;font-weight:600;color:#3a1f2e;margin-bottom:2px}
-.rdesc{font-size:11px;color:#c0849a;line-height:1.5}
+.rnum{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;
+}
+.rtitle{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.rdesc{font-size:11px;color:var(--muted2);line-height:1.6}
 
-.weekend-badge{font-size:9px;background:#eaf4e8;color:#3B6D11;border:1px solid #b8ddb0;border-radius:50px;padding:2px 7px;font-weight:700;letter-spacing:.5px;margin-left:4px}
+/* ── OPEN WHEN ── */
+.open-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.open-btn{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:11px;font-size:11px;
+  color:var(--muted2);cursor:pointer;transition:all .2s;
+  font-family:'DM Sans',sans-serif;font-weight:500;
+}
+.open-btn:hover{background:var(--card2);border-color:var(--border2);color:var(--text)}
+.letter-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:18px 16px;
+  font-size:12.5px;color:var(--muted2);
+  font-style:italic;line-height:2.2;min-height:120px;
+  transition:opacity .2s;white-space:pre-line;
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+}
 
-.mini-love{background:rgba(255,255,255,0.7);border:1.5px solid #f2d6e4;padding:14px 16px;border-radius:16px;margin-top:10px;margin-bottom:4px;text-align:center;font-size:12.5px;line-height:2;color:#8b6172;font-style:italic}
-.mini-love .ml-icon{font-size:18px;display:block;margin-bottom:4px}
+/* ── FUTURE LETTERS ── */
+.fl-compose{
+  background:var(--card);border:1px dashed var(--border2);
+  border-radius:var(--r2);padding:14px;margin-bottom:10px;
+}
+.fl-date-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.fl-date-lbl{font-size:10px;color:var(--muted);flex-shrink:0;letter-spacing:.05em}
+.fl-date-input{
+  border:1px solid var(--border);border-radius:6px;
+  padding:5px 10px;font-size:11px;color:var(--text);
+  font-family:'DM Sans',sans-serif;background:var(--bg);outline:none;flex:1;
+}
+.fl-card{border-radius:var(--r2);padding:13px;margin-bottom:7px;position:relative;overflow:hidden}
+.fl-card.locked{background:var(--card);border:1px solid var(--border)}
+.fl-card.unlocked{background:rgba(196,169,106,0.05);border:1px solid rgba(196,169,106,.2)}
+.fl-lock-icon{font-size:15px;margin-bottom:4px}
+.fl-card-date{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.fl-card-date.p{color:var(--pink)}.fl-card-date.s{color:var(--purple)}.fl-card-date.g{color:var(--gold)}
+.fl-preview{font-size:12px;color:var(--text);line-height:1.7;font-style:italic;font-family:'Cormorant Garamond',serif}
+.fl-locked-text{font-size:11px;color:var(--muted);font-style:italic}
+.fl-del{position:absolute;top:10px;right:10px;background:transparent;border:none;font-size:13px;color:var(--muted);cursor:pointer;padding:2px 5px;border-radius:4px}
+.fl-del:hover{color:#c97a7a}
+.fl-empty{text-align:center;padding:24px;color:var(--muted);font-size:12px;font-style:italic}
 
-.open-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
-.open-grid button{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:12px;font-size:12px;color:#7c5a69;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
-.open-grid button:hover{background:#eeedfe;border-color:#cecbf6}
-.letter-box{background:rgba(255,255,255,0.75);border:1.5px solid #e8d0f0;border-radius:18px;padding:20px 18px;line-height:2.1;font-size:13px;color:#7c5a69;font-style:italic;min-height:140px;transition:opacity .2s ease;white-space:pre-line}
+/* ── HISTORY ── */
+.hist-row{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:11px 13px;margin-bottom:6px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.hist-date{font-size:12px;font-weight:500;color:var(--text)}
+.hist-bar-wrap{display:flex;align-items:center;gap:8px}
+.hist-bar-bg{width:80px;height:3px;background:var(--border);border-radius:3px;overflow:hidden}
+.hist-bar-fill{height:3px;border-radius:3px}
+.hist-pct{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300}
 
-.msg-bubble{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:12px 14px;margin-bottom:8px}
-.msg-meta{font-size:10px;color:#c0849a;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
-.msg-from-p{color:#D4537E;font-weight:700}
-.msg-from-s{color:#7F77DD;font-weight:700}
-.msg-text{font-size:13px;color:#5a2040;line-height:1.7}
+/* ── ROUGH DAY ── */
+.rough-active{
+  background:var(--purple-dim);border:1px solid rgba(139,125,216,.2);
+  border-radius:var(--r2);padding:12px 14px;margin-bottom:10px;
+  text-align:center;font-size:12px;color:var(--purple);line-height:1.8;
+}
+.soft-btn{
+  background:var(--purple-dim);border:1px solid rgba(139,125,216,.2);
+  color:var(--purple);padding:8px 14px;border-radius:6px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .2s;width:100%;
+}
+.soft-btn:hover{background:rgba(139,125,216,.2)}
+.night-btn{
+  background:rgba(139,125,216,.08);border:1px solid rgba(139,125,216,.2);
+  color:var(--purple);padding:10px;border-radius:6px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .2s;width:100%;letter-spacing:.05em;
+}
+.night-btn:hover{background:rgba(139,125,216,.15)}
+.mini-love{
+  background:var(--gold-dim);border:1px solid rgba(196,169,106,.15);
+  border-radius:var(--r2);padding:14px 16px;text-align:center;
+  font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;
+  color:var(--gold);line-height:2;margin-bottom:4px;font-style:italic;
+}
+.countdown-banner{
+  background:rgba(196,169,106,.06);border:1px solid rgba(196,169,106,.15);
+  border-radius:var(--r2);padding:10px 14px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cd-label{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.cd-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--gold)}
+.cd-sub{font-size:9px;color:var(--muted2);margin-top:1px}
 
-.rough-day-active{background:#f0eeff;border:1.5px solid #c9c3f5;border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center;font-size:12px;color:#534AB7;line-height:1.8}
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:22px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  padding:9px 20px;border-radius:100px;
+  font-size:12px;font-weight:600;
+  transition:transform .3s ease;z-index:9998;white-space:nowrap;
+  letter-spacing:.05em;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.tp{background:var(--pink);color:#0a0415}
+.toast.ts{background:var(--purple);color:#0a0415}
 
-.why-card{background:#fff;border:1.5px solid #f2d6e4;border-radius:14px;padding:16px;margin-bottom:10px;font-size:13px;color:#5a2040;line-height:2}
-.why-card p{margin-bottom:10px}
-.why-card p:last-child{margin-bottom:0}
-.why-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:#993556;margin-bottom:12px;text-align:center}
+/* ── THEME TOGGLE ── */
+.theme-btn{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted2);cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.theme-btn:hover{border-color:var(--border2);color:var(--text)}
 
-/* PIN LOCK */
-#pin-overlay{position:fixed;inset:0;background:#fdf4f8;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.pin-logo{font-family:'Playfair Display',serif;font-size:2rem;color:#993556;margin-bottom:4px;letter-spacing:1px}
-.pin-sub{font-size:12px;color:#c0849a;margin-bottom:32px;text-align:center}
-.pin-dots{display:flex;gap:12px;margin-bottom:28px}
-.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #f4c0d1;background:transparent;transition:all .2s}
-.pin-dot.filled{background:#D4537E;border-color:#D4537E}
-.pin-dot.filled-s{background:#7F77DD;border-color:#7F77DD}
-.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:10px}
-.pin-btn{width:72px;height:72px;border-radius:50%;border:1.5px solid #f2d6e4;background:#fff;font-size:1.4rem;font-weight:600;color:#3a1f2e;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center}
-.pin-btn:active{background:#fbeaf0;border-color:#f4c0d1;transform:scale(.93)}
-.pin-btn.zero{grid-column:2}
-.pin-del{background:transparent;border:none;font-size:1.3rem;cursor:pointer;color:#c0849a;width:72px;height:72px;display:flex;align-items:center;justify-content:center}
-.pin-error{font-size:12px;color:#D4537E;margin-top:16px;min-height:18px;text-align:center}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.pin-shake{animation:shake .35s ease}
-.pin-who{display:flex;gap:10px;margin-bottom:20px}
-.pin-who-btn{padding:8px 20px;border-radius:50px;border:1.5px solid #f4c0d1;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#993556;transition:all .2s;font-family:'DM Sans',sans-serif}
-.pin-who-btn.active-p{background:#fbeaf0;border-color:#D4537E;color:#D4537E}
-.pin-who-btn.active-s{background:#eeedfe;border-color:#7F77DD;color:#534AB7}
+/* ── ANNIVERSARY BANNER ── */
+.anniv-banner{
+  background:linear-gradient(135deg,rgba(196,169,106,.08),rgba(201,122,170,.06));
+  border:1px solid rgba(196,169,106,.2);
+  border-radius:var(--r2);padding:14px 16px;margin-bottom:12px;
+  text-align:center;
+}
+.anniv-days{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.6rem;font-weight:300;color:var(--gold);line-height:1;
+}
+.anniv-label{font-size:10px;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.anniv-date{font-size:10px;color:var(--muted);margin-top:2px;font-style:italic}
+
+/* ── LAST SEEN ── */
+.last-seen-bar{
+  font-size:10px;color:var(--muted2);text-align:center;
+  padding:6px;letter-spacing:.03em;font-style:italic;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+
+/* ── PRIVATE NOTES ── */
+.note-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px}
+.note-tab-btn{flex:1;padding:7px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;background:transparent;color:var(--muted);transition:all .2s}
+.note-tab-btn.active-p{background:var(--pink-dim);color:var(--pink)}
+.note-tab-btn.active-s{background:var(--purple-dim);color:var(--purple)}
+
+/* ── SETTINGS ROWS ── */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-name{font-size:12px;color:var(--text)}
+.setting-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.toggle-switch{position:relative;width:40px;height:22px;cursor:pointer}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;border-radius:11px;background:var(--border2);transition:.3s}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:var(--muted2);transition:.3s}
+input:checked+.toggle-track{background:var(--pink)}
+input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
+
+.export-btn{
+  width:100%;background:rgba(33,115,70,.1);border:1px solid rgba(33,115,70,.3);
+  color:#4ade80;padding:11px;border-radius:var(--r2);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;margin-bottom:14px;transition:all .2s;letter-spacing:.05em;
+}
+.export-btn:hover{background:rgba(33,115,70,.2)}
+.settings-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:13px;margin-bottom:8px;
+}
+.settings-lbl{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.time-input{
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:6px 10px;font-size:11px;color:var(--text);
+  font-family:'DM Sans',sans-serif;outline:none;
+}
 </style>
 
-<!-- PIN LOCK OVERLAY -->
-<div id="pin-overlay">
-  <div class="pin-logo">VELARIS 💕</div>
-  <div class="pin-sub">hidden city, just for us</div>
+</head>
+<body>
+
+<!-- STARFIELD -->
+<div class="stars" id="stars"></div>
+
+<!-- PIN SCREEN -->
+<div id="pin-screen">
+  <div class="pin-bg-glow"></div>
+  <div class="pin-logo">✦ <span>VELARIS</span> ✦</div>
+  <div class="pin-sub">welcome back 🌙</div>
   <div class="pin-dots" id="pin-dots">
     <div class="pin-dot" id="pd0"></div>
     <div class="pin-dot" id="pd1"></div>
     <div class="pin-dot" id="pd2"></div>
     <div class="pin-dot" id="pd3"></div>
   </div>
-  <div class="pin-pad">
+  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-grid">
     <button class="pin-btn" onclick="pinPress('1')">1</button>
     <button class="pin-btn" onclick="pinPress('2')">2</button>
     <button class="pin-btn" onclick="pinPress('3')">3</button>
@@ -173,148 +528,73 @@ body{background:#fdf4f8;font-family:'DM Sans',sans-serif;color:#3a1f2e;min-heigh
     <button class="pin-btn" onclick="pinPress('7')">7</button>
     <button class="pin-btn" onclick="pinPress('8')">8</button>
     <button class="pin-btn" onclick="pinPress('9')">9</button>
-    <button class="pin-del zero" onclick="pinDel()">⌫</button>
+    <button class="pin-btn empty"></button>
     <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
-  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-hint">First time? Set any 4-digit PIN · shared by both 💕</div>
 </div>
 
-<div class="header">
-  <div class="header-top">
-    <div>
-      <div class="couple-name">Sanjana &amp; Sanjay 💕</div>
-      <div class="couple-sub" id="hdate">growing together, one day at a time</div>
-    </div>
-    <div class="streaks-row">
-      <div class="spill spill-p"><span class="sn" id="streak-p">0</span>🩷 days</div>
-      <div class="spill spill-s"><span class="sn" id="streak-s">0</span>💜 days</div>
-    </div>
-  </div>
-  <div class="both-prog">
-    <div>
-      <div class="prog-lbl">Sanjana 🩷 today</div>
-      <div class="prog-track"><div class="prog-fill-p" id="prog-p" style="width:0%"></div></div>
-      <div class="prog-pct pct-p" id="pct-p">0 / 18 (0%)</div>
-    </div>
-    <div>
-      <div class="prog-lbl">Sanjay 💜 today</div>
-      <div class="prog-track"><div class="prog-fill-s" id="prog-s" style="width:0%"></div></div>
-      <div class="prog-pct pct-s" id="pct-s">0 / 4 (0%)</div>
-    </div>
-  </div>
-</div>
-
-<div class="person-tabs">
-  <div class="ptab ap" id="ptab-p" onclick="switchPerson('sanjana')">🩷 Sanjana</div>
-  <div class="ptab" id="ptab-s" onclick="switchPerson('sanjay')">💜 Sanjay</div>
-</div>
-
-<div class="nav-tabs" id="nav-tabs">
-  <button class="ntab active-p" onclick="switchTab('today',this)">📋 Today</button>
-  <button class="ntab" onclick="switchTab('history',this)">📅 Log</button>
-  <button class="ntab" onclick="switchTab('partner',this)">👀 Partner</button>
-  <button class="ntab" onclick="switchTab('messages',this)">💌 Notes</button>
-  <button class="ntab" onclick="switchTab('why',this)">💍 Why</button>
-  <button class="ntab" onclick="switchTab('roadmap',this)">🗺 Roadmap</button>
-</div>
-
-<div class="motto motto-p" id="motto">Your future EY manager doesn't know you yet — let your skills introduce you.</div>
-
-<div class="main">
-
-  <div class="tab-content" id="tab-today" style="display:block"></div>
-
-  <div class="tab-content" id="tab-history">
-    <div class="sec-label">30-day log</div>
-    <div class="day-dots" id="day-dots"></div>
-    <div id="hist-list"></div>
-  </div>
-
-  <div class="tab-content" id="tab-partner">
-    <div class="sec-label" id="partner-head">💜 Sanjay's tasks</div>
-    <div class="other-card" id="partner-tasks"></div>
-    <div class="sec-label" id="partner-note-head">💜 Sanjay's note</div>
-    <div class="other-card"><div class="note-display" id="partner-note">—</div></div>
-  </div>
-
-  <div class="tab-content" id="tab-messages">
-    <div class="sec-label">send a note 💌</div>
-    <div class="note-card">
-      <div class="note-lbl" id="msg-send-lbl">Write something caring...</div>
-      <textarea class="note-ta" id="msg-input" rows="3" placeholder="Eat properly okay? / I'm proud of you. / Sleep early tonight."></textarea>
-      <div class="btn-row">
-        <button class="save-btn-p" id="msg-send-btn" onclick="sendMessage()">Send 💌</button>
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="velaris-name">✦ VELARIS</div>
+        <div class="velaris-date" id="hdate"></div>
+      </div>
+      <div class="header-right">
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+        <button class="lock-btn" onclick="lockApp()" title="Lock">🔒</button>
+        <div class="streaks-row">
+          <div class="streak-pill pink"><span class="snum" id="streak-p">0</span>🩷</div>
+          <div class="streak-pill purple"><span class="snum" id="streak-s">0</span>💜</div>
+        </div>
       </div>
     </div>
-    <div class="sec-label">messages</div>
-    <div id="messages-list"></div>
-  </div>
-
-  <div class="tab-content" id="tab-why">
-    <div class="sec-label">why we're doing all this 💍</div>
-    <div class="why-card">
-      <div class="why-title">💜 Hey love.</div>
-      <p>I know life feels really tiring right now. Every day feels the same. Early mornings, long travel, coming home exhausted, overthinking everything at night... it all feels heavy sometimes.</p>
-      <p>But please remember why we started okay?</p>
-      <p>We're not doing all this to survive. We're building our future slowly — together. A future where we don't have to fear life. Where we can take care of our family. Where we can sleep peacefully. Where we can look back at these hard nights and say — we made it.</p>
-      <p>Right now I'm also studying, preparing, planning — trying to build something for both of us. We're both tired. And that's okay. We're doing this together.</p>
-      <p>This space exists not to pressure you. Just to remind you — you're not alone in this anymore.</p>
-      <p>Even small effort matters. Even tired effort matters.</p>
-      <p>One day all these late nights, overthinking sessions, tiny study habits, and soft encouragements will become memories we smile at together.</p>
-      <p style="color:#993556;font-style:italic">So whenever you feel low — come here and read this okay?<br><br>I'm not going anywhere. 🫂<br>I love you so much.<br><br>— me 💗</p>
+    <div class="both-prog">
+      <div>
+        <div class="prog-lbl">Sanjana 🩷</div>
+        <div class="prog-track"><div class="prog-fill-p" id="prog-p" style="width:0%"></div></div>
+        <div class="prog-pct pct-p" id="pct-p">0%</div>
+      </div>
+      <div>
+        <div class="prog-lbl">Sanjay 💜</div>
+        <div class="prog-track"><div class="prog-fill-s" id="prog-s" style="width:0%"></div></div>
+        <div class="prog-pct pct-s" id="pct-s">0%</div>
+      </div>
     </div>
   </div>
 
-  <div class="tab-content" id="tab-roadmap">
-    <div class="sec-label" id="roadmap-head">Roadmap 🗺</div>
-    <div class="roadmap-card" id="roadmap-content"></div>
+  <div class="person-tabs">
+    <button class="ptab ap" id="ptab-p" onclick="switchPerson('sanjana')">🩷 Sanjana</button>
+    <button class="ptab" id="ptab-s" onclick="switchPerson('sanjay')">💜 Sanjay</button>
   </div>
+  <div class="last-seen-bar" id="last-seen-bar"></div>
 
+  <div class="nav-tabs" id="nav-tabs"></div>
+  <div class="motto" id="motto"></div>
+
+  <div class="main">
+    <div id="tab-today"></div>
+    <div id="tab-history" style="display:none"></div>
+    <div id="tab-partner" style="display:none"></div>
+    <div id="tab-messages" style="display:none"></div>
+    <div id="tab-why" style="display:none"></div>
+    <div id="tab-roadmap" style="display:none"></div>
+    <div id="tab-future" style="display:none"></div>
+    <div id="tab-settings" style="display:none"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── PIN LOCK ──────────────────────────────────────────────
-const PIN = '1109';
-let pinBuffer = '';
-
-function pinPress(d) {
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += d;
-  updatePinDots();
-  if (pinBuffer.length === 4) setTimeout(checkPin, 120);
-}
-
-function pinDel() {
-  pinBuffer = pinBuffer.slice(0, -1);
-  updatePinDots();
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
-  }
-}
-
-function checkPin() {
-  if (pinBuffer === PIN) {
-    document.getElementById('pin-overlay').style.display = 'none';
-  } else {
-    document.getElementById('pin-error').textContent = 'Wrong PIN — try again 💗';
-    const dots = document.getElementById('pin-dots');
-    dots.classList.add('pin-shake');
-    setTimeout(() => dots.classList.remove('pin-shake'), 400);
-    pinBuffer = '';
-    updatePinDots();
-  }
-}
-// ─────────────────────────────────────────────────────────
-const TODAY = new Date().toISOString().split('T')[0];
-const SKEY = 'couple_v8';
+// ── SUPABASE (plain fetch — no CDN needed) ──
 const SUPABASE_URL = 'https://dvqplyfzhqftwjeiithd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cXBseWZ6aHFmdHdqZWlpdGhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzkyNjEsImV4cCI6MjA5NDA1NTI2MX0.NL6ckzPzm2EnvcDzFuE2_7giKUyE_6xfz4gpCnYB2R8';
+const DB_KEY = 'velaris_main';
+const PIN_KEY = 'velaris_pin';
 
 async function sbGet(key) {
   try {
@@ -336,298 +616,487 @@ async function sbSet(key, value) {
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates'
       },
-      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+      body: JSON.stringify({ key, value: typeof value === 'string' ? value : JSON.stringify(value), updated_at: new Date().toISOString() })
     });
   } catch(e) {}
 }
-const IS_WEEKEND = [0,6].includes(new Date().getDay());
 
-const SANJANA_TASKS = [
-  {id:'p0',time:'8:00–9:00 AM',name:'Wake + freshen + breakfast',tag:'LIFE',tc:'#c0849a',bg:'rgba(192,132,154,.15)',block:'Morning'},
-  {id:'p1',time:'9:00–9:30 AM · fixed',name:"Sister's business",tag:'FIXED',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Morning'},
-  {id:'p2',time:'9:30–10:00 AM',name:'English — speak + write 3 sentences',tag:'ENGLISH',tc:'#7F77DD',bg:'rgba(127,119,221,.12)',block:'Morning',skill:'english'},
-  {id:'p3',time:'10:00–10:30 AM',name:'Excel — build something',tag:'EXCEL',tc:'#3B6D11',bg:'rgba(59,109,17,.12)',block:'Morning',skill:'excel'},
-  {id:'p4',time:'10:30–11:00 AM',name:'SAP — study + explore',tag:'SAP',tc:'#185FA5',bg:'rgba(24,95,165,.12)',block:'Morning',skill:'sap'},
-  {id:'p5',time:'11:00–11:30 AM',name:'Household chores / free buffer',tag:'CHORES',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Morning'},
-  {id:'p6',time:'11:30 AM–12:30 PM',name:'SQL — study + practice (first hour)',tag:'SQL',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Mid-morning',skill:'sql'},
-  {id:'p7',time:'12:30–1:30 PM',name:'SQL — continued (second hour)',tag:'SQL',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Mid-morning',skill:'sql'},
-  {id:'p8',time:'1:30–2:30 PM',name:'Lunch + rest',tag:'REST',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Afternoon'},
-  {id:'p9',time:'2:30–4:00 PM',name:'Python — study + practice',tag:'PYTHON',tc:'#854F0B',bg:'rgba(133,79,11,.12)',block:'Afternoon',skill:'python'},
-  {id:'p10',time:'4:00–4:30 PM',name:'Chores / nap if needed',tag:'CHORES',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Afternoon'},
-  {id:'p11',time:'4:30–5:30 PM',name:'Python — continued',tag:'PYTHON',tc:'#854F0B',bg:'rgba(133,79,11,.12)',block:'Evening',skill:'python'},
-  {id:'p12',time:'5:30–6:00 PM',name:'Power BI — build something',tag:'POWER BI',tc:'#085041',bg:'rgba(8,80,65,.12)',block:'Evening',skill:'powerbi'},
-  {id:'p13',time:'6:00–7:00 PM',name:'Free time / household chores',tag:'FREE',tc:'#888780',bg:'rgba(136,135,128,.12)',block:'Evening'},
-  {id:'p14',time:'7:00–7:30 PM',name:'Light review — revise today',tag:'REVIEW',tc:'#0F6E56',bg:'rgba(15,110,86,.12)',block:'Evening'},
-  {id:'p15',time:'7:30–8:30 PM',name:'Dinner + wind down',tag:'LIFE',tc:'#c0849a',bg:'rgba(192,132,154,.15)',block:'Evening'},
-  {id:'p16',time:'8:30–9:00 PM · fixed',name:"Sister's business (evening)",tag:'FIXED',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Evening'},
-  {id:'p17',time:'9:00–9:30 PM',name:'English show — Friends / Ted Lasso',tag:'ENGLISH',tc:'#7F77DD',bg:'rgba(127,119,221,.12)',block:'Evening',skill:'english'},
+// ── PRIVATE NOTE ENCRYPTION (AES-GCM, key derived from PIN) ──
+let _encKey = null;
+async function deriveKey(pin) {
+  const raw = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt: new TextEncoder().encode('velaris_private'), iterations:100000, hash:'SHA-256' },
+    raw, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+  );
+}
+async function encryptNote(text) {
+  if(!_encKey) return text; // fallback unencrypted
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = await crypto.subtle.encrypt({name:'AES-GCM',iv}, _encKey, new TextEncoder().encode(text));
+  return btoa(String.fromCharCode(...iv) + String.fromCharCode(...new Uint8Array(enc)));
+}
+async function decryptNote(b64) {
+  if(!_encKey || !b64) return b64||'';
+  try {
+    const raw = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const iv = raw.slice(0,12), data = raw.slice(12);
+    const dec = await crypto.subtle.decrypt({name:'AES-GCM',iv}, _encKey, data);
+    return new TextDecoder().decode(dec);
+  } catch(e) { return '🔒 (encrypted)'; }
+}
+
+
+const ANNIV_DATE = new Date('2019-11-06'); // together since 6 Nov 2019
+const daysTogther = Math.floor((new Date() - ANNIV_DATE) / 86400000);
+
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light-mode');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('velaris_theme', isLight ? 'light' : 'dark');
+}
+function applyTheme(){
+  const saved = localStorage.getItem('velaris_theme');
+  if(saved === 'light'){
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('theme-btn');
+    if(btn) btn.textContent = '☀️';
+  }
+}
+
+// ── LAST SEEN ──
+const LAST_SEEN_KEY = 'velaris_lastseen';
+async function updateLastSeen(){
+  const now = new Date();
+  const payload = { sanjana: null, sanjay: null };
+  const existing = await sbGet(LAST_SEEN_KEY);
+  const prev = existing ? JSON.parse(existing) : {};
+  payload.sanjana = prev.sanjana || null;
+  payload.sanjay = prev.sanjay || null;
+  payload[activePerson] = now.toISOString();
+  await sbSet(LAST_SEEN_KEY, JSON.stringify(payload));
+}
+async function renderLastSeen(){
+  const bar = document.getElementById('last-seen-bar');
+  if(!bar) return;
+  try{
+    const data = await sbGet(LAST_SEEN_KEY);
+    if(!data){ bar.textContent=''; return; }
+    const d = JSON.parse(data);
+    const other = activePerson === 'sanjana' ? 'sanjay' : 'sanjana';
+    const ts = d[other];
+    if(!ts){ bar.textContent=''; return; }
+    const diff = Math.floor((new Date() - new Date(ts)) / 60000);
+    const name = other === 'sanjana' ? '🩷 Sanjana' : '💜 Sanjay';
+    let ago;
+    if(diff < 1) ago = 'just now';
+    else if(diff < 60) ago = diff + ' min ago';
+    else if(diff < 1440) ago = Math.floor(diff/60) + ' hr ago';
+    else ago = Math.floor(diff/1440) + ' day ago';
+    bar.textContent = `${name} was here ${ago} ✦`;
+  }catch(e){ bar.textContent=''; }
+}
+
+// ── AUTO SYNC (poll every 30s) ──
+let syncInterval;
+function startAutoSync(){
+  clearInterval(syncInterval);
+  syncInterval = setInterval(async()=>{
+    const fresh = await sbGet(DB_KEY);
+    if(fresh){
+      const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
+      // only re-render if data actually changed
+      if(JSON.stringify(parsed)!==JSON.stringify(state)){
+        state = parsed;
+        ensureState();
+        render();
+        showToast('✦ Synced','ts');
+      }
+    }
+    renderLastSeen();
+  }, 30000);
+}
+
+let pinBuf = '';
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('velaris_salt_' + pin));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function pinPress(d) {
+  if (pinBuf.length >= 4) return;
+  pinBuf += d; updateDots();
+  if (pinBuf.length === 4) setTimeout(checkPin, 130);
+}
+function pinDel() { pinBuf = pinBuf.slice(0,-1); updateDots(); document.getElementById('pin-error').textContent = ''; }
+function updateDots() {
+  for(let i=0;i<4;i++)
+    document.getElementById('pd'+i).className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '');
+}
+async function checkPin() {
+  const hashed = await hashPin(pinBuf);
+  const stored = await sbGet(PIN_KEY);
+  if (!stored) {
+    await sbSet(PIN_KEY, hashed);
+    _encKey = await deriveKey(pinBuf);
+    unlock(); return;
+  }
+  if (hashed === stored) {
+    _encKey = await deriveKey(pinBuf);
+    unlock();
+  }
+  else {
+    document.getElementById('pin-error').textContent = 'wrong PIN, try again ✦';
+    document.getElementById('pin-dots').classList.add('shake');
+    setTimeout(() => document.getElementById('pin-dots').classList.remove('shake'), 400);
+    pinBuf = ''; updateDots();
+  }
+}
+function lockApp() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('pin-screen').style.display = 'flex';
+  pinBuf = ''; updateDots(); document.getElementById('pin-error').textContent = '';
+}
+function unlock() {
+  document.getElementById('pin-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('hdate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  applyTheme();
+  initApp().then(()=>{
+    render();
+    updateLastSeen();
+    renderLastSeen();
+    startRealtimeSync();
+  });
+}
+const TODAY=new Date().toISOString().split('T')[0];
+const IS_WEEKEND=[0,6].includes(new Date().getDay());
+const EY_DATE=new Date('2026-08-24');
+const daysToEY=Math.ceil((EY_DATE-new Date())/86400000);
+
+const SANJANA_TASKS=[
+  {id:'p0',time:'8:00–9:00 AM',name:'Wake + freshen + breakfast',tag:'Life',tc:'#c4a96a',bg:'rgba(196,169,106,.12)',block:'Morning',skill:null},
+  {id:'p1',time:'9:00–9:30 AM · fixed',name:"Sister's business",tag:'Fixed',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Morning',skill:null},
+  {id:'p2',time:'9:30–10:00 AM',name:'English — speak + write 3 sentences',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Morning',skill:'english'},
+  {id:'p3',time:'10:00–10:30 AM',name:'Excel — build something',tag:'Excel',tc:'#4ade80',bg:'rgba(74,222,128,.1)',block:'Morning',skill:'excel'},
+  {id:'p4',time:'10:30–11:00 AM',name:'SAP — study + explore',tag:'SAP',tc:'#60a5fa',bg:'rgba(96,165,250,.1)',block:'Morning',skill:'sap'},
+  {id:'p5',time:'11:00–11:30 AM',name:'Household chores / free buffer',tag:'Chores',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Morning',skill:null},
+  {id:'p6',time:'11:30 AM–12:30 PM',name:'SQL — study + practice (first hour)',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Mid-morning',skill:'sql'},
+  {id:'p7',time:'12:30–1:30 PM',name:'SQL — continued (second hour)',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Mid-morning',skill:'sql'},
+  {id:'p8',time:'1:30–2:30 PM',name:'Lunch + rest',tag:'Rest',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
+  {id:'p9',time:'2:30–4:00 PM',name:'Python — study + practice',tag:'Python',tc:'#facc15',bg:'rgba(250,204,21,.1)',block:'Afternoon',skill:'python'},
+  {id:'p10',time:'4:00–4:30 PM',name:'Chores / nap if needed',tag:'Chores',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
+  {id:'p11',time:'4:30–5:30 PM',name:'Python — continued',tag:'Python',tc:'#facc15',bg:'rgba(250,204,21,.1)',block:'Evening',skill:'python'},
+  {id:'p12',time:'5:30–6:00 PM',name:'Power BI — build something',tag:'Power BI',tc:'#22d3ee',bg:'rgba(34,211,238,.1)',block:'Evening',skill:'powerbi'},
+  {id:'p13',time:'6:00–7:00 PM',name:'Free time / household chores',tag:'Free',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Evening',skill:null},
+  {id:'p14',time:'7:00–7:30 PM',name:'Light review — revise today',tag:'Review',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Evening',skill:null},
+  {id:'p15',time:'7:30–8:30 PM',name:'Dinner + wind down',tag:'Life',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Evening',skill:null},
+  {id:'p16',time:'8:30–9:00 PM · fixed',name:"Sister's business (evening)",tag:'Fixed',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Evening',skill:null},
+  {id:'p17',time:'9:00–9:30 PM',name:'English show — Friends / Ted Lasso',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Evening',skill:'english'},
 ];
 
-const SANJAY_TASKS = [
-  {id:'s0',time:'10:00–10:45 PM',name:'Omega exam prep — anatomy, terminology, coding concepts',tag:'OMEGA',tc:'#993C1D',bg:'rgba(153,60,29,.12)',block:'Night study'},
-  {id:'s1',time:'10:45–11:15 PM',name:'PV / Clinical research — AE vs SAE, GCP, CRF basics',tag:'PV',tc:'#0F6E56',bg:'rgba(15,110,86,.12)',block:'Night study',skill:'pv'},
-  {id:'s2',time:'11:15–11:45 PM',name:'Excel — VLOOKUP, pivot tables, filters',tag:'EXCEL',tc:'#3B6D11',bg:'rgba(59,109,17,.12)',block:'Night study',skill:'excel',weekendOnly:true},
-  {id:'s3',time:'11:45 PM–12:00 AM',name:'Interview speaking — self intro / why healthcare?',tag:'SPEAK',tc:'#534AB7',bg:'rgba(83,74,183,.12)',block:'Night study'},
-  {id:'s4',time:'Non-negotiable',name:'Sleep before 12:30 AM — rest properly okay?',tag:'HEALTH',tc:'#D4537E',bg:'rgba(212,83,126,.12)',block:'Non-negotiable'},
+const SANJAY_TASKS=[
+  {id:'s0',time:'10:00–10:45 PM',name:'Omega exam prep — anatomy, terminology',tag:'Omega',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Night study',skill:'omega'},
+  {id:'s1',time:'10:45–11:15 PM',name:'PV — AE vs SAE, GCP, CRF basics',tag:'PV',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Night study',skill:'pv'},
+  {id:'s2',time:'11:15–11:45 PM',name:'Excel — VLOOKUP, pivot tables',tag:'Excel',tc:'#4ade80',bg:'rgba(74,222,128,.1)',block:'Night study',skill:'excel',weekendOnly:true},
+  {id:'s3',time:'11:45 PM–12:00 AM',name:'Interview speaking — self intro',tag:'Speak',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Night study',skill:null},
+  {id:'s4',time:'Non-negotiable',name:'Sleep before 12:30 AM — rest properly 🌙',tag:'Health',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Non-negotiable',skill:null},
 ];
 
-const SANJANA_SKILLS = [
-  {id:'sap',name:'SAP',icon:'⚙️',color:'#185FA5'},
-  {id:'python',name:'Python',icon:'🐍',color:'#854F0B'},
-  {id:'sql',name:'SQL',icon:'🗄️',color:'#993C1D'},
-  {id:'excel',name:'Excel',icon:'📗',color:'#3B6D11'},
-  {id:'powerbi',name:'Power BI',icon:'📊',color:'#085041'},
-  {id:'english',name:'English',icon:'💬',color:'#534AB7'},
+const SANJANA_SKILLS=[
+  {id:'sap',name:'SAP',icon:'⚙️',color:'#60a5fa'},
+  {id:'python',name:'Python',icon:'🐍',color:'#facc15'},
+  {id:'sql',name:'SQL',icon:'🗄️',color:'#f97316'},
+  {id:'excel',name:'Excel',icon:'📗',color:'#4ade80'},
+  {id:'powerbi',name:'Power BI',icon:'📊',color:'#22d3ee'},
+  {id:'english',name:'English',icon:'🗣️',color:'#8b7dd8'},
+];
+const SANJAY_SKILLS=[
+  {id:'omega',name:'Omega',icon:'📚',color:'#f97316'},
+  {id:'pv',name:'PV',icon:'💊',color:'#34d399'},
+  {id:'excel',name:'Excel',icon:'📗',color:'#4ade80'},
 ];
 
-const SANJAY_SKILLS = [
-  {id:'pv',name:'PV/CRM',icon:'💊',color:'#0F6E56'},
-  {id:'excel',name:'Excel',icon:'📗',color:'#3B6D11'},
-];
-
-const MOTTOS_P = [
-  "Your future EY manager doesn't know you yet — let your skills introduce you.",
+const MOTTOS_P=[
   "Every SAP session today is confidence walking into EY on August 24th.",
+  "The girl who shows up daily always beats the girl with talent.",
   "Tamil to English. Comfort zone to confidence. One day at a time.",
   "Don't skip — shrink. 15 minutes always beats zero.",
-  "The girl who shows up daily always beats the girl with talent.",
-  "Small consistent effort compounds quietly into something big.",
-  "You built this schedule. Now just follow it, one hour at a time.",
+  "Your future EY manager doesn't know you yet. Let your skills introduce you.",
 ];
-
-const MOTTOS_S = [
+const MOTTOS_S=[
   "🌸 Don't skip food again okay?",
   "💜 Finish today's small goals then rest.",
   "🌸 Slow progress is still progress.",
   "💗 I'm here. Don't stress too much.",
-  "🌸 Sleep matters too.",
   "💜 One step at a time okay?",
-  "🌸 I'm proud of your consistency.",
-  "💗 It's okay to feel tired sometimes.",
-  "💜 We're not racing anyone.",
   "🌸 Small habits build big futures.",
-  "💗 Drink water. Eat properly. Rest.",
-  "💜 You don't have to be perfect. Just consistent.",
-  "🌸 Today counts even if it felt small.",
   "💗 Hard phases don't last forever.",
   "💜 You're doing better than you think.",
-  "🌸 Rest is part of the process too.",
-  "💗 I believe in you quietly every single day.",
-  "💜 Don't overthink tonight okay?",
-  "🌸 Slow and steady is still moving forward.",
-  "💗 I'm here. Always.",
 ];
 
-let state = {
-  sanjana:{checked:{},streakDays:[],skillDays:{},note:''},
-  sanjay:{checked:{},streakDays:[],skillDays:{},note:''},
-  messages:[],
-  roughDay:{}
+const LETTERS={
+  stress:`Hey.\n\nI know things feel heavy right now.\n\nBut please don't carry everything alone in your head okay? You don't have to solve everything tonight.\n\nEat properly. Drink water. Do one small thing.\n\nI'm here.\n\n— me 💗`,
+  overthinking:`Hey love.\n\nStop imagining the worst-case okay?\n\nYou're not failing. You're not behind.\n\nYou're just tired and your brain is doing too much.\n\nSleep first. Think tomorrow.\n\n💜`,
+  low:`Hi 💗\n\nI know today felt rough.\n\nBut one bad day doesn't change who you are.\n\nWe said we'll build something beautiful together right?\n\nI don't need you to be perfect. I just need you to not give up.\n\nI love you so much okay?\n\n— me 💗`,
+  tired:`Hey.\n\nYou did enough for today.\n\nRest without guilt okay?\n\nI'm already proud of you — not for finishing everything, but for still trying even when you're this tired.\n\nSleep properly. 💗`,
+  miss:`Hi love 💗\n\nMissing you.\n\nDrink water. Eat something proper.\n\nFinish today's small goals if you can — and if you can't, that's fine too.\n\nJust rest.\n\nWe're going to be okay. 🫂`,
 };
-let activePerson = 'sanjana';
-let activeTab = 'today';
 
-async function load(){
-  try{const v=await sbGet(SKEY);if(v)state=JSON.parse(v);}catch(e){}
-  if(!state.sanjana)state.sanjana={checked:{},streakDays:[],skillDays:{},note:''};
-  if(!state.sanjay)state.sanjay={checked:{},streakDays:[],skillDays:{},note:''};
+// ── STATE (Supabase synced) ──
+async function getS(){
+  const v = await sbGet(DB_KEY);
+  if(v) return typeof v === 'string' ? JSON.parse(v) : v;
+  return {};
+}
+async function setS(s){ await sbSet(DB_KEY, s); }
+
+function ensureState(){
+  if(!state.sanjana)state.sanjana={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{},messages:[]};
+  if(!state.sanjay)state.sanjay={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{},messages:[]};
   if(!state.messages)state.messages=[];
+  if(!state.futureLetters)state.futureLetters=[];
   if(!state.roughDay)state.roughDay={};
   ['sanjana','sanjay'].forEach(p=>{
     if(!state[p].checked)state[p].checked={};
-    if(!state[p].streakDays)state[p].streakDays=[];
+    if(!state[p].streakDays)state[p].streakDays={};
     if(!state[p].skillDays)state[p].skillDays={};
-    if(state[p].note===undefined)state[p].note='';
+    if(!state[p].note)state[p].note={};
+    if(!state[p].privateNote)state[p].privateNote={};
   });
-  const d=new Date();
-  document.getElementById('hdate').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  render();
 }
 
-async function save(){try{await sbSet(SKEY,JSON.stringify(state));}catch(e){}}
+let state = {};
+ensureState();
 
-function calcStreak(person){
-  const days=[...(state[person].streakDays||[])].sort().reverse();
+let activePerson='sanjana';
+let activeTab='today';
+
+// Load state from Supabase on startup
+async function initApp(){
+  state = await getS();
+  ensureState();
+}
+
+// ── STARFIELD ──
+(function(){
+  const c=document.getElementById('stars');
+  if(!c)return;
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');s.className='star';
+    const size=Math.random()*2+0.5;
+    s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s;--min:${0.05+Math.random()*.1};--max:${0.3+Math.random()*.5}`;
+    c.appendChild(s);
+  }
+})();
+
+// ── STREAK ──
+function calcStreak(who){
+  const days=Object.keys(state[who].streakDays).sort().reverse();
   if(!days.length)return 0;
   let s=0,c=new Date(TODAY);
-  for(const d of days){const dd=new Date(d),diff=Math.round((c-dd)/86400000);if(diff===0||diff===1){s++;c=dd;}else break;}
+  for(const d of days){
+    const dd=new Date(d),diff=Math.round((c-dd)/86400000);
+    if(diff===0||diff===1){s++;c=dd;}else break;
+  }
+  return s;
+}
+function calcSkillStreak(who,skillId){
+  const days=((state[who].skillDays||{})[skillId]||[]).sort().reverse();
+  if(!days.length)return 0;
+  let s=0,c=new Date(TODAY);
+  for(const d of days){
+    const dd=new Date(d),diff=Math.round((c-dd)/86400000);
+    if(diff===0||diff===1){s++;c=dd;}else break;
+  }
   return s;
 }
 
-function calcSkillStreak(person,skillId){
-  const days=[...((state[person].skillDays||{})[skillId]||[])].sort().reverse();
-  if(!days.length)return 0;
-  let s=0,c=new Date(TODAY);
-  for(const d of days){const dd=new Date(d),diff=Math.round((c-dd)/86400000);if(diff===0||diff===1){s++;c=dd;}else break;}
-  return s;
-}
-
+// ── SWITCH ──
 function switchPerson(p){
   activePerson=p;activeTab='today';
   document.getElementById('ptab-p').className='ptab'+(p==='sanjana'?' ap':'');
   document.getElementById('ptab-s').className='ptab'+(p==='sanjay'?' as':'');
-  document.querySelectorAll('.ntab').forEach((b,i)=>{b.className='ntab'+(i===0?' active-'+(p==='sanjana'?'p':'s'):'');});
-  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
-  document.getElementById('tab-today').style.display='block';
+  updateLastSeen();
+  renderLastSeen();
   render();
 }
-
-function switchTab(tab,el){
+function switchTab(tab){
   activeTab=tab;
-  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.main > div').forEach(d=>d.style.display='none');
   document.getElementById('tab-'+tab).style.display='block';
   document.querySelectorAll('.ntab').forEach(b=>b.className='ntab');
-  el.className='ntab active-'+(activePerson==='sanjana'?'p':'s');
+  document.querySelector(`.ntab[data-tab="${tab}"]`).className='ntab '+(activePerson==='sanjana'?'ap':'as');
   if(tab==='history')renderHistory();
   if(tab==='partner')renderPartner();
-  if(tab==='roadmap')renderRoadmap();
   if(tab==='messages')renderMessages();
+  if(tab==='future')renderFuture();
+  if(tab==='why')renderWhy();
+  if(tab==='roadmap')renderRoadmap();
+  if(tab==='settings')renderSettings();
 }
 
+// ── RENDER ──
 function render(){
-  const p=activePerson;
-  const isPink=p==='sanjana';
-  const isRoughDay=!!state.roughDay[TODAY+'-sanjay'];
-  const allTasks=isPink?SANJANA_TASKS:SANJAY_TASKS;
-  const tasks=(!isPink&&isRoughDay)
-    ? allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND).slice(0,3)
-    : allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND);
-  const skills=isPink?SANJANA_SKILLS:SANJAY_SKILLS;
-  const checked=state[p].checked[TODAY]||{};
-
+  const p=activePerson;const isPink=p==='sanjana';
+  // nav
+  const tabs=[
+    {id:'today',label:'Today'},
+    {id:'history',label:'Log'},
+    {id:'partner',label:'Partner'},
+    {id:'messages',label:'Notes'},
+    {id:'why',label:'Why'},
+    {id:'roadmap',label:'Roadmap'},
+    {id:'future',label:'Letters'},
+    {id:'settings',label:'Settings'},
+  ];
+  document.getElementById('nav-tabs').innerHTML=tabs.map(t=>
+    `<button class="ntab${t.id===activeTab?' '+(isPink?'ap':'as'):''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`
+  ).join('');
+  // motto
+  const mottos=isPink?MOTTOS_P:MOTTOS_S;
+  const mottoEl=document.getElementById('motto');
+  mottoEl.textContent=mottos[new Date().getDay()%mottos.length];
+  mottoEl.className='motto '+(isPink?'mp':'ms');
+  // progress
   const doneP=SANJANA_TASKS.filter(t=>(state.sanjana.checked[TODAY]||{})[t.id]).length;
   const pctP=Math.round(doneP/SANJANA_TASKS.length*100);
   const sActiveTasks=SANJAY_TASKS.filter(t=>!t.weekendOnly||IS_WEEKEND);
   const doneS=sActiveTasks.filter(t=>(state.sanjay.checked[TODAY]||{})[t.id]).length;
   const pctS=Math.round(doneS/sActiveTasks.length*100);
-
   document.getElementById('prog-p').style.width=pctP+'%';
-  document.getElementById('pct-p').textContent=doneP+' / '+SANJANA_TASKS.length+' ('+pctP+'%)';
+  document.getElementById('pct-p').textContent=doneP+'/'+SANJANA_TASKS.length+' ('+pctP+'%)';
   document.getElementById('prog-s').style.width=pctS+'%';
-  document.getElementById('pct-s').textContent=doneS+' / '+sActiveTasks.length+' ('+pctS+'%) · '+(IS_WEEKEND?'5 hrs possible 🎉':'max 2 hrs');
+  document.getElementById('pct-s').textContent=doneS+'/'+sActiveTasks.length+' ('+pctS+'%)';
   document.getElementById('streak-p').textContent=calcStreak('sanjana');
   document.getElementById('streak-s').textContent=calcStreak('sanjay');
+  // show active tab
+  document.querySelectorAll('.main > div').forEach(d=>d.style.display='none');
+  document.getElementById('tab-'+activeTab).style.display='block';
+  if(activeTab==='today')renderToday();
+  else if(activeTab==='history')renderHistory();
+  else if(activeTab==='partner')renderPartner();
+  else if(activeTab==='messages')renderMessages();
+  else if(activeTab==='why')renderWhy();
+  else if(activeTab==='roadmap')renderRoadmap();
+  else if(activeTab==='future')renderFuture();
+  else if(activeTab==='settings')renderSettings();
+}
 
-  const mottos=isPink?MOTTOS_P:MOTTOS_S;
-  const mottoEl=document.getElementById('motto');
-  mottoEl.textContent=mottos[new Date().getDay()%mottos.length];
-  mottoEl.className='motto '+(isPink?'motto-p':'motto-s');
+// ── TODAY ──
+function renderToday(){
+  const p=activePerson;const isPink=p==='sanjana';
+  const col=isPink?'var(--pink)':'var(--purple)';
+  const isRough=!!state.roughDay[TODAY+'-sanjay'];
+  const allTasks=isPink?SANJANA_TASKS:SANJAY_TASKS;
+  const tasks=(!isPink&&isRough)?allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND).slice(0,3):allTasks.filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const skills=isPink?SANJANA_SKILLS:SANJAY_SKILLS;
+  const checked=state[p].checked[TODAY]||{};
+  const c=document.getElementById('tab-today');
+  c.innerHTML='';
 
-  const container=document.getElementById('tab-today');
-  container.innerHTML='';
+  // anniversary banner (always shown)
+  const ab=document.createElement('div');ab.className='anniv-banner';
+  ab.innerHTML=`<div class="anniv-days">${daysTogther}</div><div class="anniv-label">days together ✦</div><div class="anniv-date">since 6 November 2019 💕</div>`;
+  c.appendChild(ab);
 
-  // Rough day banner
-  if(!isPink&&isRoughDay){
-    const rb=document.createElement('div');
-    rb.className='rough-day-active';
-    rb.innerHTML='🌸 Taking it slow today. That\'s okay.<br><span style="font-size:11px;opacity:.75">Streak is safe. Only 3 tasks showing. Rest properly.</span>';
-    container.appendChild(rb);
+  // countdown (Sanjana only)
+  if(isPink&&daysToEY>0){
+    const cb=document.createElement('div');cb.className='countdown-banner';
+    cb.innerHTML=`<div><div class="cd-label">EY Chennai</div><div class="cd-sub">August 24, 2026</div></div><div style="text-align:right"><div class="cd-val">${daysToEY}</div><div class="cd-label">days away ✦</div></div>`;
+    c.appendChild(cb);
   }
 
-  // Weekday/weekend banner for Sanjay
-  if(!isPink&&!isRoughDay){
+  // rough day banner
+  if(!isPink&&isRough){
+    const rb=document.createElement('div');rb.className='rough-active';
+    rb.innerHTML='🌸 Taking it slow today. That\'s okay.<br><span style="font-size:10px;opacity:.7">Streak safe. 3 tasks only.</span>';
+    c.appendChild(rb);
+  }
+  if(!isPink&&!isRough){
     const banner=document.createElement('div');
-    banner.style.cssText='background:'+(IS_WEEKEND?'#eaf4e8':'#fbeaf0')+';border:1.5px solid '+(IS_WEEKEND?'#b8ddb0':'#f4c0d1')+';border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:11.5px;font-weight:600;color:'+(IS_WEEKEND?'#3B6D11':'#993556')+';text-align:center';
-    banner.textContent=IS_WEEKEND?'🎉 Weekend — Excel unlocked. Up to 5 hrs today.':'💜 Weekday mode — max 2 hrs. Quality over quantity.';
-    container.appendChild(banner);
+    banner.style.cssText=`background:${IS_WEEKEND?'rgba(74,222,128,.06)':'rgba(201,122,170,.06)'};border:1px solid ${IS_WEEKEND?'rgba(74,222,128,.15)':'rgba(201,122,170,.15)'};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:10px;font-weight:600;color:${IS_WEEKEND?'#4ade80':'var(--pink)'};text-align:center;letter-spacing:.05em`;
+    banner.textContent=IS_WEEKEND?'✦ Weekend — Excel unlocked. Up to 5 hrs today.':'✦ Weekday — max 2 hrs. Quality over quantity.';
+    c.appendChild(banner);
   }
 
-  // Tasks
+  // tasks
   let lastBlock='';
   tasks.forEach(t=>{
     if(t.block!==lastBlock){
-      const sh=document.createElement('div');sh.className='sec-label';sh.textContent=t.block;
-      container.appendChild(sh);lastBlock=t.block;
+      const sh=document.createElement('div');sh.className='sec-lbl';sh.textContent=t.block;c.appendChild(sh);lastBlock=t.block;
     }
     const div=document.createElement('div');
     const isDone=!!checked[t.id];
-    div.className='block'+(isDone?(isPink?' done':' done-s'):'');
+    div.className='block'+(isDone?' done':'');
     div.onclick=()=>toggleTask(t.id,t.skill);
-    const wb=t.weekendOnly?'<span class="weekend-badge">weekend only</span>':'';
+    const wb=t.weekendOnly?'<span style="font-size:8px;background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);border-radius:100px;padding:1px 6px;margin-left:4px">weekend</span>':'';
     div.innerHTML=`<div class="block-inner">
       <div class="bcheck ${isDone?(isPink?'cp':'cs'):''}">${isDone?'✓':''}</div>
       <div class="baccent" style="background:${t.tc}"></div>
       <div class="binfo"><div class="btime">${t.time}</div><div class="btitle">${t.name}${wb}</div></div>
       <span class="btag" style="background:${t.bg};color:${t.tc}">${t.tag}</span>
     </div>`;
-    container.appendChild(div);
+    c.appendChild(div);
   });
 
-  // Skill streaks
-  const slbl=document.createElement('div');slbl.className='sec-label';slbl.textContent='Skill streaks';container.appendChild(slbl);
+  // skill streaks
+  const slbl=document.createElement('div');slbl.className='sec-lbl';slbl.textContent='Skill streaks';c.appendChild(slbl);
   const sg=document.createElement('div');sg.className='skills-grid';
   skills.forEach(sk=>{
     const streak=calcSkillStreak(p,sk.id);
-    sg.innerHTML+=`<div class="skill-card"><div class="skill-icon">${sk.icon}</div><div class="skill-name">${sk.name}</div><div class="skill-streak" style="color:${sk.color}">${streak}</div><div class="skill-days">day streak</div></div>`;
+    sg.innerHTML+=`<div class="skill-card"><div class="skill-icon">${sk.icon}</div><div class="skill-name">${sk.name}</div><div class="skill-streak" style="color:${sk.color}">${streak}</div><div class="skill-days">days</div></div>`;
   });
-  container.appendChild(sg);
+  c.appendChild(sg);
 
-  // Mini love box — Sanjay only
+  // mini love (Sanjay)
   if(!isPink){
     const ml=document.createElement('div');ml.className='mini-love';
-    ml.innerHTML='<span class="ml-icon">💌</span>I love you.<br>Keep going slowly okay?<br>I\'m here with you.';
-    container.appendChild(ml);
+    ml.innerHTML='I love you.<br>Keep going slowly okay? I\'m here with you. 💗';
+    c.appendChild(ml);
   }
 
-  // Note
-  const nlbl=document.createElement('div');nlbl.className='sec-label';nlbl.textContent="Today's note";container.appendChild(nlbl);
+  // note
+  const nlbl=document.createElement('div');nlbl.className='sec-lbl';nlbl.textContent="Today's note";c.appendChild(nlbl);
   const nc=document.createElement('div');nc.className='note-card';
+  const savedNote=state[p].note[TODAY]||'';
   nc.innerHTML=`
-    <div class="note-lbl">${isPink?"What did you learn today? (write in English 🩷)":"What went well tonight? (30-second reflection)"}</div>
-    <textarea class="note-ta" id="my-note" placeholder="${isPink?'Even 1 sentence in English counts. What did you study?':'Omega topic done? Phrase practiced? Just write anything.'}">${state[p].note||''}</textarea>
+    <div class="note-lbl">${isPink?"What did you learn today?":"What went well tonight?"}</div>
+    <textarea class="note-ta" id="my-note" placeholder="${isPink?'Write in English — even 1 sentence counts.':'Omega topic done? Phrase practiced? Just write anything.'}">${savedNote}</textarea>
     <div class="btn-row">
-      <button class="${isPink?'save-btn-p':'save-btn-s'}" onclick="saveNote()">Save ✓</button>
-      <button class="reset-btn" onclick="resetDay()">Reset today</button>
+      <button class="save-btn ${isPink?'p':'s'}" onclick="saveNote()">Save ✓</button>
+      <button class="ghost-btn" onclick="resetDay()">Reset today</button>
     </div>`;
-  container.appendChild(nc);
+  c.appendChild(nc);
 
-  // Sanjay-only extras
+  // Sanjay extras
   if(!isPink){
-
-    // Rough day button
-    const rdlbl=document.createElement('div');rdlbl.className='sec-label';rdlbl.textContent='rough day?';container.appendChild(rdlbl);
+    const rdlbl=document.createElement('div');rdlbl.className='sec-lbl';rdlbl.textContent='rough day?';c.appendChild(rdlbl);
     const rdcard=document.createElement('div');rdcard.className='note-card';rdcard.style.textAlign='center';
-    if(isRoughDay){
-      rdcard.innerHTML=`<div style="font-size:12.5px;color:#534AB7;line-height:2;font-style:italic">🌸 It's okay. Rest first.<br>Tomorrow is another day.<br><span style="font-size:11px;opacity:.7">Streak is protected. I'm proud of you for showing up at all.</span></div>`;
-    } else {
-      rdcard.innerHTML=`<button class="soft-btn" onclick="enableRoughDay()" style="width:100%">😔 Taking it slow today</button>
-      <div style="font-size:11px;color:#c0849a;margin-top:8px">Streak protected · Only 3 tasks · No guilt</div>`;
+    if(isRough){
+      rdcard.innerHTML=`<div style="font-size:12px;color:var(--purple);line-height:2;font-style:italic">🌸 It's okay. Rest first.<br>Tomorrow is another day.</div>`;
+    }else{
+      rdcard.innerHTML=`<button class="soft-btn" onclick="enableRoughDay()">😔 Taking it slow today</button><div style="font-size:10px;color:var(--muted);margin-top:8px">Streak protected · 3 tasks only · No guilt</div>`;
     }
-    container.appendChild(rdcard);
+    c.appendChild(rdcard);
 
-    // Open When
-    const owlbl=document.createElement('div');owlbl.className='sec-label';owlbl.textContent='open when... 💌';container.appendChild(owlbl);
+    // open when
+    const owlbl=document.createElement('div');owlbl.className='sec-lbl';owlbl.textContent='open when ✦';c.appendChild(owlbl);
     const og=document.createElement('div');og.className='open-grid';
     og.innerHTML=`
-      <button onclick="openLetter('stress')">😔 stressed</button>
-      <button onclick="openLetter('overthinking')">🌙 overthinking</button>
-      <button onclick="openLetter('low')">💔 feeling low</button>
-      <button onclick="openLetter('tired')">😴 tired</button>
-      <button onclick="openLetter('miss')" style="grid-column:1/-1">💗 missing me</button>`;
-    container.appendChild(og);
-    const lb=document.createElement('div');lb.className='letter-box';lb.id='letter-box';lb.textContent='Tap a letter above 💌';container.appendChild(lb);
+      <button class="open-btn" onclick="openLetter('stress')">😔 stressed</button>
+      <button class="open-btn" onclick="openLetter('overthinking')">🌙 overthinking</button>
+      <button class="open-btn" onclick="openLetter('low')">💔 feeling low</button>
+      <button class="open-btn" onclick="openLetter('tired')">😴 tired</button>
+      <button class="open-btn" onclick="openLetter('miss')" style="grid-column:1/-1">💗 missing her</button>`;
+    c.appendChild(og);
+    const lb=document.createElement('div');lb.className='letter-box';lb.id='letter-box';lb.textContent='tap a letter above ✦';c.appendChild(lb);
 
-    // Good Night
-    const gnlbl=document.createElement('div');gnlbl.className='sec-label';gnlbl.textContent='end the day';container.appendChild(gnlbl);
+    // good night
+    const gnlbl=document.createElement('div');gnlbl.className='sec-lbl';gnlbl.textContent='end the day';c.appendChild(gnlbl);
     const gncard=document.createElement('div');gncard.className='note-card';gncard.style.textAlign='center';
-    gncard.innerHTML=`<button class="night-btn" onclick="goodNight()">🌙 Good Night</button><div style="font-size:11px;color:#c0849a;margin-top:8px">Logs today's effort. Sleep peacefully.</div>`;
-    container.appendChild(gncard);
+    gncard.innerHTML=`<button class="night-btn" onclick="goodNight()">🌙 Good Night</button><div style="font-size:10px;color:var(--muted);margin-top:6px">Logs today. Sleep peacefully.</div>`;
+    c.appendChild(gncard);
   }
-
-  // 30-day dots
-  const dllbl=document.createElement('div');dllbl.className='sec-label';dllbl.textContent='30-day log';container.appendChild(dllbl);
-  const dd=document.createElement('div');dd.className='day-dots';
-  for(let i=29;i>=0;i--){
-    const d2=new Date();d2.setDate(d2.getDate()-i);
-    const dStr=d2.toISOString().split('T')[0];
-    const ch=state[p].checked[dStr]||{};
-    const t2=isPink?SANJANA_TASKS:SANJAY_TASKS;
-    const hasDone=t2.some(t=>ch[t.id]);
-    const dot=document.createElement('div');
-    dot.className='ddot'+(hasDone?(isPink?' dp':' ds'):'')+(dStr===TODAY?(isPink?' td':' tds'):'');
-    dot.title=dStr;dd.appendChild(dot);
-  }
-  container.appendChild(dd);
 }
 
 function toggleTask(id,skill){
@@ -640,182 +1109,467 @@ function toggleTask(id,skill){
       if(!state[p].skillDays[skill])state[p].skillDays[skill]=[];
       if(!state[p].skillDays[skill].includes(TODAY))state[p].skillDays[skill].push(TODAY);
     }
-    if(!state[p].streakDays.includes(TODAY))state[p].streakDays.push(TODAY);
-    showToast(p==='sanjana'?'🩷 Done':'💜 Done');
+    state[p].streakDays[TODAY]=true;
+    showToast(activePerson==='sanjana'?'🩷 Done':'💜 Done',activePerson==='sanjana'?'tp':'ts');
   }
-  save();render();
+  setS(state).then(()=>render());
 }
-
 function saveNote(){
-  state[activePerson].note=document.getElementById('my-note').value;
-  save();showToast('Saved 🌸');
+  const val=document.getElementById('my-note').value;
+  state[activePerson].note[TODAY]=val;
+  setS(state).then(()=>showToast('Saved ✦',activePerson==='sanjana'?'tp':'ts'));
 }
-
 function resetDay(){
   if(!confirm("Reset today's ticks?"))return;
-  state[activePerson].checked[TODAY]={};
-  save();render();
+  state[activePerson].checked[TODAY]={};setS(state).then(()=>render());
 }
-
 function enableRoughDay(){
   state.roughDay[TODAY+'-sanjay']=true;
-  if(!state.sanjay.streakDays.includes(TODAY))state.sanjay.streakDays.push(TODAY);
-  save();render();
-  showToast('🌸 Taking it slow. That\'s okay.');
+  state.sanjay.streakDays[TODAY]=true;
+  setS(state).then(()=>{render();showToast('🌸 Taking it slow.','ts');});
 }
-
 function goodNight(){
-  if(!state.sanjay.streakDays.includes(TODAY))state.sanjay.streakDays.push(TODAY);
-  save();render();
-  showToast('🌙 Good night. Today was enough.');
-  setTimeout(()=>{
-    const lb=document.getElementById('letter-box');
-    if(lb){
-      lb.style.opacity='0';
-      setTimeout(()=>{lb.textContent='Good night love 💗\n\nToday was enough.\nRest properly okay?\n\nI\'m proud of you.\n\n🌙';lb.style.opacity='1';},200);
-    }
-  },700);
+  state.sanjay.streakDays[TODAY]=true;setS(state).then(()=>render());
+  showToast('🌙 Good night. Today was enough.','ts');
+}
+function openLetter(type){
+  const box=document.getElementById('letter-box');
+  if(box){box.style.opacity='0';setTimeout(()=>{box.textContent=LETTERS[type];box.style.opacity='1';},200);}
 }
 
-function sendMessage(){
-  const input=document.getElementById('msg-input');
-  const text=input.value.trim();
-  if(!text)return;
-  if(!state.messages)state.messages=[];
-  state.messages.unshift({
-    from:activePerson,text,
-    time:new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}),
-    date:TODAY
-  });
-  input.value='';save();renderMessages();showToast('💌 Sent');
-}
-
-function renderMessages(){
-  const lbl=document.getElementById('msg-send-lbl');
-  const btn=document.getElementById('msg-send-btn');
-  if(lbl)lbl.textContent=activePerson==='sanjana'?'Write something for Sanjay 💗':'Write something for Sanjana 💜';
-  if(btn)btn.className=activePerson==='sanjana'?'save-btn-p':'save-btn-s';
-  const list=document.getElementById('messages-list');
-  if(!list)return;
-  const msgs=state.messages||[];
-  if(!msgs.length){
-    list.innerHTML='<div class="other-card" style="text-align:center;color:#c0849a;font-size:12.5px;font-style:italic;padding:20px">No messages yet 🌸<br>Send the first one above.</div>';
-    return;
-  }
-  list.innerHTML='';
-  msgs.forEach(msg=>{
-    const isSanjana=msg.from==='sanjana';
-    const div=document.createElement('div');div.className='msg-bubble';
-    div.innerHTML=`
-      <div class="msg-meta">
-        <span class="${isSanjana?'msg-from-p':'msg-from-s'}">${isSanjana?'🩷 Sanjana':'💜 Sanjay'}</span>
-        <span>${msg.date===TODAY?'Today':msg.date} · ${msg.time}</span>
-      </div>
-      <div class="msg-text">${msg.text.replace(/\n/g,'<br>')}</div>`;
-    list.appendChild(div);
-  });
-}
-
+// ── HISTORY ──
 function renderHistory(){
   const p=activePerson;const isPink=p==='sanjana';
   const tasks=isPink?SANJANA_TASKS:SANJAY_TASKS;
-  const dots=document.getElementById('day-dots');
-  const list=document.getElementById('hist-list');
-  dots.innerHTML='';list.innerHTML='';
-  for(let i=29;i>=0;i--){
-    const d=new Date();d.setDate(d.getDate()-i);
-    const dStr=d.toISOString().split('T')[0];
-    const ch=state[p].checked[dStr]||{};
-    const hasDone=tasks.some(t=>ch[t.id]);
-    const dot=document.createElement('div');
-    dot.className='ddot'+(hasDone?(isPink?' dp':' ds'):'')+(dStr===TODAY?(isPink?' td':' tds'):'');
-    dot.title=dStr;dots.appendChild(dot);
+  const c=document.getElementById('tab-history');c.innerHTML='';
+  if(isPink){
+    const eb=document.createElement('button');eb.className='export-btn';eb.textContent='↓ Download Excel — All Data';eb.onclick=exportExcel;c.appendChild(eb);
   }
-  const histDays=Object.keys(state[p].checked).filter(d=>Object.values(state[p].checked[d]).some(Boolean)).sort().reverse().slice(0,20);
-  if(!histDays.length){list.innerHTML='<div style="text-align:center;padding:2rem;color:#c0849a;font-size:13px">No history yet 🌸</div>';return;}
-  histDays.forEach(dStr=>{
+  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='30-day log';c.appendChild(lbl);
+  const allDays=Object.keys(state[p].checked).filter(d=>Object.values(state[p].checked[d]).some(Boolean)).sort().reverse().slice(0,30);
+  if(!allDays.length){c.innerHTML+='<div class="fl-empty">No history yet ✦<br>Start checking off tasks today.</div>';return;}
+  allDays.forEach(dStr=>{
     const ch=state[p].checked[dStr]||{};
-    const dayIsWeekend=[0,6].includes(new Date(dStr).getDay());
+    const dayIsWeekend=[0,6].includes(new Date(dStr+'T00:00:00').getDay());
     const dayTasks=tasks.filter(t=>!t.weekendOnly||dayIsWeekend);
     const done=dayTasks.filter(t=>ch[t.id]).length;
     const pct=Math.round(done/dayTasks.length*100);
-    const d=new Date(dStr);
-    const lbl=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-    const color=pct>=80?'#0F6E56':pct>=50?'#854F0B':'#993C1D';
-    const roughMark=state.roughDay&&state.roughDay[dStr+'-'+p]?' 🌸':'';
-    const row=document.createElement('div');
-    row.style.cssText='background:#fff;border:1.5px solid #f2d6e4;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600;color:#3a1f2e">${lbl}${roughMark}</span><div style="display:flex;align-items:center;gap:10px"><div style="width:100px;height:5px;background:#f2d6e4;border-radius:50px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${isPink?'#D4537E':'#7F77DD'};border-radius:50px"></div></div><span style="font-size:13px;font-weight:700;color:${color}">${pct}%</span></div>`;
-    list.appendChild(row);
+    const d=new Date(dStr+'T00:00:00');
+    const lbl2=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    const color=pct>=80?'#34d399':pct>=50?'#facc15':'#f87171';
+    const row=document.createElement('div');row.className='hist-row';
+    row.innerHTML=`<div class="hist-date">${lbl2}</div><div class="hist-bar-wrap"><div class="hist-bar-bg"><div class="hist-bar-fill" style="width:${pct}%;background:${isPink?'var(--pink)':'var(--purple)'}"></div></div><div class="hist-pct" style="color:${color}">${pct}%</div></div>`;
+    c.appendChild(row);
   });
 }
 
+// ── PARTNER ──
 function renderPartner(){
   const other=activePerson==='sanjana'?'sanjay':'sanjana';
   const isPink=other==='sanjana';
   const tasks=(isPink?SANJANA_TASKS:SANJAY_TASKS).filter(t=>!t.weekendOnly||IS_WEEKEND);
-  const emoji=isPink?'🩷':'💜';const name=isPink?'Sanjana':'Sanjay';
-  document.getElementById('partner-head').textContent=emoji+' '+name+"'s tasks today";
-  document.getElementById('partner-note-head').textContent=emoji+' '+name+"'s note";
+  const name=isPink?'Sanjana 🩷':'Sanjay 💜';
+  const c=document.getElementById('tab-partner');c.innerHTML='';
+  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent=name+"'s tasks today";c.appendChild(lbl);
+  const card=document.createElement('div');card.className='partner-card';
   const ch=state[other].checked[TODAY]||{};
-  const pt=document.getElementById('partner-tasks');pt.innerHTML='';
   tasks.forEach(t=>{
     const isDone=!!ch[t.id];
-    const row=document.createElement('div');row.className='other-item';
-    row.innerHTML=`<div class="odot" style="background:${isDone?(isPink?'#D4537E':'#7F77DD'):'#f2d6e4'}"></div><div class="otext${isDone?' done':''}">${t.name}</div>`;
-    pt.appendChild(row);
+    const row=document.createElement('div');row.className='partner-task';
+    row.innerHTML=`<div class="pdot" style="background:${isDone?(isPink?'var(--pink)':'var(--purple)'):'var(--border2)'}"></div><div class="ptext${isDone?' done':''}">${t.name}</div>`;
+    card.appendChild(row);
   });
-  const note=state[other].note||'';
-  document.getElementById('partner-note').textContent=note||'No note yet 🌸';
-  document.getElementById('partner-note').style.fontStyle=note?'italic':'normal';
+  c.appendChild(card);
+  const nlbl=document.createElement('div');nlbl.className='sec-lbl';nlbl.textContent=name+"'s note";c.appendChild(nlbl);
+  const ncard=document.createElement('div');ncard.className='partner-card';
+  const note=state[other].note[TODAY]||'';
+  ncard.innerHTML=`<div class="note-display">${note||'No note yet ✦'}</div>`;
+  c.appendChild(ncard);
 }
 
+// ── MESSAGES ──
+let notesTab = 'shared'; // 'shared' | 'private'
+function renderMessages(){
+  const p=activePerson;const isPink=p==='sanjana';
+  const c=document.getElementById('tab-messages');c.innerHTML='';
+
+  // tab switcher
+  const nt=document.createElement('div');nt.className='note-tabs';
+  nt.innerHTML=`
+    <button class="note-tab-btn ${notesTab==='shared'?(isPink?'active-p':'active-s'):''}" onclick="notesTab='shared';renderMessages()">💌 Shared</button>
+    <button class="note-tab-btn ${notesTab==='private'?(isPink?'active-p':'active-s'):''}" onclick="notesTab='private';renderMessages()">🔒 Private</button>`;
+  c.appendChild(nt);
+
+  if(notesTab==='private'){
+    // private diary — only your own
+    const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='private diary — only you see this ✦';c.appendChild(lbl);
+    const nc=document.createElement('div');nc.className='note-card';
+    const savedPrivate=state[p].privateNote[TODAY]||'';
+    decryptNote(savedPrivate).then(decrypted=>{
+      document.getElementById('private-note-input').value=decrypted;
+    });
+    nc.innerHTML=`
+      <div class="note-lbl">Your private thoughts for today 🔒</div>
+      <textarea class="note-ta" id="private-note-input" rows="5" placeholder="Only you can read this. Write freely..."></textarea>
+      <div class="btn-row"><button class="save-btn ${isPink?'p':'s'}" onclick="savePrivateNote()">Save privately ✦</button></div>`;
+    c.appendChild(nc);
+    const hist=Object.entries(state[p].privateNote).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);
+    if(hist.length){
+      const hlbl=document.createElement('div');hlbl.className='sec-lbl';hlbl.textContent='recent entries';c.appendChild(hlbl);
+    hist.forEach(async ([d,txt])=>{
+        const dObj=new Date(d+'T00:00:00');
+        const dStr=dObj.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+        const decrypted = await decryptNote(txt);
+        const div=document.createElement('div');div.className='msg-bubble';
+        div.innerHTML=`<div class="msg-meta"><span class="${isPink?'msg-from-p':'msg-from-s'}">${dStr}</span></div><div class="msg-text" style="font-style:italic">${decrypted.replace(/\n/g,'<br>')}</div>`;
+        c.appendChild(div);
+      });
+    }
+    return;
+  }
+
+  // shared notes
+  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='send a note 💌';c.appendChild(lbl);
+  const nc=document.createElement('div');nc.className='note-card';
+  nc.innerHTML=`
+    <div class="note-lbl">${isPink?'Write something for Sanjay 💗':'Write something for Sanjana 💜'}</div>
+    <textarea class="note-ta" id="msg-input" rows="3" placeholder="${isPink?'Eat properly okay? / I\'m proud of you.':'I miss you. / Thank you for being there.'}"></textarea>
+    <div class="btn-row"><button class="save-btn ${isPink?'p':'s'}" onclick="sendMsg()">Send 💌</button></div>`;
+  c.appendChild(nc);
+  const mlbl=document.createElement('div');mlbl.className='sec-lbl';mlbl.textContent='messages';c.appendChild(mlbl);
+  const msgs=state.messages||[];
+  if(!msgs.length){c.innerHTML+='<div class="fl-empty">No messages yet ✦<br>Send the first one above.</div>';return;}
+  msgs.forEach(msg=>{
+    const isSanjana=msg.from==='sanjana';
+    const div=document.createElement('div');div.className='msg-bubble';
+    div.innerHTML=`<div class="msg-meta"><span class="${isSanjana?'msg-from-p':'msg-from-s'}">${isSanjana?'🩷 Sanjana':'💜 Sanjay'}</span><span>${msg.date===TODAY?'Today':msg.date} · ${msg.time}</span></div><div class="msg-text">${msg.text.replace(/\n/g,'<br>')}</div>`;
+    c.appendChild(div);
+  });
+}
+function savePrivateNote(){
+  const val=document.getElementById('private-note-input').value;
+  encryptNote(val).then(enc=>{
+    state[activePerson].privateNote[TODAY]=enc;
+    setS(state).then(()=>showToast('Saved privately 🔒',activePerson==='sanjana'?'tp':'ts'));
+  });
+}
+function sendMsg(){
+  const val=document.getElementById('msg-input').value.trim();
+  if(!val)return;
+  if(!state.messages)state.messages=[];
+  state.messages.unshift({from:activePerson,text:val,time:new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}),date:TODAY});
+  setS(state).then(()=>{renderMessages();showToast('💌 Sent',activePerson==='sanjana'?'tp':'ts');});
+}
+
+// ── WHY ──
+function renderWhy(){
+  const c=document.getElementById('tab-why');c.innerHTML='';
+  const card=document.createElement('div');card.className='why-card';
+  card.innerHTML=`
+    <div class="why-title">✦ Hey love.</div>
+    <div class="why-p">I know life feels really tiring right now. Every day feels the same. Early mornings, long travel, coming home exhausted, overthinking everything at night... it all feels heavy sometimes.</div>
+    <div class="why-p">But please remember why we started okay?</div>
+    <div class="why-p">We're not doing all this to survive. We're building our future slowly — together. A future where we don't have to fear life. Where we can take care of our family. Where we can sleep peacefully. Where we can look back at these hard nights and say — we made it.</div>
+    <div class="why-p">Right now I'm also studying, preparing, planning — trying to build something for both of us. We're both tired. And that's okay. We're doing this together.</div>
+    <div class="why-p">This space exists not to pressure you. Just to remind you — you're not alone in this anymore.</div>
+    <div class="why-p">Even small effort matters. Even tired effort matters.</div>
+    <div class="why-p">One day all these late nights, overthinking sessions, tiny study habits, and soft encouragements will become memories we smile at together.</div>
+    <div class="why-p why-sign">So whenever you feel low — come here and read this okay?<br><br>I'm not going anywhere. 🫂<br>I love you so much.<br><br>— me 💗</div>`;
+  c.appendChild(card);
+}
+
+// ── ROADMAP ──
 function renderRoadmap(){
   const isSanjay=activePerson==='sanjay';
-  document.getElementById('roadmap-head').textContent=isSanjay?'💜 Sanjay\'s roadmap':'🩷 Sanjana\'s roadmap';
-  const rc=document.getElementById('roadmap-content');
+  const c=document.getElementById('tab-roadmap');c.innerHTML='';
+  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent=isSanjay?'Sanjay\'s path ✦':'Sanjana\'s path ✦';c.appendChild(lbl);
+  const card=document.createElement('div');card.className='roadmap-card';
   if(!isSanjay){
-    rc.innerHTML=`
-      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">1</div><div><div class="rtitle">Now → Aug 24, 2026</div><div class="rdesc">SAP, Python, SQL, Excel, Power BI — 5 hrs/day. English daily. Walk in ready.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">2</div><div><div class="rtitle">Aug 24, 2026 — first day at EY GDS</div><div class="rdesc">SAP + data analytics role. All this preparation will make sense on that morning.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">3</div><div><div class="rtitle">6–12 months in</div><div class="rdesc">Real project experience. SAP certification. English confidence growing at work.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:#fbeaf0;color:#993556">4</div><div><div class="rtitle">Year 2+</div><div class="rdesc">Senior analyst → AI/ML → higher CTC. Already on track.</div></div></div>`;
-  } else {
-    rc.innerHTML=`
-      <div class="roadmap-step"><div class="rnum rnum-s">1</div><div><div class="rtitle">Right now — one goal at a time</div><div class="rdesc">Omega exam prep. 45 minutes daily is enough. Just show up. I'm proud of you for even trying.</div></div></div>
-      <div class="roadmap-step"><div class="rnum rnum-s">2</div><div><div class="rtitle">Build confidence &amp; healthcare experience</div><div class="rdesc">Learn slowly. Gain real experience. Grow stronger. One day at a time — we'll get there.</div></div></div>
-      <div class="roadmap-step"><div class="rnum rnum-s">3</div><div><div class="rtitle">Parallel PV learning (30 min/night)</div><div class="rdesc">AE vs SAE, GCP, CRF. Small daily habit. Big difference over 6 months. Excel on weekends adds to this quietly.</div></div></div>
-      <div class="roadmap-step"><div class="rnum rnum-s">4</div><div><div class="rtitle">4–6 months: PV / Clinical research path</div><div class="rdesc">Drug Safety Associate, PV Associate, Clinical Data roles. Experience + PV knowledge = a profile that stands out.</div></div></div>
-      <div class="roadmap-step"><div class="rnum rnum-s">5</div><div><div class="rtitle">Year 1–2: growing steadily</div><div class="rdesc">CRC → CRA → Senior CRA. You're already in the right direction. That's enough. I'm waiting at every milestone. 🌸</div></div></div>`;
+    card.innerHTML=`
+      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">1</div><div><div class="rtitle">Now → Aug 24, 2026</div><div class="rdesc">SAP, Python, SQL, Excel, Power BI — 5 hrs/day. English daily. Walk in ready.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">2</div><div><div class="rtitle">Aug 24, 2026 — first day at EY GDS</div><div class="rdesc">SAP + data analytics role. All this preparation will make sense on that morning.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">3</div><div><div class="rtitle">6–12 months in</div><div class="rdesc">Real project experience. SAP certification. English confidence growing at work.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">4</div><div><div class="rtitle">Year 2+</div><div class="rdesc">Senior analyst → AI/ML → higher CTC. Already on track.</div></div></div>`;
+  }else{
+    card.innerHTML=`
+      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">1</div><div><div class="rtitle">Right now — one goal at a time</div><div class="rdesc">Omega exam prep. 45 minutes daily is enough. Just show up.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">2</div><div><div class="rtitle">PV learning (30 min/night)</div><div class="rdesc">AE vs SAE, GCP, CRF. Small daily habit. Big difference over 6 months.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">3</div><div><div class="rtitle">4–6 months: PV / Clinical research path</div><div class="rdesc">Drug Safety Associate, PV Associate roles. Experience + PV = a profile that stands out.</div></div></div>
+      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">4</div><div><div class="rtitle">Year 1–2: growing steadily</div><div class="rdesc">CRC → CRA → Senior CRA. You're already in the right direction. 🌸</div></div></div>`;
   }
+  c.appendChild(card);
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.style.background=activePerson==='sanjana'?'#D4537E':'#7F77DD';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+// ── FUTURE LETTERS ──
+function renderFuture(){
+  const p=activePerson;const isPink=p==='sanjana';
+  const c=document.getElementById('tab-future');c.innerHTML='';
+  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='future letters ✦';c.appendChild(lbl);
+  const compose=document.createElement('div');compose.className='fl-compose';
+  const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+  const def=new Date();def.setMonth(def.getMonth()+3);
+  compose.innerHTML=`
+    <div class="note-lbl">✍ Write a letter to the future</div>
+    <textarea class="note-ta" id="fl-text" rows="4" placeholder="Dear future me... / Dear Sanjay, by the time you read this... / I hope by this date you have..."></textarea>
+    <div class="fl-date-row">
+      <div class="fl-date-lbl">Open on:</div>
+      <input type="date" class="fl-date-input" id="fl-date" min="${tomorrow.toISOString().split('T')[0]}" value="${def.toISOString().split('T')[0]}">
+    </div>
+    <div class="btn-row"><button class="save-btn ${isPink?'p':'s'}" onclick="saveLetter()">Seal & Lock 🔒</button></div>`;
+  c.appendChild(compose);
+  const myLetters=(state.futureLetters||[]).filter(l=>l.from===p).sort((a,b)=>new Date(a.openDate)-new Date(b.openDate));
+  if(!myLetters.length){c.innerHTML+='<div class="fl-empty">No letters yet ✦<br>Write your first one — seal it, and open it on a special day.</div>';return;}
+  myLetters.forEach(letter=>{
+    const canOpen=TODAY>=letter.openDate;
+    const card=document.createElement('div');
+    card.className='fl-card '+(canOpen?'unlocked':'locked');
+    const openD=new Date(letter.openDate+'T00:00:00');
+    const dateStr=openD.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    if(canOpen){
+      card.innerHTML=`<div class="fl-lock-icon">💌</div><div class="fl-card-date g">Opened — ${dateStr}</div><div class="fl-preview">${letter.text.replace(/\n/g,'<br>')}</div><button class="fl-del" onclick="deleteLetter('${letter.id}')">🗑</button>`;
+    }else{
+      const daysLeft=Math.ceil((new Date(letter.openDate)-new Date(TODAY))/86400000);
+      card.innerHTML=`<div class="fl-lock-icon">🔒</div><div class="fl-card-date ${isPink?'p':'s'}">Opens ${dateStr} · ${daysLeft} day${daysLeft===1?'':'s'} away</div><div class="fl-locked-text">This letter is sealed. Come back on ${dateStr} to read it ✦</div><button class="fl-del" onclick="deleteLetter('${letter.id}')">🗑</button>`;
+    }
+    c.appendChild(card);
+  });
+}
+function saveLetter(){
+  const text=document.getElementById('fl-text').value.trim();
+  const date=document.getElementById('fl-date').value;
+  if(!text){showToast('Write something first ✦',activePerson==='sanjana'?'tp':'ts');return;}
+  if(!date){showToast('Pick a date 📅',activePerson==='sanjana'?'tp':'ts');return;}
+  if(!state.futureLetters)state.futureLetters=[];
+  state.futureLetters.push({id:Date.now().toString(),from:activePerson,text,openDate:date,createdOn:TODAY});
+  setS(state).then(()=>{renderFuture();showToast('Sealed with love 🔒',activePerson==='sanjana'?'tp':'ts');});
+}
+function deleteLetter(id){
+  if(!confirm('Delete this letter?'))return;
+  state.futureLetters=(state.futureLetters||[]).filter(l=>l.id!==id);
+  setS(state).then(()=>renderFuture());
 }
 
-function openLetter(type){
-  const box=document.getElementById('letter-box');
-  const letters={
-    stress:`Hey.\n\nI know things feel heavy right now.\n\nBut please don't carry everything alone in your head okay? You don't have to solve everything tonight.\n\nEat properly. Drink water. Do one small thing.\n\nI'm here. Come talk to me if it gets too much.\n\nOne step at a time okay?\n\n— me 💗`,
+// ── SETTINGS ──
+function renderSettings(){
+  const c=document.getElementById('tab-settings');c.innerHTML='';
+  const isLight=document.body.classList.contains('light-mode');
 
-    overthinking:`Hey love.\n\nStop imagining the worst-case okay?\n\nYou're not failing. You're not behind. You're not falling apart.\n\nYou're just tired and your brain is doing too much.\n\nSleep first. Think tomorrow.\n\nNot everything needs to be solved tonight. I promise.\n\n💜`,
+  const lbl1=document.createElement('div');lbl1.className='sec-lbl';lbl1.textContent='appearance';c.appendChild(lbl1);
+  const themeCard=document.createElement('div');themeCard.className='settings-card';
+  themeCard.innerHTML=`
+    <div class="setting-row">
+      <div><div class="setting-name">${isLight?'☀️ Light Mode':'🌙 Dark Mode'}</div><div class="setting-sub">tap to switch theme</div></div>
+      <label class="toggle-switch"><input type="checkbox" ${isLight?'checked':''} onchange="toggleTheme();renderSettings()"><div class="toggle-track"></div></label>
+    </div>`;
+  c.appendChild(themeCard);
 
-    low:`Hi 💗\n\nI know today felt rough.\n\nBut one bad day doesn't change who you are. One hard phase doesn't decide your future.\n\nWe said we'll build something beautiful together right? Then let's get there slowly.\n\nI don't need you to be perfect. I just need you to not give up.\n\nI'm not going anywhere. We'll handle this together. 🫂\n\nI love you so much okay?\n\n— me 💗`,
+  const lbl2=document.createElement('div');lbl2.className='sec-lbl';lbl2.textContent='data & settings';c.appendChild(lbl2);
+  const card=document.createElement('div');card.className='note-card';
+  card.innerHTML=`
+    <div class="note-lbl">Change PIN</div>
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <input type="password" id="new-pin" maxlength="4" placeholder="New 4-digit PIN" class="note-ta" style="min-height:unset;padding:7px 10px">
+      <button class="save-btn p" onclick="changePin()">Save</button>
+    </div>
+    <div class="note-lbl" style="margin-top:10px">Export & Clear</div>
+    <div class="btn-row" style="flex-direction:column">
+      <button class="export-btn" style="margin-bottom:0" onclick="exportExcel()">↓ Download All Data as Excel</button>
+      <button class="ghost-btn" style="margin-top:6px;color:#f87171;border-color:rgba(248,113,113,.3)" onclick="clearAll()">🗑 Clear All Data (cannot undo)</button>
+    </div>
+    <div class="note-lbl" style="margin-top:14px">About VELARIS</div>
+    <div style="font-size:11px;color:var(--muted);line-height:2">
+      ✦ A secret world for two.<br>
+      ✦ Together for <strong style="color:var(--gold)">${daysTogther} days</strong> since 6 Nov 2019 💕<br>
+      ✦ Synced via Supabase — both phones share the same data.<br>
+      ✦ Auto-syncs every 30 seconds in the background.<br>
+      ✦ "A city of dreamers." — ACOTAR 💗
+    </div>`;
+  c.appendChild(card);
+}
+function changePin(){
+  const val=document.getElementById('new-pin').value.trim();
+  if(val.length!==4||isNaN(val)){showToast('PIN must be 4 digits','tp');return;}
+  hashPin(val).then(h=>sbSet(PIN_KEY,h).then(()=>showToast('PIN updated ✦','tp')));
+}
+async function clearAll(){
+  if(!confirm('Delete ALL VELARIS data?'))return;
+  if(!confirm('Really sure? Cannot undo.'))return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/couple_data?key=in.(${DB_KEY},${PIN_KEY})`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+  } catch(e) {}
+  location.reload();
+}
 
-    tired:`Hey.\n\nYou did enough for today.\n\nPlease rest without guilt okay? Seriously.\n\nI'm already proud of you — not for finishing everything, but for still trying even when you're this tired.\n\nSleep properly. I'll be here tomorrow.\n\n💗`,
+// ── EXCEL EXPORT ──
+function exportExcel(){
+  const wb=XLSX.utils.book_new();
+  ['sanjana','sanjay'].forEach(who=>{
+    const tasks=who==='sanjana'?SANJANA_TASKS:SANJAY_TASKS;
+    const header=['Date',...tasks.map(t=>t.name),'Done','%','Note'];
+    const rows=[header];
+    const allDays=Object.keys(state[who].checked).sort();
+    allDays.forEach(dStr=>{
+      const ch=state[who].checked[dStr]||{};
+      const dayTasks=tasks.filter(t=>!t.weekendOnly||[0,6].includes(new Date(dStr+'T00:00:00').getDay()));
+      const done=dayTasks.filter(t=>ch[t.id]).length;
+      const pct=Math.round(done/dayTasks.length*100);
+      const note=state[who].note[dStr]||'';
+      rows.push([dStr,...tasks.map(t=>ch[t.id]?'✓':''),done,pct+'%',note]);
+    });
+    if(rows.length>1){
+      const ws=XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols']=[{wch:12},...tasks.map(()=>({wch:20})),{wch:6},{wch:6},{wch:40}];
+      XLSX.utils.book_append_sheet(wb,ws,who==='sanjana'?'Sanjana':'Sanjay');
+    }
+  });
+  // messages sheet
+  if(state.messages&&state.messages.length){
+    const mrows=[['From','Date','Time','Message'],...state.messages.map(m=>[m.from,m.date,m.time,m.text])];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(mrows),'Messages');
+  }
+  XLSX.writeFile(wb,`VELARIS_${TODAY}.xlsx`);
+  showToast('↓ Downloaded ✦','tp');
+}
 
-    miss:`Hi love 💗\n\nMissing you.\n\nDrink water okay?\nEat something proper.\nFinish today's small goals if you can — and if you can't, that's fine too.\n\nJust rest.\n\nI miss you too. Come talk to me when you can.\n\nWe're going to be okay. 🫂`
+
+// ── REALTIME SYNC via Supabase WebSocket ──
+// Replaces the 30s polling with instant push when DB changes
+function startRealtimeSync() {
+  const projectId = 'dvqplyfzhqftwjeiithd';
+  const wsUrl = `wss://realtime.supabase.co/socket/websocket?apikey=${SUPABASE_KEY}&vsn=1.0.0`;
+  let ws, heartbeat;
+
+  function connect() {
+    try { ws = new WebSocket(wsUrl); } catch(e) { return; }
+
+    ws.onopen = () => {
+      // join the realtime channel for our table
+      ws.send(JSON.stringify({
+        topic: `realtime:public:couple_data:key=eq.${DB_KEY}`,
+        event: 'phx_join', payload: {}, ref: '1'
+      }));
+      heartbeat = setInterval(() => {
+        if(ws.readyState === WebSocket.OPEN)
+          ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'hb'}));
+      }, 25000);
+    };
+
+    ws.onmessage = async (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        // fire on INSERT or UPDATE to couple_data
+        if(msg.event === 'INSERT' || msg.event === 'UPDATE') {
+          const fresh = await sbGet(DB_KEY);
+          if(fresh) {
+            const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
+            if(JSON.stringify(parsed) !== JSON.stringify(state)) {
+              state = parsed;
+              ensureState();
+              render();
+              renderLastSeen();
+              showToast('✦ Synced live','ts');
+            }
+          }
+        }
+      } catch(e) {}
+    };
+
+    ws.onclose = () => {
+      clearInterval(heartbeat);
+      // reconnect after 5s
+      setTimeout(connect, 5000);
+    };
+    ws.onerror = () => ws.close();
+  }
+
+  connect();
+  // keep 30s polling as fallback
+  startAutoSync();
+}
+
+// ── PWA SETUP ──
+function setupPWA() {
+  // inject manifest dynamically (avoids needing a separate file)
+  const manifest = {
+    name: 'VELARIS',
+    short_name: 'VELARIS',
+    description: 'A secret world for two 💕',
+    start_url: location.href,
+    display: 'standalone',
+    background_color: '#080810',
+    theme_color: '#080810',
+    orientation: 'portrait',
+    icons: [
+      { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="%23080810"/><text y="320" x="80" font-size="320" fill="%23c4a96a">✦</text></svg>', sizes: '512x512', type: 'image/svg+xml' }
+    ]
   };
-  if(box){
-    box.style.opacity='0';
-    setTimeout(()=>{box.textContent=letters[type];box.style.opacity='1';},200);
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+
+  // register service worker inline via blob
+  if('serviceWorker' in navigator) {
+    const sw = `
+      const CACHE = 'velaris-v1';
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+        self.skipWaiting();
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(caches.keys().then(keys =>
+          Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))
+        ));
+        self.clients.claim();
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(
+          fetch(e.request).catch(() => caches.match(e.request))
+        );
+      });
+    `;
+    const swBlob = new Blob([sw], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+      .catch(()=>{}); // fails silently on some browsers — that's fine
   }
+
+  // install prompt banner
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // show a small install toast after 3s
+    setTimeout(() => {
+      if(deferredPrompt) showInstallBanner();
+    }, 3000);
+  });
+
+  function showInstallBanner() {
+    const banner = document.createElement('div');
+    banner.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;z-index:9000;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text);white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)`;
+    banner.innerHTML = `<span>✦ Add VELARIS to home screen</span><button onclick="installPWA()" style="background:var(--gold);color:#080810;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Install</button><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">×</button>`;
+    document.body.appendChild(banner);
+    window._installBanner = banner;
+  }
+
+  window.installPWA = async () => {
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if(window._installBanner) window._installBanner.remove();
+  };
 }
 
-load();
+// initialise PWA immediately
+setupPWA();
+
+function showToast(msg,cls='tp'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+cls;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);
+}
 </script>
+</body>
+</html>
