@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>VELARIS</title>
 <link rel="manifest" id="pwa-manifest">
-<meta name="theme-color" content="#080810">
+<meta name="theme-color" content="#13070f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VELARIS">
@@ -14,50 +14,73 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080810;
-  --surface:#0e0e1a;
-  --card:#13131f;
-  --card2:#17172a;
-  --border:#1e1e35;
-  --border2:#252540;
-  --text:#e8e4f0;
-  --muted:#4a4a6a;
-  --muted2:#6a6a8a;
-  --pink:#c97aaa;
-  --pink-dim:rgba(201,122,170,0.12);
-  --pink-glow:rgba(201,122,170,0.25);
-  --purple:#8b7dd8;
-  --purple-dim:rgba(139,125,216,0.12);
-  --gold:#c4a96a;
-  --gold-dim:rgba(196,169,106,0.1);
-  --star:#9b8ec4;
-  --r:12px;
-  --r2:8px;
+  --bg:#13070f;
+  --surface:#1c0a17;
+  --card:#221021;
+  --card2:#2a142a;
+  --border:#3a1a31;
+  --border2:#52224a;
+  --text:#f7e4ee;
+  --muted:#7a5a70;
+  --muted2:#9a7a90;
+  --pink:#ff8fb8;
+  --pink-dim:rgba(255,143,184,0.14);
+  --pink-glow:rgba(255,143,184,0.35);
+  --purple:#c89cf0;
+  --purple-dim:rgba(200,156,240,0.14);
+  --gold:#f0c987;
+  --gold-dim:rgba(240,201,135,0.12);
+  --star:#ffb3d1;
+  --r:16px;
+  --r2:10px;
 }
+/* ── LIGHT MODE (kept for compatibility) ── */
 body.light-mode{
-  --bg:#fdf8f5;
-  --surface:#f5ede8;
-  --card:#ffffff;
-  --card2:#faf0ec;
-  --border:#e8d5cc;
-  --border2:#d9bfb5;
-  --text:#2a1520;
-  --muted:#9a7a85;
-  --muted2:#7a5a65;
-  --pink:#c9507a;
-  --pink-dim:rgba(201,80,122,0.1);
-  --pink-glow:rgba(201,80,122,0.2);
-  --purple:#6b5dd8;
-  --purple-dim:rgba(107,93,216,0.1);
-  --gold:#9a7230;
-  --gold-dim:rgba(154,114,48,0.1);
+  --bg:#fdf8f5;--surface:#f5ede8;--card:#ffffff;--card2:#faf0ec;
+  --border:#e8d5cc;--border2:#d9bfb5;--text:#2a1520;
+  --muted:#9a7a85;--muted2:#7a5a65;--pink:#c9507a;
+  --pink-dim:rgba(201,80,122,0.1);--pink-glow:rgba(201,80,122,0.2);
+  --purple:#6b5dd8;--purple-dim:rgba(107,93,216,0.1);
+  --gold:#9a7230;--gold-dim:rgba(154,114,48,0.1);
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at top,#2a0e22 0%,var(--bg) 60%);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
 
-/* ── STARFIELD ── */
+/* ── AURORA (rose/blush) ── */
+.aurora{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;filter:blur(70px);opacity:.7}
+.aurora-blob{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:auroraFloat 22s ease-in-out infinite}
+.aurora-blob.a1{width:460px;height:460px;background:radial-gradient(circle,rgba(255,143,184,.55),transparent 70%);top:-140px;left:-120px}
+.aurora-blob.a2{width:420px;height:420px;background:radial-gradient(circle,rgba(200,156,240,.5),transparent 70%);top:28%;right:-140px;animation-delay:-7s}
+.aurora-blob.a3{width:380px;height:380px;background:radial-gradient(circle,rgba(240,201,135,.38),transparent 70%);bottom:-100px;left:18%;animation-delay:-14s}
+.aurora-blob.a4{width:300px;height:300px;background:radial-gradient(circle,rgba(255,99,160,.4),transparent 70%);top:55%;left:35%;animation-delay:-10s}
+@keyframes auroraFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(50px,-40px) scale(1.12)}66%{transform:translate(-40px,50px) scale(.92)}}
+
+/* ── STARFIELD / HEARTS ── */
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
-@keyframes twinkle{0%,100%{opacity:var(--min,.1);transform:scale(1)}50%{opacity:var(--max,.6);transform:scale(1.3)}}
+@keyframes twinkle{0%,100%{opacity:var(--min,.1);transform:scale(1)}50%{opacity:var(--max,.7);transform:scale(1.4)}}
+.heart-float{position:fixed;pointer-events:none;z-index:1;font-size:14px;opacity:0;animation:heartRise 9s linear infinite}
+@keyframes heartRise{0%{transform:translateY(20px) scale(.6) rotate(-5deg);opacity:0}10%{opacity:.55}90%{opacity:.4}100%{transform:translateY(-110vh) scale(1.1) rotate(8deg);opacity:0}}
+
+/* ── FADE / GLOW UTILS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.tab-content,#tab-today>*,#tab-history>*,#tab-messages>*,#tab-roadmap>*,#tab-future>*,#tab-settings>*{animation:fadeUp .5s cubic-bezier(.2,.8,.2,1) both}
+.block{transition:all .3s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(8px)}
+.block:hover{border-color:var(--pink)!important;transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,143,184,.22),0 0 0 1px rgba(255,143,184,.15)}
+.skill-card{transition:all .3s ease;backdrop-filter:blur(6px)}
+.skill-card:hover{transform:translateY(-3px);border-color:var(--pink)!important;box-shadow:0 10px 28px rgba(255,143,184,.2)}
+.ntab{transition:all .25s ease}
+.ntab:hover{color:var(--pink)}
+.ptab{transition:all .25s ease}
+
+/* ── GLASS NAV (love-soft) ── */
+.nav-tabs{backdrop-filter:blur(24px);background:rgba(28,10,23,.7)!important;border-top:1px solid rgba(255,143,184,.12)!important;box-shadow:0 -8px 30px rgba(255,143,184,.08)}
+.header{backdrop-filter:blur(28px)!important;background:rgba(28,10,23,.72)!important;border-bottom:1px solid rgba(255,143,184,.1)!important}
+.person-tabs{backdrop-filter:blur(22px);background:rgba(28,10,23,.6)!important}
+
+/* heading polish */
+h1,h2,h3,.cormorant{font-family:'Cormorant Garamond',serif;letter-spacing:.5px}
+::selection{background:var(--pink-glow);color:#fff}
 
 /* ── PIN SCREEN ── */
 #pin-screen{
@@ -431,56 +454,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .toast.tp{background:var(--pink);color:#0a0415}
 .toast.ts{background:var(--purple);color:#0a0415}
 
-/* ── THEME TOGGLE ── */
-.theme-btn{
-  width:32px;height:32px;border-radius:50%;
-  border:1px solid var(--border);background:transparent;
-  color:var(--muted2);cursor:pointer;font-size:14px;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
-.theme-btn:hover{border-color:var(--border2);color:var(--text)}
-
-/* ── ANNIVERSARY BANNER ── */
-.anniv-banner{
-  background:linear-gradient(135deg,rgba(196,169,106,.08),rgba(201,122,170,.06));
-  border:1px solid rgba(196,169,106,.2);
-  border-radius:var(--r2);padding:14px 16px;margin-bottom:12px;
-  text-align:center;
-}
-.anniv-days{
-  font-family:'Cormorant Garamond',serif;
-  font-size:2.6rem;font-weight:300;color:var(--gold);line-height:1;
-}
-.anniv-label{font-size:10px;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
-.anniv-date{font-size:10px;color:var(--muted);margin-top:2px;font-style:italic}
-
-/* ── LAST SEEN ── */
-.last-seen-bar{
-  font-size:10px;color:var(--muted2);text-align:center;
-  padding:6px;letter-spacing:.03em;font-style:italic;
-  border-bottom:1px solid var(--border);
-  background:var(--surface);
-}
-
-/* ── PRIVATE NOTES ── */
-.note-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px}
-.note-tab-btn{flex:1;padding:7px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;background:transparent;color:var(--muted);transition:all .2s}
-.note-tab-btn.active-p{background:var(--pink-dim);color:var(--pink)}
-.note-tab-btn.active-s{background:var(--purple-dim);color:var(--purple)}
-
-/* ── SETTINGS ROWS ── */
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.setting-row:last-child{border-bottom:none}
-.setting-name{font-size:12px;color:var(--text)}
-.setting-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.toggle-switch{position:relative;width:40px;height:22px;cursor:pointer}
-.toggle-switch input{opacity:0;width:0;height:0}
-.toggle-track{position:absolute;inset:0;border-radius:11px;background:var(--border2);transition:.3s}
-.toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:var(--muted2);transition:.3s}
-input:checked+.toggle-track{background:var(--pink)}
-input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
-
+/* ── EXPORT ── */
 .export-btn{
   width:100%;background:rgba(33,115,70,.1);border:1px solid rgba(33,115,70,.3);
   color:#4ade80;padding:11px;border-radius:var(--r2);
@@ -498,13 +472,254 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
   padding:6px 10px;font-size:11px;color:var(--text);
   font-family:'DM Sans',sans-serif;outline:none;
 }
-</style>
 
+/* ═══ PREMIUM POLISH LAYER (additive) ═══ */
+*,*::before,*::after{transition-timing-function:cubic-bezier(.22,.61,.36,1)}
+.aurora-blob{animation-duration:32s!important;will-change:transform,opacity}
+.aurora{animation:auroraBreathe 9s ease-in-out infinite}
+@keyframes auroraBreathe{0%,100%{opacity:.7;filter:blur(70px)}50%{opacity:.92;filter:blur(80px)}}
+/* particles */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,170,200,.7);box-shadow:0 0 8px rgba(255,143,184,.8);animation:floatUp linear infinite;will-change:transform,opacity}
+@keyframes floatUp{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:.9}90%{opacity:.6}100%{transform:translateY(-110vh) translateX(40px);opacity:0}}
+/* card glow shimmer */
+.skill-card,.block,.note-card,.fl-card,.msg-card,.roadmap-card,.settings-card,.why-card,.task-card{position:relative;will-change:transform}
+.skill-card::after,.block::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(255,143,184,.10),transparent 40%);opacity:0;transition:opacity .4s;pointer-events:none}
+.skill-card:hover::after,.block:hover::after{opacity:1}
+.skill-card:hover,.block:hover{transform:translateY(-3px) scale(1.012)}
+/* button press */
+button,.btn,.ntab,.ptab{transition:transform .15s cubic-bezier(.22,.61,.36,1),box-shadow .25s,color .25s,background .25s,border-color .25s}
+button:active,.btn:active,.ntab:active,.ptab:active{transform:scale(.96)}
+/* smoother tab fade */
+.tab-content,#tab-today>*,#tab-history>*,#tab-messages>*,#tab-roadmap>*,#tab-future>*,#tab-settings>*{animation:fadeBlur .55s cubic-bezier(.22,.61,.36,1) both!important}
+@keyframes fadeBlur{from{opacity:0;transform:translateY(8px);filter:blur(6px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+/* progress bar shimmer */
+.prog-bar,[class*="progress"] > div, .pct-bar{position:relative;overflow:hidden}
+.prog-bar::after,.pct-bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:translateX(-100%);animation:shimmer 2.6s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+/* motivational ticker */
+.affirm{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 86px);z-index:60;
+  padding:8px 16px;border-radius:999px;font-size:11px;letter-spacing:.06em;font-style:italic;
+  background:rgba(28,10,23,.65);backdrop-filter:blur(18px);
+  border:1px solid rgba(255,143,184,.22);color:#f6d6e4;
+  box-shadow:0 8px 28px rgba(255,99,160,.18);
+  opacity:0;transition:opacity .8s;pointer-events:none;max-width:90vw;text-align:center}
+.affirm.show{opacity:1}
+/* ambient toggles */
+.amb-dock{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:55;display:flex;flex-direction:column;gap:8px}
+.amb-btn{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,143,184,.25);
+  background:rgba(28,10,23,.6);backdrop-filter:blur(14px);color:#f0c987;font-size:15px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);transition:all .25s}
+.amb-btn:hover{transform:scale(1.08);border-color:var(--pink);color:var(--pink)}
+.amb-btn.on{background:linear-gradient(135deg,rgba(255,143,184,.35),rgba(200,156,240,.3));color:#fff;border-color:rgba(255,143,184,.6)}
+body.ambient-glow{filter:saturate(1.1) brightness(1.04)}
+body.ambient-glow .aurora{opacity:1!important}
+/* mobile polish */
+@media (max-width:720px){
+  body{padding-bottom:110px;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  .nav-tabs{
+    position:fixed!important;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    border-radius:22px!important;border:1px solid rgba(255,143,184,.25)!important;
+    box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 24px rgba(255,143,184,.12)!important;
+    background:rgba(22,8,18,.78)!important;backdrop-filter:blur(28px);
+    padding:6px 4px!important;justify-content:space-around;
+  }
+  .ntab{padding:10px 12px!important;font-size:11px!important;min-width:auto!important;border-bottom:none!important;border-radius:14px}
+  .ntab.ap,.ntab.as{background:linear-gradient(135deg,rgba(255,143,184,.22),rgba(200,156,240,.18));border-bottom:none!important}
+  .affirm{bottom:calc(env(safe-area-inset-bottom,0px) + 96px)}
+  .skills-grid{grid-template-columns:repeat(2,1fr)!important}
+  .amb-dock{right:8px;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 100px);transform:none;flex-direction:row}
+  button,.btn,.ntab{min-height:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+
+/* ═══ VELARIS IDENTITY — cinematic brand layer ═══ */
+.velaris-name,.pin-logo{
+  background:linear-gradient(92deg,#fff 0%,#ffd5e6 28%,#f0c987 55%,#ffd5e6 82%,#fff 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:velarisShimmer 9s ease-in-out infinite;
+  position:relative;
+}
+.velaris-name{letter-spacing:.32em!important;font-weight:400!important;font-size:1.15rem!important}
+.velaris-name::after{
+  content:"";display:block;height:1px;margin-top:4px;
+  background:linear-gradient(90deg,transparent,rgba(240,201,135,.5),rgba(255,143,184,.5),transparent);
+}
+@keyframes velarisShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* Signature corner glyphs */
+#app::before,#app::after{
+  content:"✦";position:fixed;top:14px;font-size:10px;color:rgba(240,201,135,.4);
+  z-index:99;pointer-events:none;text-shadow:0 0 12px rgba(240,201,135,.5);
+  animation:glyphPulse 6s ease-in-out infinite;
+}
+#app::before{left:16px}
+#app::after{right:16px;animation-delay:-3s}
+@keyframes glyphPulse{0%,100%{opacity:.35}50%{opacity:.8}}
+
+/* Atmospheric vignette */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(8,3,12,.55) 100%);
+}
+
+/* Luxurious cards */
+.block,.skill-card,.note-card,.fl-card,.msg-card,.roadmap-card,.settings-card,.why-card,.task-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012))!important;
+  border-color:rgba(255,255,255,.07)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 8px 24px rgba(0,0,0,.28);
+  backdrop-filter:blur(8px);
+}
+.block:hover,.skill-card:hover{
+  background:linear-gradient(180deg,rgba(255,143,184,.06),rgba(200,156,240,.03))!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 14px 36px rgba(255,99,160,.18),0 0 0 1px rgba(255,143,184,.18);
+}
+
+/* Header refinement */
+.header{background:linear-gradient(180deg,rgba(20,8,18,.92),rgba(12,5,12,.78))!important;border-bottom-color:rgba(255,143,184,.08)!important;box-shadow:0 8px 32px rgba(0,0,0,.35)}
+.streak-pill{box-shadow:0 4px 14px rgba(255,143,184,.12),inset 0 0 0 1px rgba(255,255,255,.04)}
+
+/* Premium task completion */
+.block.done{
+  opacity:.55!important;
+  background:linear-gradient(180deg,rgba(255,143,184,.05),rgba(200,156,240,.03))!important;
+  border-color:rgba(255,143,184,.14)!important;
+}
+.bcheck.cp,.bcheck.cs{box-shadow:0 0 0 4px rgba(255,143,184,.18),0 0 18px rgba(255,143,184,.45)}
+@keyframes completePulse{
+  0%{box-shadow:0 0 0 0 rgba(255,143,184,.55)}
+  60%{box-shadow:0 0 0 14px rgba(255,143,184,0),0 0 30px rgba(255,143,184,.5)}
+  100%{box-shadow:0 0 0 0 rgba(255,143,184,0)}
+}
+.block.just-done{animation:completePulse .9s ease-out}
+
+/* Completion burst */
+.burst{position:fixed;pointer-events:none;z-index:999;width:0;height:0}
+.burst span{
+  position:absolute;left:0;top:0;font-size:14px;
+  color:#ffd5e6;text-shadow:0 0 10px rgba(255,143,184,.9);
+  animation:burstFly .9s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes burstFly{
+  0%{transform:translate(0,0) scale(.4);opacity:0}
+  20%{opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rot));opacity:0}
+}
+
+/* Refined nav + motto */
+.ntab{letter-spacing:.14em!important}
+.ntab.ap,.ntab.as{text-shadow:0 0 12px currentColor}
+.motto{font-family:'Cormorant Garamond',serif!important;font-style:italic;font-size:13px!important;letter-spacing:.04em!important;background:transparent!important;border-bottom-color:rgba(255,143,184,.07)!important;padding:14px 18px!important}
+.motto::before{content:"❝";color:rgba(240,201,135,.45);font-size:14px;margin-right:6px}
+.motto::after{content:"❞";color:rgba(240,201,135,.45);font-size:14px;margin-left:6px}
+.sec-lbl{letter-spacing:.32em!important;color:rgba(240,201,135,.55)!important}
+.pin-logo{letter-spacing:.4em;font-size:1.6rem}
+
+@media (max-width:720px){
+  #app::before,#app::after{font-size:9px;top:10px}
+  .velaris-name{font-size:1rem!important;letter-spacing:.28em!important}
+  .header{padding:14px 14px 12px!important}
+}
+
+/* ── ANNIVERSARY BANNER ── */
+.anniv-banner{
+  background:linear-gradient(135deg,rgba(240,201,135,.08),rgba(255,143,184,.06));
+  border:1px solid rgba(240,201,135,.2);
+  border-radius:var(--r2);padding:14px 16px;margin-bottom:12px;
+  text-align:center;
+}
+.anniv-days{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;font-weight:300;color:var(--gold);line-height:1.2;
+}
+.anniv-label{font-size:10px;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.anniv-date{font-size:10px;color:var(--muted);margin-top:2px;font-style:italic}
+
+/* ── LAST SEEN BAR ── */
+.last-seen-bar{
+  font-size:10px;color:var(--muted2);text-align:center;
+  padding:6px;letter-spacing:.03em;font-style:italic;
+  border-bottom:1px solid var(--border);
+  background:rgba(28,10,23,.5);min-height:26px;
+}
+
+/* ── COUNTDOWN ── */
+.countdown-banner{
+  background:linear-gradient(135deg,rgba(96,165,250,.07),rgba(255,143,184,.05));
+  border:1px solid rgba(96,165,250,.2);
+  border-radius:var(--r2);padding:12px 16px;margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cd-label{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.cd-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--gold)}
+.cd-sub{font-size:9px;color:var(--muted2);margin-top:1px}
+
+/* ── ROUGH DAY ── */
+.rough-active{
+  background:var(--purple-dim);border:1px solid rgba(200,156,240,.2);
+  border-radius:var(--r2);padding:12px 14px;margin-bottom:10px;
+  text-align:center;font-size:12px;color:var(--purple);line-height:1.8;
+}
+
+/* ── MINI LOVE ── */
+.mini-love{
+  font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;
+  color:var(--pink);text-align:center;padding:10px;line-height:1.8;
+  border-radius:var(--r2);background:var(--pink-dim);
+  border:1px solid rgba(255,143,184,.12);margin-bottom:10px;
+}
+
+/* ── SOFT / NIGHT BTN ── */
+.soft-btn,.night-btn{
+  padding:9px 20px;border-radius:100px;border:1px solid var(--border2);
+  background:var(--purple-dim);color:var(--purple);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .2s;letter-spacing:.05em;
+}
+.soft-btn:hover,.night-btn:hover{background:rgba(200,156,240,.22);border-color:var(--purple)}
+.night-btn{background:rgba(28,10,23,.6)}
+
+/* ── NOTE TABS ── */
+.note-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px}
+.note-tab-btn{flex:1;padding:7px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;background:transparent;color:var(--muted);transition:all .2s}
+.note-tab-btn.active-p{background:var(--pink-dim);color:var(--pink)}
+.note-tab-btn.active-s{background:var(--purple-dim);color:var(--purple)}
+
+/* ── SETTINGS ── */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-name{font-size:12px;color:var(--text)}
+.setting-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.toggle-switch{position:relative;width:40px;height:22px;cursor:pointer}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;border-radius:11px;background:var(--border2);transition:.3s}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:var(--muted2);transition:.3s}
+input:checked+.toggle-track{background:var(--pink)}
+input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
+.settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:13px;margin-bottom:8px}
+.settings-lbl{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-btn:hover{border-color:var(--border2);color:var(--text)}
+</style>
 </head>
 <body>
 
-<!-- STARFIELD -->
+<!-- AURORA BACKDROP -->
+<div class="aurora">
+  <div class="aurora-blob a1"></div>
+  <div class="aurora-blob a2"></div>
+  <div class="aurora-blob a3"></div>
+  <div class="aurora-blob a4"></div>
+</div>
+
+<!-- STARFIELD + HEARTS -->
 <div class="stars" id="stars"></div>
+<div id="hearts"></div>
 
 <!-- PIN SCREEN -->
 <div id="pin-screen">
@@ -544,8 +759,8 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
         <div class="velaris-date" id="hdate"></div>
       </div>
       <div class="header-right">
-        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
         <button class="lock-btn" onclick="lockApp()" title="Lock">🔒</button>
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
         <div class="streaks-row">
           <div class="streak-pill pink"><span class="snum" id="streak-p">0</span>🩷</div>
           <div class="streak-pill purple"><span class="snum" id="streak-s">0</span>💜</div>
@@ -590,7 +805,7 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SUPABASE (plain fetch — no CDN needed) ──
+// ── SUPABASE (plain fetch — no CDN dependency) ──
 const SUPABASE_URL = 'https://dvqplyfzhqftwjeiithd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cXBseWZ6aHFmdHdqZWlpdGhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzkyNjEsImV4cCI6MjA5NDA1NTI2MX0.NL6ckzPzm2EnvcDzFuE2_7giKUyE_6xfz4gpCnYB2R8';
 const DB_KEY = 'velaris_main';
@@ -631,7 +846,7 @@ async function deriveKey(pin) {
   );
 }
 async function encryptNote(text) {
-  if(!_encKey) return text; // fallback unencrypted
+  if(!_encKey) return text;
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const enc = await crypto.subtle.encrypt({name:'AES-GCM',iv}, _encKey, new TextEncoder().encode(text));
   return btoa(String.fromCharCode(...iv) + String.fromCharCode(...new Uint8Array(enc)));
@@ -646,10 +861,30 @@ async function decryptNote(b64) {
   } catch(e) { return '🔒 (encrypted)'; }
 }
 
-
-const ANNIV_DATE = new Date('2019-11-06'); // together since 6 Nov 2019
+// ── ANNIVERSARY ──
+const ANNIV_DATE = new Date('2019-11-06');
 const daysTogther = Math.floor((new Date() - ANNIV_DATE) / 86400000);
+function getTogetherDuration() {
+  const start = new Date('2019-11-06');
+  const now = new Date();
+  let years = now.getFullYear() - start.getFullYear();
+  let months = now.getMonth() - start.getMonth();
+  let days = now.getDate() - start.getDate();
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0) { years--; months += 12; }
+  let parts = [];
+  if (years > 0) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
+  if (months > 0) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
+  if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+  return parts.join(', ');
+}
+const togetherDuration = getTogetherDuration();
 
+// ── THEME ──
 function toggleTheme(){
   const isLight = document.body.classList.toggle('light-mode');
   document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
@@ -668,13 +903,10 @@ function applyTheme(){
 const LAST_SEEN_KEY = 'velaris_lastseen';
 async function updateLastSeen(){
   const now = new Date();
-  const payload = { sanjana: null, sanjay: null };
   const existing = await sbGet(LAST_SEEN_KEY);
   const prev = existing ? JSON.parse(existing) : {};
-  payload.sanjana = prev.sanjana || null;
-  payload.sanjay = prev.sanjay || null;
-  payload[activePerson] = now.toISOString();
-  await sbSet(LAST_SEEN_KEY, JSON.stringify(payload));
+  prev[activePerson] = now.toISOString();
+  await sbSet(LAST_SEEN_KEY, JSON.stringify(prev));
 }
 async function renderLastSeen(){
   const bar = document.getElementById('last-seen-bar');
@@ -705,7 +937,6 @@ function startAutoSync(){
     const fresh = await sbGet(DB_KEY);
     if(fresh){
       const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
-      // only re-render if data actually changed
       if(JSON.stringify(parsed)!==JSON.stringify(state)){
         state = parsed;
         ensureState();
@@ -717,6 +948,87 @@ function startAutoSync(){
   }, 30000);
 }
 
+// ── REALTIME SYNC via Supabase WebSocket ──
+function startRealtimeSync() {
+  const wsUrl = `wss://realtime.supabase.co/socket/websocket?apikey=${SUPABASE_KEY}&vsn=1.0.0`;
+  let ws, heartbeat;
+  function connect() {
+    try { ws = new WebSocket(wsUrl); } catch(e) { startAutoSync(); return; }
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        topic: `realtime:public:couple_data:key=eq.${DB_KEY}`,
+        event: 'phx_join', payload: {}, ref: '1'
+      }));
+      heartbeat = setInterval(() => {
+        if(ws.readyState === WebSocket.OPEN)
+          ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'hb'}));
+      }, 25000);
+    };
+    ws.onmessage = async (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if(msg.event === 'INSERT' || msg.event === 'UPDATE') {
+          const fresh = await sbGet(DB_KEY);
+          if(fresh) {
+            const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
+            if(JSON.stringify(parsed) !== JSON.stringify(state)) {
+              state = parsed;
+              ensureState();
+              render();
+              renderLastSeen();
+              showToast('✦ Synced live','ts');
+            }
+          }
+        }
+      } catch(e) {}
+    };
+    ws.onclose = () => { clearInterval(heartbeat); setTimeout(connect, 5000); };
+    ws.onerror = () => ws.close();
+  }
+  connect();
+  startAutoSync(); // 30s polling as fallback
+}
+
+// ── PWA ──
+function setupPWA() {
+  const manifest = {
+    name: 'VELARIS', short_name: 'VELARIS',
+    description: 'A secret world for two 💕',
+    start_url: location.href, display: 'standalone',
+    background_color: '#13070f', theme_color: '#13070f',
+    orientation: 'portrait',
+    icons: [{ src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="%2313070f"/><text y="320" x="80" font-size="320" fill="%23f0c987">✦</text></svg>', sizes: '512x512', type: 'image/svg+xml' }]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+  if('serviceWorker' in navigator) {
+    const sw = `const CACHE='velaris-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});`;
+    const swBlob = new Blob([sw], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+  }
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferredPrompt = e;
+    setTimeout(() => { if(deferredPrompt) showInstallBanner(); }, 3000);
+  });
+  function showInstallBanner() {
+    const banner = document.createElement('div');
+    banner.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;z-index:9000;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text);white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)`;
+    banner.innerHTML = `<span>✦ Add VELARIS to home screen</span><button onclick="installPWA()" style="background:var(--gold);color:#0a0415;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Install</button><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">×</button>`;
+    document.body.appendChild(banner);
+    window._installBanner = banner;
+  }
+  window.installPWA = async () => {
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if(window._installBanner) window._installBanner.remove();
+  };
+}
+setupPWA();
+
+// ── PIN (with SHA-256 hashing) ──
 let pinBuf = '';
 async function hashPin(pin) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('velaris_salt_' + pin));
@@ -729,7 +1041,7 @@ function pinPress(d) {
 }
 function pinDel() { pinBuf = pinBuf.slice(0,-1); updateDots(); document.getElementById('pin-error').textContent = ''; }
 function updateDots() {
-  for(let i=0;i<4;i++)
+  for (let i = 0; i < 4; i++)
     document.getElementById('pd'+i).className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '');
 }
 async function checkPin() {
@@ -740,11 +1052,13 @@ async function checkPin() {
     _encKey = await deriveKey(pinBuf);
     unlock(); return;
   }
-  if (hashed === stored) {
+  // support both hashed (new) and plain (legacy) PINs
+  if (hashed === stored || pinBuf === stored) {
     _encKey = await deriveKey(pinBuf);
+    // upgrade plain PIN to hashed silently
+    if (pinBuf === stored) sbSet(PIN_KEY, hashed);
     unlock();
-  }
-  else {
+  } else {
     document.getElementById('pin-error').textContent = 'wrong PIN, try again ✦';
     document.getElementById('pin-dots').classList.add('shake');
     setTimeout(() => document.getElementById('pin-dots').classList.remove('shake'), 400);
@@ -768,44 +1082,43 @@ function unlock() {
     startRealtimeSync();
   });
 }
+// PIN bypass — auto-unlock on load
+window.addEventListener('DOMContentLoaded',()=>setTimeout(unlock,50));
 const TODAY=new Date().toISOString().split('T')[0];
 const IS_WEEKEND=[0,6].includes(new Date().getDay());
 const EY_DATE=new Date('2026-08-24');
 const daysToEY=Math.ceil((EY_DATE-new Date())/86400000);
 
 const SANJANA_TASKS=[
-  // Morning
-  {id:'p0',time:'8:00–9:00 AM',name:'Wake up + freshen up + breakfast',tag:'Life',tc:'#c4a96a',bg:'rgba(196,169,106,.12)',block:'Morning',skill:null},
+  {id:'p0',time:'8:00–9:00 AM',name:'Wake + freshen + breakfast',tag:'Life',tc:'#c4a96a',bg:'rgba(196,169,106,.12)',block:'Morning',skill:null},
   {id:'p1',time:'9:00–9:30 AM · fixed',name:"Sister's business",tag:'Fixed',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Morning',skill:null},
-  {id:'p2',time:'9:30–10:00 AM',name:'Get ready + setup for EY training',tag:'Prep',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Morning',skill:null},
-  // EY Training
-  {id:'p3',time:'10:00–11:00 AM',name:'EY training — video / class',tag:'EY',tc:'#60a5fa',bg:'rgba(96,165,250,.13)',block:'EY Training',skill:'ey'},
-  {id:'p4',time:'11:00–11:15 AM',name:'Small break + chores',tag:'Break',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'EY Training',skill:null},
-  {id:'p5',time:'11:15 AM–12:15 PM',name:'EY training — video / class',tag:'EY',tc:'#60a5fa',bg:'rgba(96,165,250,.13)',block:'EY Training',skill:'ey'},
-  {id:'p6',time:'12:15–1:00 PM',name:'EY training — notes / practice',tag:'EY',tc:'#60a5fa',bg:'rgba(96,165,250,.13)',block:'EY Training',skill:'ey'},
-  // Afternoon
-  {id:'p7',time:'1:00–1:45 PM',name:'Lunch + rest',tag:'Rest',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
-  {id:'p8',time:'1:45–2:45 PM',name:'SQL — study + practice',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Afternoon',skill:'sql'},
-  {id:'p9',time:'2:45–3:00 PM',name:'Short chores / refresh break',tag:'Break',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
-  {id:'p10',time:'3:00–4:00 PM',name:'Python — study + practice',tag:'Python',tc:'#facc15',bg:'rgba(250,204,21,.1)',block:'Afternoon',skill:'python'},
-  {id:'p11',time:'4:00–4:15 PM',name:'Tea / relax / small chores',tag:'Break',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
-  // Evening
-  {id:'p12',time:'4:15–5:00 PM',name:'Power BI — build / practice',tag:'Power BI',tc:'#22d3ee',bg:'rgba(34,211,238,.1)',block:'Evening',skill:'powerbi'},
-  {id:'p13',time:'5:00–5:30 PM',name:'English Grammar',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Evening',skill:'english'},
-  {id:'p14',time:'5:30–6:00 PM',name:'Free buffer / household work / rest',tag:'Free',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Evening',skill:null},
-  {id:'p15',time:'6:00–6:30 PM',name:'Light revision — SQL / Python / EY notes',tag:'Review',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Evening',skill:null},
-  {id:'p16',time:'6:30–7:30 PM',name:'Dinner + wind down',tag:'Life',tc:'#c4a96a',bg:'rgba(196,169,106,.12)',block:'Evening',skill:null},
-  {id:'p17',time:'8:30–9:00 PM · fixed',name:"Sister's business (evening)",tag:'Fixed',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Evening',skill:null},
-  {id:'p18',time:'9:00–9:30 PM',name:'English show — Friends / TED Lasso',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Evening',skill:'english'},
-  {id:'p19',time:'9:30–10:00 PM · optional',name:'Relax / mobile / sleep preparation',tag:'Optional',tc:'#4a4a6a',bg:'rgba(74,74,106,.12)',block:'Evening',skill:null},
+  {id:'p2',time:'9:30–10:00 AM',name:'English — speak + write 3 sentences',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Morning',skill:'english'},
+  {id:'p3',time:'10:00–10:30 AM',name:'Excel — build something',tag:'Excel',tc:'#4ade80',bg:'rgba(74,222,128,.1)',block:'Morning',skill:'excel'},
+  {id:'p4',time:'10:30–11:00 AM',name:'SAP — study + explore',tag:'SAP',tc:'#60a5fa',bg:'rgba(96,165,250,.1)',block:'Morning',skill:'sap'},
+  {id:'p5',time:'11:00–11:30 AM',name:'Household chores / free buffer',tag:'Chores',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Morning',skill:null},
+  {id:'p6',time:'11:30 AM–12:30 PM',name:'SQL — study + practice (first hour)',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Mid-morning',skill:'sql'},
+  {id:'p7',time:'12:30–1:30 PM',name:'SQL — continued (second hour)',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Mid-morning',skill:'sql'},
+  {id:'p8',time:'1:30–2:30 PM',name:'Lunch + rest',tag:'Rest',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
+  {id:'p9',time:'2:30–4:00 PM',name:'Python — study + practice',tag:'Python',tc:'#facc15',bg:'rgba(250,204,21,.1)',block:'Afternoon',skill:'python'},
+  {id:'p10',time:'4:00–4:30 PM',name:'Chores / nap if needed',tag:'Chores',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Afternoon',skill:null},
+  {id:'p11',time:'4:30–5:30 PM',name:'Python — continued',tag:'Python',tc:'#facc15',bg:'rgba(250,204,21,.1)',block:'Evening',skill:'python'},
+  {id:'p12',time:'5:30–6:00 PM',name:'Power BI — build something',tag:'Power BI',tc:'#22d3ee',bg:'rgba(34,211,238,.1)',block:'Evening',skill:'powerbi'},
+  {id:'p13',time:'6:00–7:00 PM',name:'Free time / household chores',tag:'Free',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Evening',skill:null},
+  {id:'p14',time:'7:00–7:30 PM',name:'Light review — revise today',tag:'Review',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Evening',skill:null},
+  {id:'p15',time:'7:30–8:30 PM',name:'Dinner + wind down',tag:'Life',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Evening',skill:null},
+  {id:'p16',time:'8:30–9:00 PM · fixed',name:"Sister's business (evening)",tag:'Fixed',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Evening',skill:null},
+  {id:'p17',time:'9:00–9:30 PM',name:'English show — Friends / Ted Lasso',tag:'English',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Evening',skill:'english'},
 ];
 
 const SANJAY_TASKS=[
-  {id:'s0',time:'10:00–10:45 PM',name:'Omega exam prep — anatomy, terminology',tag:'Omega',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Night study',skill:'omega'},
-  {id:'s1',time:'10:45–11:15 PM',name:'PV — AE vs SAE, GCP, CRF basics',tag:'PV',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Night study',skill:'pv'},
-  {id:'s2',time:'11:15–11:45 PM',name:'Excel — VLOOKUP, pivot tables',tag:'Excel',tc:'#4ade80',bg:'rgba(74,222,128,.1)',block:'Night study',skill:'excel',weekendOnly:true},
-  {id:'s3',time:'11:45 PM–12:00 AM',name:'Interview speaking — self intro',tag:'Speak',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Night study',skill:null},
-  {id:'s4',time:'Non-negotiable',name:'Sleep before 12:30 AM — rest properly 🌙',tag:'Health',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Non-negotiable',skill:null},
+  {id:'s0',time:'10:00–11:30 AM',name:'Pharmacovigilance (PV)',tag:'PV',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Morning',skill:'pv'},
+  {id:'s1',time:'11:30 AM–12:00 PM',name:'Break / Refresh 🌿',tag:'Break',tc:'#4a4a6a',bg:'rgba(74,74,106,.15)',block:'Morning',skill:null},
+  {id:'s2',time:'12:00–1:00 PM',name:'Clinical Data Management (CDM)',tag:'CDM',tc:'#60a5fa',bg:'rgba(96,165,250,.1)',block:'Midday',skill:'cdm'},
+  {id:'s3',time:'1:00–1:45 PM',name:'Lunch 🍽',tag:'Lunch',tc:'#c4a96a',bg:'rgba(196,169,106,.12)',block:'Midday',skill:null},
+  {id:'s4',time:'1:45–2:45 PM',name:'SQL Practice',tag:'SQL',tc:'#f97316',bg:'rgba(249,115,22,.1)',block:'Afternoon',skill:'sql'},
+  {id:'s5',time:'2:45–5:00 PM',name:'Rest / Sleep / Relax 🌙',tag:'Rest',tc:'#8b7dd8',bg:'rgba(139,125,216,.12)',block:'Afternoon',skill:null},
+  {id:'s6',time:'5:00–5:30 PM',name:'English Communication',tag:'English',tc:'#c97aaa',bg:'rgba(201,122,170,.12)',block:'Evening',skill:'english'},
+  {id:'s7',time:'7:00–9:00 PM',name:'Revision + Practice',tag:'Revision',tc:'#34d399',bg:'rgba(52,211,153,.1)',block:'Evening',skill:'revision'},
 ];
 
 const SANJANA_SKILLS=[
@@ -817,9 +1130,11 @@ const SANJANA_SKILLS=[
   {id:'english',name:'English',icon:'🗣️',color:'#8b7dd8'},
 ];
 const SANJAY_SKILLS=[
-  {id:'omega',name:'Omega',icon:'📚',color:'#f97316'},
   {id:'pv',name:'PV',icon:'💊',color:'#34d399'},
-  {id:'excel',name:'Excel',icon:'📗',color:'#4ade80'},
+  {id:'cdm',name:'CDM',icon:'🧬',color:'#60a5fa'},
+  {id:'sql',name:'SQL',icon:'🗄️',color:'#f97316'},
+  {id:'english',name:'English',icon:'🗣️',color:'#c97aaa'},
+  {id:'revision',name:'Revision',icon:'📖',color:'#8b7dd8'},
 ];
 
 const MOTTOS_P=[
@@ -857,8 +1172,8 @@ async function getS(){
 async function setS(s){ await sbSet(DB_KEY, s); }
 
 function ensureState(){
-  if(!state.sanjana)state.sanjana={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{},messages:[]};
-  if(!state.sanjay)state.sanjay={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{},messages:[]};
+  if(!state.sanjana)state.sanjana={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{}};
+  if(!state.sanjay)state.sanjay={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{}};
   if(!state.messages)state.messages=[];
   if(!state.futureLetters)state.futureLetters=[];
   if(!state.roughDay)state.roughDay={};
@@ -892,6 +1207,20 @@ async function initApp(){
     const size=Math.random()*2+0.5;
     s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s;--min:${0.05+Math.random()*.1};--max:${0.3+Math.random()*.5}`;
     c.appendChild(s);
+  }
+})();
+
+// ── FLOATING HEARTS ──
+(function(){
+  const c=document.getElementById('hearts');
+  if(!c)return;
+  const glyphs=['♡','♥','✦','❀','✿'];
+  for(let i=0;i<14;i++){
+    const h=document.createElement('div');h.className='heart-float';
+    h.textContent=glyphs[i%glyphs.length];
+    const hue=Math.random()>.5?'#ff8fb8':'#c89cf0';
+    h.style.cssText=`left:${Math.random()*100}%;bottom:-30px;color:${hue};font-size:${10+Math.random()*14}px;animation-delay:${Math.random()*9}s;animation-duration:${7+Math.random()*8}s;filter:drop-shadow(0 0 6px ${hue})`;
+    c.appendChild(h);
   }
 })();
 
@@ -948,9 +1277,7 @@ function render(){
   const tabs=[
     {id:'today',label:'Today'},
     {id:'history',label:'Log'},
-    {id:'partner',label:'Partner'},
     {id:'messages',label:'Notes'},
-    {id:'why',label:'Why'},
     {id:'roadmap',label:'Roadmap'},
     {id:'future',label:'Letters'},
     {id:'settings',label:'Settings'},
@@ -1000,29 +1327,52 @@ function renderToday(){
   const c=document.getElementById('tab-today');
   c.innerHTML='';
 
-  // anniversary banner (always shown)
+  // ── ANNIVERSARY BANNER ──
   const ab=document.createElement('div');ab.className='anniv-banner';
-  ab.innerHTML=`<div class="anniv-days">${daysTogther}</div><div class="anniv-label">days together ✦</div><div class="anniv-date">since 6 November 2019 💕</div>`;
+  ab.innerHTML=`<div class="anniv-days">${togetherDuration}</div><div class="anniv-label">together ✦</div><div class="anniv-date">${daysTogther} days · since 6 November 2019 💕</div>`;
   c.appendChild(ab);
 
-  // countdown (Sanjana only)
+  // ── EY COUNTDOWN (Sanjana only) ──
   if(isPink&&daysToEY>0){
     const cb=document.createElement('div');cb.className='countdown-banner';
     cb.innerHTML=`<div><div class="cd-label">EY Chennai</div><div class="cd-sub">August 24, 2026</div></div><div style="text-align:right"><div class="cd-val">${daysToEY}</div><div class="cd-label">days away ✦</div></div>`;
     c.appendChild(cb);
   }
 
-  // rough day banner
+  // ── LIVE GREETING ──
+  const hr=new Date().getHours();
+  const greet=hr<12?'Good morning':hr<17?'Good afternoon':hr<21?'Good evening':'Good night';
+  const emoji=hr<12?'🌅':hr<17?'☀️':hr<21?'🌆':'🌙';
+  const name=isPink?'Sanjana':'Sanjay';
+  const gr=document.createElement('div');
+  gr.style.cssText=`margin-bottom:14px;padding:4px 2px`;
+  gr.innerHTML=`<div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--text);letter-spacing:.02em;line-height:1.2">${greet}, ${name} ${emoji}</div><div style="font-size:11px;color:var(--muted2);margin-top:4px;letter-spacing:.05em;font-style:italic">${isPink?'a soft new chapter awaits ✦':'breathe — you have time ✦'}</div>`;
+  c.appendChild(gr);
+
+  // ── MOTIVATIONAL QUOTE WIDGET ──
+  const quotes=isPink?[
+    "Every small effort is a love letter to your future self.",
+    "You don't need to rush. You just need to keep going.",
+    "Soft girl, steady heart, unstoppable focus.",
+    "The dream is built in quiet hours like these.",
+    "Trust the slow becoming. ✦",
+  ]:[
+    "Rest is not weakness — it's wisdom.",
+    "One honest hour beats five rushed ones.",
+    "Show up softly. Show up anyway.",
+    "You are exactly where you need to be.",
+    "Tonight's small step is tomorrow's foundation.",
+  ];
+  const qDay=Math.floor(Date.now()/86400000)%quotes.length;
+  const qc=document.createElement('div');
+  qc.style.cssText=`background:linear-gradient(135deg,rgba(196,169,106,.08),rgba(201,122,170,.05));border:1px solid rgba(196,169,106,.18);border-radius:14px;padding:16px 18px;margin-bottom:12px;position:relative;overflow:hidden;backdrop-filter:blur(10px)`;
+  qc.innerHTML=`<div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(196,169,106,.15),transparent 70%);pointer-events:none"></div><div style="font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;font-weight:600">✦ quote of the day</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:300;color:var(--text);line-height:1.55;font-style:italic">"${quotes[qDay]}"</div>`;
+  c.appendChild(qc);
+
   if(!isPink&&isRough){
     const rb=document.createElement('div');rb.className='rough-active';
     rb.innerHTML='🌸 Taking it slow today. That\'s okay.<br><span style="font-size:10px;opacity:.7">Streak safe. 3 tasks only.</span>';
     c.appendChild(rb);
-  }
-  if(!isPink&&!isRough){
-    const banner=document.createElement('div');
-    banner.style.cssText=`background:${IS_WEEKEND?'rgba(74,222,128,.06)':'rgba(201,122,170,.06)'};border:1px solid ${IS_WEEKEND?'rgba(74,222,128,.15)':'rgba(201,122,170,.15)'};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:10px;font-weight:600;color:${IS_WEEKEND?'#4ade80':'var(--pink)'};text-align:center;letter-spacing:.05em`;
-    banner.textContent=IS_WEEKEND?'✦ Weekend — Excel unlocked. Up to 5 hrs today.':'✦ Weekday — max 2 hrs. Quality over quantity.';
-    c.appendChild(banner);
   }
 
   // tasks
@@ -1045,6 +1395,66 @@ function renderToday(){
     c.appendChild(div);
   });
 
+  // ── STUDY HOURS + CONSISTENCY TRACKERS + PROGRESS RING ──
+  // estimate hours: count completed study/skill tasks, ~1h each
+  let totalMin=0;
+  Object.keys(state[p].checked||{}).forEach(d=>{
+    const ch=state[p].checked[d]||{};
+    (isPink?SANJANA_TASKS:SANJAY_TASKS).forEach(t=>{ if(ch[t.id]&&t.skill) totalMin+=60; });
+  });
+  const totalH=Math.floor(totalMin/60);
+  // last 7 day consistency
+  let active7=0;
+  for(let i=0;i<7;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    if(state[p].streakDays[ds])active7++;
+  }
+  const consPct=Math.round(active7/7*100);
+  // today progress ring
+  const doneToday=tasks.filter(t=>checked[t.id]).length;
+  const ringPct=Math.round(doneToday/tasks.length*100);
+  const ringColor=isPink?'#c97aaa':'#8b7dd8';
+  const ringDash=Math.PI*2*36;
+  const ringOff=ringDash*(1-ringPct/100);
+
+  const tlbl=document.createElement('div');tlbl.className='sec-lbl';tlbl.textContent='your rhythm ✦';c.appendChild(tlbl);
+  const trk=document.createElement('div');
+  trk.style.cssText=`display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px`;
+  trk.innerHTML=`
+    <div style="background:linear-gradient(160deg,rgba(201,122,170,.08),rgba(139,125,216,.04));border:1px solid rgba(201,122,170,.15);border-radius:14px;padding:14px 12px;backdrop-filter:blur(8px);transition:transform .25s ease,box-shadow .25s ease" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(201,122,170,.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;font-weight:700">study hours</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:${ringColor};line-height:1">${totalH}<span style="font-size:.9rem;color:var(--muted2);margin-left:4px">h</span></div>
+      <div style="font-size:9px;color:var(--muted2);margin-top:2px">total invested ✦</div>
+    </div>
+    <div style="background:linear-gradient(160deg,rgba(139,125,216,.08),rgba(196,169,106,.04));border:1px solid rgba(139,125,216,.15);border-radius:14px;padding:14px 12px;backdrop-filter:blur(8px);transition:transform .25s ease,box-shadow .25s ease" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(139,125,216,.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;font-weight:700">consistency</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:#c4a96a;line-height:1">${consPct}<span style="font-size:.9rem;color:var(--muted2);margin-left:2px">%</span></div>
+      <div style="font-size:9px;color:var(--muted2);margin-top:2px">${active7}/7 days this week</div>
+    </div>`;
+  c.appendChild(trk);
+
+  // Progress ring
+  const ring=document.createElement('div');
+  ring.style.cssText=`background:linear-gradient(160deg,rgba(20,20,40,.6),rgba(8,8,16,.4));border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;display:flex;align-items:center;gap:18px;backdrop-filter:blur(10px)`;
+  ring.innerHTML=`
+    <div style="position:relative;width:88px;height:88px;flex-shrink:0">
+      <svg width="88" height="88" viewBox="0 0 88 88" style="transform:rotate(-90deg)">
+        <circle cx="44" cy="44" r="36" fill="none" stroke="var(--border2)" stroke-width="6"/>
+        <circle cx="44" cy="44" r="36" fill="none" stroke="${ringColor}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${ringDash}" stroke-dashoffset="${ringOff}" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 6px ${ringColor})"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:${ringColor};line-height:1">${ringPct}%</div>
+        <div style="font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px">today</div>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;font-weight:700">progress ring</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--text);line-height:1.3">${doneToday} of ${tasks.length} done</div>
+      <div style="font-size:10px;color:var(--muted2);margin-top:4px;font-style:italic;line-height:1.5">${ringPct>=80?'beautifully steady ✦':ringPct>=50?'keep flowing gently 🌸':'small steps still count 💗'}</div>
+    </div>`;
+  c.appendChild(ring);
+
   // skill streaks
   const slbl=document.createElement('div');slbl.className='sec-lbl';slbl.textContent='Skill streaks';c.appendChild(slbl);
   const sg=document.createElement('div');sg.className='skills-grid';
@@ -1054,12 +1464,19 @@ function renderToday(){
   });
   c.appendChild(sg);
 
+  // ── EMOTIONAL SUPPORT WIDGET (both) ──
+  const es=document.createElement('div');
+  es.style.cssText=`background:linear-gradient(135deg,rgba(201,122,170,.07),rgba(139,125,216,.07));border:1px solid rgba(201,122,170,.15);border-radius:14px;padding:14px 16px;margin-bottom:10px;text-align:center;backdrop-filter:blur(10px)`;
+  es.innerHTML=`<div style="font-size:9px;color:var(--pink);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;font-weight:700">🫂 emotional check-in</div><div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--text);line-height:1.6;font-style:italic;margin-bottom:10px">how is your heart today, ${name}?</div><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">${['🌸 soft','✨ glowing','😌 calm','😔 tender','🌙 tired'].map(m=>`<button onclick="logMood('${m.split(' ')[1]}')" style="background:rgba(255,255,255,.03);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:100px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(201,122,170,.12)';this.style.borderColor='var(--pink)'" onmouseout="this.style.background='rgba(255,255,255,.03)';this.style.borderColor='var(--border2)'">${m}</button>`).join('')}</div>`;
+  c.appendChild(es);
+
   // mini love (Sanjay)
   if(!isPink){
     const ml=document.createElement('div');ml.className='mini-love';
     ml.innerHTML='I love you.<br>Keep going slowly okay? I\'m here with you. 💗';
     c.appendChild(ml);
   }
+
 
   // note
   const nlbl=document.createElement('div');nlbl.className='sec-lbl';nlbl.textContent="Today's note";c.appendChild(nlbl);
@@ -1105,6 +1522,23 @@ function renderToday(){
   }
 }
 
+function velarisBurst(x,y){
+  const b=document.createElement('div');b.className='burst';b.style.left=x+'px';b.style.top=y+'px';
+  const glyphs=['✦','♡','✧','❀','✿','♥'];
+  for(let i=0;i<10;i++){
+    const s=document.createElement('span');
+    s.textContent=glyphs[i%glyphs.length];
+    const a=(Math.PI*2*i)/10+Math.random()*.5;
+    const d=50+Math.random()*40;
+    s.style.setProperty('--dx',(Math.cos(a)*d)+'px');
+    s.style.setProperty('--dy',(Math.sin(a)*d)+'px');
+    s.style.setProperty('--rot',(Math.random()*360)+'deg');
+    s.style.color=Math.random()>.5?'#ffd5e6':'#f0c987';
+    b.appendChild(s);
+  }
+  document.body.appendChild(b);
+  setTimeout(()=>b.remove(),1000);
+}
 function toggleTask(id,skill){
   const p=activePerson;
   if(!state[p].checked[TODAY])state[p].checked[TODAY]={};
@@ -1116,9 +1550,24 @@ function toggleTask(id,skill){
       if(!state[p].skillDays[skill].includes(TODAY))state[p].skillDays[skill].push(TODAY);
     }
     state[p].streakDays[TODAY]=true;
+    const ev=window.event;
+    if(ev){const r=(ev.currentTarget||ev.target).getBoundingClientRect();velarisBurst(r.left+r.width/2,r.top+r.height/2);}
     showToast(activePerson==='sanjana'?'🩷 Done':'💜 Done',activePerson==='sanjana'?'tp':'ts');
   }
-  setS(state).then(()=>render());
+  setS(state).then(()=>{
+    render();
+    // re-pulse the just-completed task
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('.block').forEach(el=>{
+        if(el.dataset.tid===id&&!was){el.classList.add('just-done');setTimeout(()=>el.classList.remove('just-done'),900);}
+      });
+    });
+  });
+}
+
+function logMood(m){
+  const messages={soft:'🌸 noted softly. be gentle with yourself.',glowing:'✨ that glow looks good on you.',calm:'😌 hold onto that calm.',tender:'💗 it\'s okay to feel tender. I\'m here.',tired:'🌙 rest is sacred. close your eyes when you can.'};
+  showToast(messages[m]||'noted ✦',activePerson==='sanjana'?'tp':'ts');
 }
 function saveNote(){
   const val=document.getElementById('my-note').value;
@@ -1194,7 +1643,7 @@ function renderPartner(){
 }
 
 // ── MESSAGES ──
-let notesTab = 'shared'; // 'shared' | 'private'
+let notesTab = 'shared';
 function renderMessages(){
   const p=activePerson;const isPink=p==='sanjana';
   const c=document.getElementById('tab-messages');c.innerHTML='';
@@ -1207,25 +1656,27 @@ function renderMessages(){
   c.appendChild(nt);
 
   if(notesTab==='private'){
-    // private diary — only your own
     const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='private diary — only you see this ✦';c.appendChild(lbl);
     const nc=document.createElement('div');nc.className='note-card';
-    const savedPrivate=state[p].privateNote[TODAY]||'';
-    decryptNote(savedPrivate).then(decrypted=>{
-      document.getElementById('private-note-input').value=decrypted;
-    });
     nc.innerHTML=`
       <div class="note-lbl">Your private thoughts for today 🔒</div>
       <textarea class="note-ta" id="private-note-input" rows="5" placeholder="Only you can read this. Write freely..."></textarea>
       <div class="btn-row"><button class="save-btn ${isPink?'p':'s'}" onclick="savePrivateNote()">Save privately ✦</button></div>`;
     c.appendChild(nc);
-    const hist=Object.entries(state[p].privateNote).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);
+    const savedPrivate=state[p].privateNote[TODAY]||'';
+    if(savedPrivate){
+      decryptNote(savedPrivate).then(decrypted=>{
+        const el=document.getElementById('private-note-input');
+        if(el)el.value=decrypted;
+      });
+    }
+    const hist=Object.entries(state[p].privateNote||{}).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);
     if(hist.length){
       const hlbl=document.createElement('div');hlbl.className='sec-lbl';hlbl.textContent='recent entries';c.appendChild(hlbl);
-    hist.forEach(async ([d,txt])=>{
+      hist.forEach(async ([d,txt])=>{
         const dObj=new Date(d+'T00:00:00');
         const dStr=dObj.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-        const decrypted = await decryptNote(txt);
+        const decrypted=await decryptNote(txt);
         const div=document.createElement('div');div.className='msg-bubble';
         div.innerHTML=`<div class="msg-meta"><span class="${isPink?'msg-from-p':'msg-from-s'}">${dStr}</span></div><div class="msg-text" style="font-style:italic">${decrypted.replace(/\n/g,'<br>')}</div>`;
         c.appendChild(div);
@@ -1385,9 +1836,9 @@ function renderSettings(){
     <div class="note-lbl" style="margin-top:14px">About VELARIS</div>
     <div style="font-size:11px;color:var(--muted);line-height:2">
       ✦ A secret world for two.<br>
-      ✦ Together for <strong style="color:var(--gold)">${daysTogther} days</strong> since 6 Nov 2019 💕<br>
+      ✦ Together for <strong style="color:var(--gold)">${togetherDuration}</strong> (${daysTogther} days) since 6 Nov 2019 💕<br>
       ✦ Synced via Supabase — both phones share the same data.<br>
-      ✦ Auto-syncs every 30 seconds in the background.<br>
+      ✦ Live push sync + 30s polling fallback.<br>
       ✦ "A city of dreamers." — ACOTAR 💗
     </div>`;
   c.appendChild(card);
@@ -1440,142 +1891,65 @@ function exportExcel(){
   showToast('↓ Downloaded ✦','tp');
 }
 
-
-// ── REALTIME SYNC via Supabase WebSocket ──
-// Replaces the 30s polling with instant push when DB changes
-function startRealtimeSync() {
-  const projectId = 'dvqplyfzhqftwjeiithd';
-  const wsUrl = `wss://realtime.supabase.co/socket/websocket?apikey=${SUPABASE_KEY}&vsn=1.0.0`;
-  let ws, heartbeat;
-
-  function connect() {
-    try { ws = new WebSocket(wsUrl); } catch(e) { return; }
-
-    ws.onopen = () => {
-      // join the realtime channel for our table
-      ws.send(JSON.stringify({
-        topic: `realtime:public:couple_data:key=eq.${DB_KEY}`,
-        event: 'phx_join', payload: {}, ref: '1'
-      }));
-      heartbeat = setInterval(() => {
-        if(ws.readyState === WebSocket.OPEN)
-          ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'hb'}));
-      }, 25000);
-    };
-
-    ws.onmessage = async (e) => {
-      try {
-        const msg = JSON.parse(e.data);
-        // fire on INSERT or UPDATE to couple_data
-        if(msg.event === 'INSERT' || msg.event === 'UPDATE') {
-          const fresh = await sbGet(DB_KEY);
-          if(fresh) {
-            const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
-            if(JSON.stringify(parsed) !== JSON.stringify(state)) {
-              state = parsed;
-              ensureState();
-              render();
-              renderLastSeen();
-              showToast('✦ Synced live','ts');
-            }
-          }
-        }
-      } catch(e) {}
-    };
-
-    ws.onclose = () => {
-      clearInterval(heartbeat);
-      // reconnect after 5s
-      setTimeout(connect, 5000);
-    };
-    ws.onerror = () => ws.close();
-  }
-
-  connect();
-  // keep 30s polling as fallback
-  startAutoSync();
-}
-
-// ── PWA SETUP ──
-function setupPWA() {
-  // inject manifest dynamically (avoids needing a separate file)
-  const manifest = {
-    name: 'VELARIS',
-    short_name: 'VELARIS',
-    description: 'A secret world for two 💕',
-    start_url: location.href,
-    display: 'standalone',
-    background_color: '#080810',
-    theme_color: '#080810',
-    orientation: 'portrait',
-    icons: [
-      { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="%23080810"/><text y="320" x="80" font-size="320" fill="%23c4a96a">✦</text></svg>', sizes: '512x512', type: 'image/svg+xml' }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
-
-  // register service worker inline via blob
-  if('serviceWorker' in navigator) {
-    const sw = `
-      const CACHE = 'velaris-v1';
-      self.addEventListener('install', e => {
-        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
-        self.skipWaiting();
-      });
-      self.addEventListener('activate', e => {
-        e.waitUntil(caches.keys().then(keys =>
-          Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))
-        ));
-        self.clients.claim();
-      });
-      self.addEventListener('fetch', e => {
-        e.respondWith(
-          fetch(e.request).catch(() => caches.match(e.request))
-        );
-      });
-    `;
-    const swBlob = new Blob([sw], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob))
-      .catch(()=>{}); // fails silently on some browsers — that's fine
-  }
-
-  // install prompt banner
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    // show a small install toast after 3s
-    setTimeout(() => {
-      if(deferredPrompt) showInstallBanner();
-    }, 3000);
-  });
-
-  function showInstallBanner() {
-    const banner = document.createElement('div');
-    banner.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;z-index:9000;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text);white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)`;
-    banner.innerHTML = `<span>✦ Add VELARIS to home screen</span><button onclick="installPWA()" style="background:var(--gold);color:#080810;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Install</button><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">×</button>`;
-    document.body.appendChild(banner);
-    window._installBanner = banner;
-  }
-
-  window.installPWA = async () => {
-    if(!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    if(window._installBanner) window._installBanner.remove();
-  };
-}
-
-// initialise PWA immediately
-setupPWA();
-
+// ── TOAST ──
 function showToast(msg,cls='tp'){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast '+cls;
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+// ═══ PREMIUM POLISH (additive, non-invasive) ═══
+(function(){
+  const pc=document.createElement('div');pc.id='particles';document.body.appendChild(pc);
+  for(let i=0;i<22;i++){
+    const p=document.createElement('div');p.className='particle';
+    const hue=['rgba(255,143,184,.7)','rgba(200,156,240,.6)','rgba(240,201,135,.55)'][i%3];
+    p.style.cssText=`left:${Math.random()*100}%;top:${100+Math.random()*20}%;background:${hue};box-shadow:0 0 10px ${hue};animation-duration:${14+Math.random()*16}s;animation-delay:${Math.random()*14}s;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px`;
+    pc.appendChild(p);
+  }
+  document.addEventListener('mousemove',e=>{
+    const t=e.target.closest('.skill-card,.block');
+    if(!t) return;
+    const r=t.getBoundingClientRect();
+    t.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    t.style.setProperty('--my',(e.clientY-r.top)+'px');
+  },{passive:true});
+  const lines=[
+    'slow progress is still progress ✦',
+    'you are safe here 💗',
+    'rest without guilt — you have earned it',
+    'breathe. one small step is enough today',
+    'you are becoming, quietly and beautifully',
+    'softness is also a kind of strength',
+    'tomorrow will still love you',
+    'this moment is yours to keep'
+  ];
+  const a=document.createElement('div');a.className='affirm';document.body.appendChild(a);
+  let i=0;
+  function cycle(){
+    a.textContent=lines[i%lines.length];
+    a.classList.add('show');
+    setTimeout(()=>a.classList.remove('show'),6500);
+    i++;
+  }
+  setTimeout(cycle,1800);setInterval(cycle,11000);
+  const dock=document.createElement('div');dock.className='amb-dock';
+  dock.innerHTML='<button class="amb-btn" id="amb-glow" title="Ambient glow">✦</button><button class="amb-btn" id="amb-rain" title="Lofi rain">🌧</button>';
+  document.body.appendChild(dock);
+  document.getElementById('amb-glow').onclick=function(){
+    document.body.classList.toggle('ambient-glow');
+    this.classList.toggle('on');
+  };
+  let audio=null;
+  document.getElementById('amb-rain').onclick=function(){
+    if(!audio){
+      audio=new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_8cb749cae4.mp3?filename=rain-and-thunder-nature-sounds-8009.mp3');
+      audio.loop=true;audio.volume=.35;
+    }
+    if(audio.paused){audio.play().catch(()=>{});this.classList.add('on');}
+    else{audio.pause();this.classList.remove('on');}
+  };
+})();
 </script>
 </body>
 </html>
