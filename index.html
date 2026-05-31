@@ -192,9 +192,10 @@ h1,h2,h3,.cormorant{font-family:'Cormorant Garamond',serif;letter-spacing:.5px}
 /* ── NAV TABS ── */
 .nav-tabs{
   display:flex;background:rgba(8,8,16,.9);
-  border-bottom:1px solid var(--border);
+  border-top:1px solid var(--border);
   padding:0 10px;overflow-x:auto;
   scrollbar-width:none;
+  position:sticky;bottom:0;z-index:100;
 }
 .nav-tabs::-webkit-scrollbar{display:none}
 .ntab{
@@ -542,20 +543,27 @@ body.ambient-glow{filter:saturate(1.1) brightness(1.04)}
 body.ambient-glow .aurora{opacity:1!important}
 /* mobile polish */
 @media (max-width:720px){
-  body{padding-bottom:110px;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 90px);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
   .nav-tabs{
     position:fixed!important;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    z-index:200!important;
     border-radius:22px!important;border:1px solid rgba(255,143,184,.25)!important;
     box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 24px rgba(255,143,184,.12)!important;
-    background:rgba(22,8,18,.78)!important;backdrop-filter:blur(28px);
+    background:rgba(22,8,18,.95)!important;backdrop-filter:blur(28px);
     padding:6px 4px!important;justify-content:space-around;
+    /* Remove from flow so it doesn't collapse with page */
+    width:calc(100% - 24px)!important;
   }
+  /* Spacer so content below person-tabs doesn't jump up when nav goes fixed */
+  #nav-tabs + .motto{margin-top:0}
   .ntab{padding:10px 12px!important;font-size:11px!important;min-width:auto!important;border-bottom:none!important;border-radius:14px}
   .ntab.ap,.ntab.as{background:linear-gradient(135deg,rgba(255,143,184,.22),rgba(200,156,240,.18));border-bottom:none!important}
   .affirm{bottom:calc(env(safe-area-inset-bottom,0px) + 96px)}
   .skills-grid{grid-template-columns:repeat(2,1fr)!important}
   .amb-dock{right:8px;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 100px);transform:none;flex-direction:row}
   button,.btn,.ntab{min-height:40px}
+  /* Toast should appear above the nav bar */
+  .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 90px)!important}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
@@ -887,7 +895,6 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
   </div>
   <div class="last-seen-bar" id="last-seen-bar"></div>
 
-  <div class="nav-tabs" id="nav-tabs"></div>
   <div class="motto" id="motto"></div>
 
   <div class="main">
@@ -900,6 +907,9 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
     <div id="tab-future" style="display:none"></div>
     <div id="tab-settings" style="display:none"></div>
   </div>
+
+  <!-- Bottom nav: placed last so fixed positioning never collapses with page content -->
+  <div class="nav-tabs" id="nav-tabs"></div>
 </div>
 
 <div class="toast" id="toast"></div>
