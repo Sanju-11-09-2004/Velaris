@@ -336,6 +336,31 @@ h1,h2,h3,.cormorant{font-family:'Cormorant Garamond',serif;letter-spacing:.5px}
 .why-p{font-size:12.5px;color:var(--muted2);line-height:2;margin-bottom:12px}
 .why-p:last-child{margin-bottom:0}
 .why-sign{color:var(--pink);font-style:italic;font-size:13px}
+.why-task-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:11px 13px;margin-bottom:6px;
+  display:flex;gap:8px;align-items:flex-start;
+}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.2)}28%{transform:scale(1)}42%{transform:scale(1.15)}70%{transform:scale(1)}}
+
+/* ── LIGHT MODE TEXT FIX ── */
+body.light-mode .why-p{color:var(--text)!important}
+body.light-mode .note-ta{color:var(--text)!important;background:var(--bg)!important}
+body.light-mode .note-ta::placeholder{color:var(--muted2)!important}
+body.light-mode .btitle{color:var(--text)!important}
+body.light-mode .btime{color:var(--muted)!important}
+body.light-mode .msg-text{color:var(--text)!important}
+body.light-mode .note-display{color:var(--text)!important}
+body.light-mode .fl-preview{color:var(--text)!important}
+body.light-mode .rdesc{color:var(--text)!important}
+body.light-mode .rtitle{color:var(--text)!important}
+body.light-mode .hist-date{color:var(--text)!important}
+body.light-mode .setting-name{color:var(--text)!important}
+body.light-mode .why-task-item{color:var(--text)!important}
+body.light-mode .fl-locked-text{color:var(--muted)!important}
+body.light-mode .sec-lbl{color:var(--muted)!important}
+body.light-mode .affirm{background:rgba(245,237,232,.88)!important;color:var(--text)!important;border-color:rgba(201,80,122,.25)!important}
+body.light-mode .letter-box{color:var(--text)!important;background:var(--card)!important}
 
 /* ── ROADMAP ── */
 .roadmap-card{
@@ -705,6 +730,81 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
 .settings-lbl{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
 .theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .theme-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── TASK CRUD MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:22px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:.03em}
+.modal-sub{font-size:10px;color:var(--muted2);margin-bottom:16px;letter-spacing:.05em}
+.modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--muted2);font-size:16px;cursor:pointer;padding:4px 8px}
+.modal-close:hover{color:var(--text)}
+.form-group{margin-bottom:12px}
+.form-label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;display:block}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--border2)}
+.form-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;appearance:none}
+.time-row{display:flex;gap:6px}
+.priority-row{display:flex;gap:6px;flex-wrap:wrap}
+.priority-btn{padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-family:'DM Sans',sans-serif;font-size:10px;cursor:pointer;transition:all .2s}
+.priority-btn.active-p{background:var(--pink-dim);color:var(--pink);border-color:rgba(201,122,170,.3)}
+.priority-btn.active-s{background:var(--purple-dim);color:var(--purple);border-color:rgba(139,125,216,.3)}
+.modal-footer{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.btn-secondary{padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer}
+.btn-primary-p{padding:7px 16px;border-radius:6px;border:none;background:var(--pink);color:#0a0415;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+.btn-primary-s{padding:7px 16px;border-radius:6px;border:none;background:var(--purple);color:#0a0415;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+
+/* ── PERIOD TABS ── */
+.period-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.period-tab{padding:6px 14px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.05em}
+.period-tab.active-p{background:var(--pink-dim);color:var(--pink);border-color:rgba(201,122,170,.3)}
+.period-tab.active-s{background:var(--purple-dim);color:var(--purple);border-color:rgba(139,125,216,.3)}
+.add-task-fab{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;border:1px solid var(--border2);background:transparent;color:var(--muted2);font-family:'DM Sans',sans-serif;font-size:10px;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.add-task-fab.fp{border-color:rgba(201,122,170,.4);color:var(--pink);background:var(--pink-dim)}
+.add-task-fab.fs{border-color:rgba(139,125,216,.4);color:var(--purple);background:var(--purple-dim)}
+.add-task-fab:hover{transform:translateY(-1px)}
+
+/* ── PRIORITY BADGE on tasks ── */
+.prio-badge{font-size:8px;padding:2px 6px;border-radius:100px;font-weight:700;letter-spacing:.05em}
+.prio-low{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
+.prio-medium{background:rgba(250,204,21,.12);color:#facc15;border:1px solid rgba(250,204,21,.2)}
+.prio-high{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.prio-urgent{background:rgba(239,68,68,.2);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.task-actions-inline{display:flex;gap:4px;flex-shrink:0}
+.task-act-sm{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:3px 5px;border-radius:4px;font-size:11px;transition:all .15s}
+.task-act-sm:hover{color:var(--text);background:var(--card2)}
+.task-act-sm.del:hover{color:#f87171}
+
+/* ── WEEKLY CHART (shared progress) ── */
+.weekly-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:10px}
+.weekly-head{font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:800;margin-bottom:12px}
+.weekly-chart-wrap{display:flex;align-items:flex-end;gap:5px;height:56px;padding:0 2px}
+.weekly-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.weekly-bar{width:100%;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:2px}
+.weekly-bar.bp{background:var(--pink)}
+.weekly-bar.bs{background:var(--purple)}
+.weekly-day-lbl{font-size:7px;color:var(--muted2);letter-spacing:.04em;font-weight:700;margin-top:3px}
+.weekly-legend{display:flex;gap:14px;margin-top:8px;justify-content:center}
+.wleg{font-size:9px;font-weight:600}
+.wleg-p{color:var(--pink)}.wleg-s{color:var(--purple)}
+
+/* ── SHARED DASHBOARD ── */
+.shared-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:10px}
+.shared-head{font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:800;margin-bottom:10px}
+.shared-pct-big{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.shared-bar-track{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin:10px 0 12px}
+.shared-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width 1s ease}
+.compare-item{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.compare-lbl{font-size:9px;color:var(--muted);width:54px;font-weight:600}
+.compare-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.compare-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.compare-fill-p{background:var(--pink)}.compare-fill-s{background:var(--purple)}
+.compare-val{font-size:10px;font-weight:700;width:32px;text-align:right}
+
+/* ── HISTORY expanded ── */
+.hist-task-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.hist-dot{width:7px;height:7px;border-radius:50%}
+
 </style>
 </head>
 <body>
@@ -1176,17 +1276,203 @@ function ensureState(){
   if(!state.messages)state.messages=[];
   if(!state.futureLetters)state.futureLetters=[];
   if(!state.roughDay)state.roughDay={};
+  if(!state.whyTasks)state.whyTasks=[];
+  if(!state.roadmap)state.roadmap={sanjana:[],sanjay:[]};
+  // CRUD extensions
+  if(!state.customTasks)state.customTasks={sanjana:{Morning:[],Afternoon:[],Evening:[],Night:[]},sanjay:{Morning:[],Afternoon:[],Evening:[],Night:[]}};
+  if(!state.taskPriority)state.taskPriority={};
+  if(!state.taskOverrides)state.taskOverrides={sanjana:{},sanjay:{}};
+  if(!state.deletedTasks)state.deletedTasks={sanjana:[],sanjay:[]};
   ['sanjana','sanjay'].forEach(p=>{
     if(!state[p].checked)state[p].checked={};
     if(!state[p].streakDays)state[p].streakDays={};
     if(!state[p].skillDays)state[p].skillDays={};
     if(!state[p].note)state[p].note={};
     if(!state[p].privateNote)state[p].privateNote={};
+    if(!state.customTasks[p])state.customTasks[p]={Morning:[],Afternoon:[],Evening:[],Night:[]};
+    ['Morning','Afternoon','Evening','Night'].forEach(per=>{if(!state.customTasks[p][per])state.customTasks[p][per]=[];});
+    if(!state.taskOverrides[p])state.taskOverrides[p]={};
+    if(!Array.isArray(state.deletedTasks[p]))state.deletedTasks[p]=[];
   });
 }
 
 let state = {};
 ensureState();
+
+// ── PERIOD STATE ──
+let activePeriod = 'Morning';
+const PERIODS = ['Morning','Afternoon','Evening','Night'];
+const PERIOD_ICONS = {Morning:'☀️',Afternoon:'🌤️',Evening:'✦',Night:'🌙'};
+
+// ── TASK CRUD HELPERS ──
+const PRIORITY_ICONS_V = {none:'',low:'🔵',medium:'🟡',high:'🔴',urgent:'🚨'};
+
+function isTaskDeleted(who, id){ return (state.deletedTasks[who]||[]).includes(id); }
+
+function applyTaskOverride(who, t){
+  const ov=(state.taskOverrides[who]||{})[t.id];
+  return ov ? {...t,...ov} : t;
+}
+
+function getBuiltInTasks(who){
+  const base = who==='sanjana'?SANJANA_TASKS:SANJAY_TASKS;
+  return base.filter(t=>!isTaskDeleted(who,t.id)).map(t=>applyTaskOverride(who,t));
+}
+
+function getCustomTasks(who){
+  const all=[];
+  PERIODS.forEach(p=>{ (state.customTasks[who]?.[p]||[]).filter(t=>!isTaskDeleted(who,t.id)).forEach(t=>all.push({...t,period:p})); });
+  return all;
+}
+
+function getAllTasksFor(who){
+  return [...getBuiltInTasks(who),...getCustomTasks(who)];
+}
+
+function getPeriodTasksFor(who, period){
+  const isBuiltIn = t => (who==='sanjana'?SANJANA_TASKS:SANJAY_TASKS).find(b=>b.id===t.id);
+  const built = getBuiltInTasks(who).filter(t=>{
+    const ov=(state.taskOverrides[who]||{})[t.id];
+    const tPeriod = ov&&ov.period ? ov.period : (t.block||'Morning');
+    return tPeriod===period;
+  });
+  const custom = (state.customTasks[who]?.[period]||[]).filter(t=>!isTaskDeleted(who,t.id)).map(t=>applyTaskOverride(who,t));
+  return [...built,...custom];
+}
+
+// Map VELARIS block names to period
+function blockToPeriod(block){
+  if(!block)return 'Morning';
+  const b=block.toLowerCase();
+  if(b.includes('morning'))return 'Morning';
+  if(b.includes('mid'))return 'Afternoon';
+  if(b.includes('afternoon'))return 'Afternoon';
+  if(b.includes('evening'))return 'Evening';
+  if(b.includes('night'))return 'Night';
+  return 'Morning';
+}
+
+// ── TASK MODAL STATE ──
+let _editingTaskId = null;
+let _selectedPriority = 'none';
+
+function openAddTask(){
+  _editingTaskId=null; _selectedPriority='none';
+  const isPink=activePerson==='sanjana';
+  document.getElementById('modal-title').textContent='✦ Add New Task';
+  document.getElementById('modal-sub').textContent=`Adding to ${isPink?'Sanjana':'Sanjay'}'s ${activePeriod.toLowerCase()} schedule`;
+  document.getElementById('mt-title').value='';
+  document.getElementById('mt-start').value='';
+  document.getElementById('mt-end').value='';
+  document.getElementById('mt-period').value=activePeriod;
+  document.getElementById('mt-tag').value='Life';
+  document.getElementById('modal-save-btn').className=isPink?'btn-primary-p':'btn-primary-s';
+  selectPriority('none');
+  document.getElementById('task-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('mt-title').focus(),100);
+}
+
+function editTask(id, evt){
+  if(evt)evt.stopPropagation();
+  const who=activePerson;
+  const all=getAllTasksFor(who);
+  const t=all.find(x=>x.id===id);
+  if(!t)return;
+  _editingTaskId=id;
+  const prio=(state.taskPriority[who+'-'+id])||'none';
+  const isPink=who==='sanjana';
+  const tPeriod=(state.taskOverrides[who]?.[id]?.period)||(t.block?blockToPeriod(t.block):t.period)||'Morning';
+  document.getElementById('modal-title').textContent='✎ Edit Task';
+  document.getElementById('modal-sub').textContent='Update this task';
+  document.getElementById('mt-title').value=t.name||t.title||'';
+  const timeParts=(t.time||'').split('–');
+  document.getElementById('mt-start').value=timeParts[0]||'';
+  document.getElementById('mt-end').value=timeParts[1]||'';
+  document.getElementById('mt-period').value=tPeriod;
+  document.getElementById('mt-tag').value=t.tag||'Life';
+  document.getElementById('modal-save-btn').className=isPink?'btn-primary-p':'btn-primary-s';
+  selectPriority(prio);
+  document.getElementById('task-modal').classList.add('open');
+}
+
+function deleteTask(id, evt){
+  if(evt)evt.stopPropagation();
+  if(!confirm('Delete this task?'))return;
+  const who=activePerson;
+  // Check custom tasks first
+  let removedCustom=false;
+  PERIODS.forEach(p=>{
+    const arr=state.customTasks[who]?.[p]||[];
+    const idx=arr.findIndex(t=>t.id===id);
+    if(idx>=0){arr.splice(idx,1);removedCustom=true;}
+  });
+  if(!removedCustom){
+    if(!state.deletedTasks[who])state.deletedTasks[who]=[];
+    if(!state.deletedTasks[who].includes(id))state.deletedTasks[who].push(id);
+  }
+  delete state.taskPriority[who+'-'+id];
+  if(state.taskOverrides[who])delete state.taskOverrides[who][id];
+  setS(state).then(()=>{render();showToast('Task deleted ✦',who==='sanjana'?'tp':'ts');});
+}
+
+function closeTaskModal(){
+  document.getElementById('task-modal').classList.remove('open');
+}
+
+function selectPriority(p){
+  _selectedPriority=p;
+  const isPink=activePerson==='sanjana';
+  document.querySelectorAll('.priority-btn').forEach(b=>{
+    b.classList.remove('active-p','active-s');
+    if(b.dataset.p===p)b.classList.add(isPink?'active-p':'active-s');
+  });
+}
+
+function saveTask(){
+  const who=activePerson;
+  const title=document.getElementById('mt-title').value.trim();
+  if(!title){showToast('Enter a task name ✦',who==='sanjana'?'tp':'ts');return;}
+  const start=document.getElementById('mt-start').value.trim();
+  const end=document.getElementById('mt-end').value.trim();
+  const period=document.getElementById('mt-period').value;
+  const tag=document.getElementById('mt-tag').value;
+  const time=start&&end?start+'\u2013'+end:start||'';
+
+  if(_editingTaskId){
+    // Check if it's a custom task
+    let found=false;
+    PERIODS.forEach(p=>{
+      const arr=state.customTasks[who]?.[p]||[];
+      const idx=arr.findIndex(t=>t.id===_editingTaskId);
+      if(idx>=0){
+        if(p!==period){
+          arr.splice(idx,1);
+          state.customTasks[who][period]=state.customTasks[who][period]||[];
+          state.customTasks[who][period].push({id:_editingTaskId,name:title,title,time,tag,period,block:period});
+        }else{
+          arr[idx]={...arr[idx],name:title,title,time,tag};
+        }
+        found=true;
+      }
+    });
+    if(!found){
+      // Built-in task → override
+      state.taskOverrides[who]=state.taskOverrides[who]||{};
+      state.taskOverrides[who][_editingTaskId]={name:title,title,time,tag,period};
+    }
+    state.taskPriority[who+'-'+_editingTaskId]=_selectedPriority;
+    activePeriod=period;
+    setS(state).then(()=>{render();showToast('Updated ✦',who==='sanjana'?'tp':'ts');});
+  }else{
+    const id='custom_'+who+'_'+Date.now();
+    state.customTasks[who][period]=state.customTasks[who][period]||[];
+    state.customTasks[who][period].push({id,name:title,title,time,tag,period,block:period});
+    if(_selectedPriority!=='none')state.taskPriority[who+'-'+id]=_selectedPriority;
+    activePeriod=period;
+    setS(state).then(()=>{render();showToast('Task added ✦',who==='sanjana'?'tp':'ts');});
+  }
+  closeTaskModal();
+}
 
 let activePerson='sanjana';
 let activeTab='today';
@@ -1247,7 +1533,7 @@ function calcSkillStreak(who,skillId){
 
 // ── SWITCH ──
 function switchPerson(p){
-  activePerson=p;activeTab='today';
+  activePerson=p;activeTab='today';activePeriod='Morning';
   document.getElementById('ptab-p').className='ptab'+(p==='sanjana'?' ap':'');
   document.getElementById('ptab-s').className='ptab'+(p==='sanjay'?' as':'');
   updateLastSeen();
@@ -1267,6 +1553,7 @@ function switchTab(tab){
   if(tab==='why')renderWhy();
   if(tab==='roadmap')renderRoadmap();
   if(tab==='settings')renderSettings();
+  if(tab==='today')renderToday();
 }
 
 // ── RENDER ──
@@ -1274,13 +1561,14 @@ function render(){
   const p=activePerson;const isPink=p==='sanjana';
   // nav
   const tabs=[
-    {id:'today',label:'Today'},
-    {id:'history',label:'Log'},
-    {id:'messages',label:'Notes'},
-    {id:'roadmap',label:'Roadmap'},
-    {id:'future',label:'Letters'},
-    {id:'why',label:'Why 💗'},
-    {id:'settings',label:'Settings'},
+    {id:'today',label:'📋 Today'},
+    {id:'history',label:'📅 Log'},
+    {id:'partner',label:'👀 Partner'},
+    {id:'messages',label:'💌 Notes'},
+    {id:'roadmap',label:'🗺️ Roadmap'},
+    {id:'future',label:'✉️ Letters'},
+    {id:'why',label:'💗 Why'},
+    {id:'settings',label:'⚙️ Settings'},
   ];
   document.getElementById('nav-tabs').innerHTML=tabs.map(t=>
     `<button class="ntab${t.id===activeTab?' '+(isPink?'ap':'as'):''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`
@@ -1313,6 +1601,7 @@ function render(){
   else if(activeTab==='roadmap')renderRoadmap();
   else if(activeTab==='future')renderFuture();
   else if(activeTab==='settings')renderSettings();
+  else renderToday();
 }
 
 // ── TODAY ──
@@ -1375,22 +1664,51 @@ function renderToday(){
     c.appendChild(rb);
   }
 
-  // tasks
-  let lastBlock='';
-  tasks.forEach(t=>{
-    if(t.block!==lastBlock){
-      const sh=document.createElement('div');sh.className='sec-lbl';sh.textContent=t.block;c.appendChild(sh);lastBlock=t.block;
-    }
+  // ── PERIOD TABS ──
+  const ptlbl=document.createElement('div');ptlbl.className='sec-lbl';ptlbl.textContent='schedule';c.appendChild(ptlbl);
+  const ptabs=document.createElement('div');ptabs.className='period-tabs';
+  PERIODS.forEach(per=>{
+    const b=document.createElement('button');b.className='period-tab'+(activePeriod===per?(isPink?' active-p':' active-s'):'');
+    b.textContent=PERIOD_ICONS[per]+' '+per;
+    b.onclick=()=>{activePeriod=per;renderToday();};
+    ptabs.appendChild(b);
+  });
+  c.appendChild(ptabs);
+
+  // Add task button
+  const fab=document.createElement('button');
+  fab.className='add-task-fab '+(isPink?'fp':'fs');
+  fab.innerHTML='+ Add Task';
+  fab.onclick=openAddTask;
+  c.appendChild(fab);
+
+  // ── TASKS for active period ──
+  const periodTasks=getPeriodTasksFor(p, activePeriod);
+  if(!periodTasks.length){
+    const empty=document.createElement('div');
+    empty.style.cssText='text-align:center;padding:24px;color:var(--muted2);font-size:12px;font-style:italic';
+    empty.textContent='No tasks in this window ✦';
+    c.appendChild(empty);
+  }
+  periodTasks.forEach(t=>{
     const div=document.createElement('div');
     const isDone=!!checked[t.id];
     div.className='block'+(isDone?' done':'');
+    div.dataset.tid=t.id;
     div.onclick=()=>toggleTask(t.id,t.skill);
     const wb=t.weekendOnly?'<span style="font-size:8px;background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);border-radius:100px;padding:1px 6px;margin-left:4px">weekend</span>':'';
+    const prio=(state.taskPriority[p+'-'+t.id])||'none';
+    const prioBadge=prio!=='none'?`<span class="prio-badge prio-${prio}">${PRIORITY_ICONS_V[prio]}</span>`:'';
+    const tc=t.tc||'#888';const bg=t.bg||'rgba(136,136,136,.1)';
     div.innerHTML=`<div class="block-inner">
       <div class="bcheck ${isDone?(isPink?'cp':'cs'):''}">${isDone?'✓':''}</div>
-      <div class="baccent" style="background:${t.tc}"></div>
-      <div class="binfo"><div class="btime">${t.time}</div><div class="btitle">${t.name}${wb}</div></div>
-      <span class="btag" style="background:${t.bg};color:${t.tc}">${t.tag}</span>
+      <div class="baccent" style="background:${tc}"></div>
+      <div class="binfo"><div class="btime">${t.time||''}</div><div class="btitle">${t.name||t.title||''}${wb} ${prioBadge}</div></div>
+      <span class="btag" style="background:${bg};color:${tc}">${t.tag}</span>
+      <div class="task-actions-inline">
+        <button class="task-act-sm" onclick="editTask('${t.id}',event)" title="Edit">✎</button>
+        <button class="task-act-sm del" onclick="deleteTask('${t.id}',event)" title="Delete">✕</button>
+      </div>
     </div>`;
     c.appendChild(div);
   });
@@ -1625,6 +1943,65 @@ function renderPartner(){
   const tasks=(isPink?SANJANA_TASKS:SANJAY_TASKS).filter(t=>!t.weekendOnly||IS_WEEKEND);
   const name=isPink?'Sanjana 🩷':'Sanjay 💜';
   const c=document.getElementById('tab-partner');c.innerHTML='';
+
+  // ── SHARED DASHBOARD ──
+  const sdlbl=document.createElement('div');sdlbl.className='sec-lbl';sdlbl.textContent='shared progress ✦';c.appendChild(sdlbl);
+  const pTasksAll=SANJANA_TASKS.filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const sTasksAll=SANJAY_TASKS.filter(t=>!t.weekendOnly||IS_WEEKEND);
+  const pDone=pTasksAll.filter(t=>(state.sanjana.checked[TODAY]||{})[t.id]).length;
+  const sDone=sTasksAll.filter(t=>(state.sanjay.checked[TODAY]||{})[t.id]).length;
+  const pPct=Math.round(pDone/Math.max(pTasksAll.length,1)*100);
+  const sPct=Math.round(sDone/Math.max(sTasksAll.length,1)*100);
+  const sharedPct=Math.round((pDone+sDone)/Math.max(pTasksAll.length+sTasksAll.length,1)*100);
+  const sharedCard=document.createElement('div');sharedCard.className='shared-card';
+  sharedCard.innerHTML=`
+    <div class="shared-head">COMBINED PRODUCTIVITY</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+      <div class="shared-pct-big">${sharedPct}%</div>
+      <div style="font-size:10px;color:var(--muted);font-style:italic">combined today</div>
+    </div>
+    <div class="shared-bar-track"><div class="shared-bar-fill" style="width:${sharedPct}%"></div></div>
+    <div class="compare-item"><span class="compare-lbl">🩷 Sanjana</span><div class="compare-track"><div class="compare-fill compare-fill-p" style="width:${pPct}%"></div></div><span class="compare-val" style="color:var(--pink)">${pPct}%</span></div>
+    <div class="compare-item"><span class="compare-lbl">💜 Sanjay</span><div class="compare-track"><div class="compare-fill compare-fill-s" style="width:${sPct}%"></div></div><span class="compare-val" style="color:var(--purple)">${sPct}%</span></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <div style="flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:8px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px">Winner</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">${pPct>sPct?'🩷 Sanjana':sPct>pPct?'💜 Sanjay':'🤝 Tied!'}</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:8px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px">Tasks done</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">${pDone+sDone} total</div>
+      </div>
+    </div>`;
+  c.appendChild(sharedCard);
+
+  // ── WEEKLY CHART ──
+  const wlbl=document.createElement('div');wlbl.className='sec-lbl';wlbl.textContent='7-day consistency ✦';c.appendChild(wlbl);
+  const wk=document.createElement('div');wk.className='weekly-section';
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let chartHTML='<div class="weekly-head">WEEKLY CONSISTENCY</div><div class="weekly-chart-wrap">';
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    const pChk=state.sanjana.checked[ds]||{};
+    const sChk=state.sanjay.checked[ds]||{};
+    const pPctD=pTasksAll.length?Math.round(pTasksAll.filter(t=>pChk[t.id]).length/pTasksAll.length*100):0;
+    const sPctD=sTasksAll.length?Math.round(sTasksAll.filter(t=>sChk[t.id]).length/sTasksAll.length*100):0;
+    const maxH=56;
+    const dayName=days[d.getDay()];
+    chartHTML+=`<div class="weekly-bar-group">
+      <div style="display:flex;gap:1px;align-items:flex-end;height:${maxH}px">
+        <div class="weekly-bar bp" style="height:${Math.round(pPctD/100*maxH)}px;width:8px;border-radius:2px 2px 0 0"></div>
+        <div class="weekly-bar bs" style="height:${Math.round(sPctD/100*maxH)}px;width:8px;border-radius:2px 2px 0 0"></div>
+      </div>
+      <div class="weekly-day-lbl">${dayName}</div>
+    </div>`;
+  }
+  chartHTML+='</div><div class="weekly-legend"><span class="wleg wleg-p">🩷 Sanjana</span><span class="wleg wleg-s">💜 Sanjay</span></div>';
+  wk.innerHTML=chartHTML;
+  c.appendChild(wk);
+
+  // ── PARTNER TASKS ──
   const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent=name+"'s tasks today";c.appendChild(lbl);
   const card=document.createElement('div');card.className='partner-card';
   const ch=state[other].checked[TODAY]||{};
@@ -1721,40 +2098,211 @@ function sendMsg(){
 // ── WHY ──
 function renderWhy(){
   const c=document.getElementById('tab-why');c.innerHTML='';
+
+  // ── HEART ABOVE WHY ──
+  const heartDiv=document.createElement('div');
+  heartDiv.style.cssText='text-align:center;font-size:2.5rem;margin-bottom:16px;animation:heartbeat 1.6s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(255,143,184,.7))';
+  heartDiv.textContent='❤️';
+  c.appendChild(heartDiv);
+
   const card=document.createElement('div');card.className='why-card';
   card.innerHTML=`
-    <div class="why-title">✦ Hey love.</div>
-    <div class="why-p">I know life feels really tiring right now. Every day feels the same. Early mornings, long travel, coming home exhausted, overthinking everything at night... it all feels heavy sometimes.</div>
-    <div class="why-p">But please remember why we started okay?</div>
-    <div class="why-p">We're not doing all this to survive. We're building our future slowly — together. A future where we don't have to fear life. Where we can take care of our family. Where we can sleep peacefully. Where we can look back at these hard nights and say — we made it.</div>
-    <div class="why-p">Right now I'm also studying, preparing, planning — trying to build something for both of us. We're both tired. And that's okay. We're doing this together.</div>
-    <div class="why-p">This space exists not to pressure you. Just to remind you — you're not alone in this anymore.</div>
-    <div class="why-p">Even small effort matters. Even tired effort matters.</div>
-    <div class="why-p">One day all these late nights, overthinking sessions, tiny study habits, and soft encouragements will become memories we smile at together.</div>
-    <div class="why-p why-sign">So whenever you feel low — come here and read this okay?<br><br>I'm not going anywhere. 🫂<br>I love you so much.<br><br>— me 💗</div>`;
+    <div class="why-title">✦ Sanjay… ❤️</div>
+    <div class="why-p">I know sometimes I fight with you a lot, get angry, overreact, or become emotional. 😔 But one thing I never want you to doubt is how much I truly love you. You mean so much to me, babe. More than I can properly express sometimes. 💗</div>
+    <div class="why-p">If something ever happens to you, I honestly cannot bear it 🥺 That's how important you are to me. So think before you do things.</div>
+    <div class="why-p">I may argue with you for many reasons, for others, etc, but when it comes to you, I will always stand strongly for you 🛡️ because you are special to me.</div>
+    <div class="why-p">And I know you are trying your absolute best for me and for us. Really… thank you for that, okay? 🙏 I notice your efforts even if I don't say it every time.</div>
+    <div class="why-p">You are not just "someone" in my life, Sanjay. 🌟 You are my comfort, my attachment, my safe place, and one of the most precious people to me.</div>
+    <div class="why-p">And like Kanish, you are another special person in my world too, okay babe? 💫 So please don't feel possessive or misunderstand me if I care for someone. Caring for others will never reduce the love and importance I have for you.</div>
+    <div class="why-p">Also… this tracker, our goals, and all this effort are for our future together. 🌱 For our life. Without becoming successful and stable, convincing our parents and building the future we want will become difficult.</div>
+    <div class="why-p">That's why I want both of us to stay focused, grow together 🌿, support each other, and not get distracted unnecessarily.</div>
+    <div class="why-p why-sign">No matter how much we fight, at the end of the day… it's always you that matters to me the most. ❤️<br><br>Whatever happens. Wherever I go. I will always come back.. 🫂<br><br>— me 💗</div>`;
   c.appendChild(card);
+
+  // ── CUSTOM TASKS (add/edit/delete) ──
+  const tlbl=document.createElement('div');tlbl.className='sec-lbl';tlbl.textContent='our little notes ✦';c.appendChild(tlbl);
+
+  const addCard=document.createElement('div');addCard.className='note-card';
+  addCard.innerHTML=`
+    <div class="note-lbl">✍ Add a note or reminder</div>
+    <textarea class="note-ta" id="why-task-input" rows="2" placeholder="Write anything — a reminder, a promise, a little thought..."></textarea>
+    <div class="btn-row">
+      <button class="save-btn p" onclick="addWhyTask()">Add ✦</button>
+    </div>`;
+  c.appendChild(addCard);
+
+  const taskList=document.createElement('div');taskList.id='why-task-list';
+  c.appendChild(taskList);
+  renderWhyTasks();
+}
+
+function renderWhyTasks(){
+  const list=document.getElementById('why-task-list');
+  if(!list)return;
+  list.innerHTML='';
+  const tasks=state.whyTasks||[];
+  if(!tasks.length){
+    list.innerHTML='<div class="fl-empty">No notes yet ✦<br>Add something sweet above.</div>';
+    return;
+  }
+  tasks.forEach((task,i)=>{
+    const div=document.createElement('div');
+    div.className='why-task-item';
+    if(task.editing){
+      div.innerHTML=`
+        <div style="flex:1">
+          <textarea class="note-ta" id="why-edit-${i}" style="min-height:36px;font-size:12px">${task.text}</textarea>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0;margin-top:4px">
+          <button class="save-btn p" style="padding:5px 10px;font-size:10px" onclick="saveWhyTask(${i})">Save</button>
+          <button class="ghost-btn" style="padding:5px 10px;font-size:10px" onclick="cancelEditWhyTask(${i})">Cancel</button>
+        </div>`;
+    }else{
+      div.innerHTML=`
+        <div style="flex:1;font-size:12px;color:var(--text);line-height:1.7">${task.text.replace(/\n/g,'<br>')}</div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button onclick="editWhyTask(${i})" style="background:transparent;border:1px solid var(--border);color:var(--muted2);padding:4px 9px;border-radius:6px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='var(--pink)';this.style.color='var(--pink)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">✏️</button>
+          <button onclick="deleteWhyTask(${i})" style="background:transparent;border:1px solid var(--border);color:var(--muted2);padding:4px 9px;border-radius:6px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s" onmouseover="this.style.borderColor='#f87171';this.style.color='#f87171'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">🗑️</button>
+        </div>`;
+    }
+    list.appendChild(div);
+  });
+}
+function addWhyTask(){
+  const val=document.getElementById('why-task-input').value.trim();
+  if(!val){showToast('Write something first ✦','tp');return;}
+  if(!state.whyTasks)state.whyTasks=[];
+  state.whyTasks.unshift({text:val,editing:false});
+  document.getElementById('why-task-input').value='';
+  setS(state).then(()=>{renderWhyTasks();showToast('Added ✦','tp');});
+}
+function editWhyTask(i){
+  if(!state.whyTasks)return;
+  state.whyTasks[i].editing=true;
+  renderWhyTasks();
+}
+function saveWhyTask(i){
+  const val=document.getElementById('why-edit-'+i).value.trim();
+  if(!val){showToast('Cannot be empty','tp');return;}
+  state.whyTasks[i].text=val;
+  state.whyTasks[i].editing=false;
+  setS(state).then(()=>{renderWhyTasks();showToast('Updated ✦','tp');});
+}
+function cancelEditWhyTask(i){
+  state.whyTasks[i].editing=false;
+  renderWhyTasks();
+}
+function deleteWhyTask(i){
+  if(!confirm('Delete this note?'))return;
+  state.whyTasks.splice(i,1);
+  setS(state).then(()=>{renderWhyTasks();showToast('Deleted','tp');});
 }
 
 // ── ROADMAP ──
-function renderRoadmap(){
-  const isSanjay=activePerson==='sanjay';
-  const c=document.getElementById('tab-roadmap');c.innerHTML='';
-  const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent=isSanjay?'Sanjay\'s path ✦':'Sanjana\'s path ✦';c.appendChild(lbl);
-  const card=document.createElement('div');card.className='roadmap-card';
-  if(!isSanjay){
-    card.innerHTML=`
-      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">1</div><div><div class="rtitle">Now → Aug 24, 2026</div><div class="rdesc">SAP, Python, SQL, Excel, Power BI — 5 hrs/day. English daily. Walk in ready.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">2</div><div><div class="rtitle">Aug 24, 2026 — first day at EY GDS</div><div class="rdesc">SAP + data analytics role. All this preparation will make sense on that morning.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">3</div><div><div class="rtitle">6–12 months in</div><div class="rdesc">Real project experience. SAP certification. English confidence growing at work.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--pink-dim);color:var(--pink)">4</div><div><div class="rtitle">Year 2+</div><div class="rdesc">Senior analyst → AI/ML → higher CTC. Already on track.</div></div></div>`;
-  }else{
-    card.innerHTML=`
-      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">1</div><div><div class="rtitle">Right now — one goal at a time</div><div class="rdesc">Omega exam prep. 45 minutes daily is enough. Just show up.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">2</div><div><div class="rtitle">PV learning (30 min/night)</div><div class="rdesc">AE vs SAE, GCP, CRF. Small daily habit. Big difference over 6 months.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">3</div><div><div class="rtitle">4–6 months: PV / Clinical research path</div><div class="rdesc">Drug Safety Associate, PV Associate roles. Experience + PV = a profile that stands out.</div></div></div>
-      <div class="roadmap-step"><div class="rnum" style="background:var(--purple-dim);color:var(--purple)">4</div><div><div class="rtitle">Year 1–2: growing steadily</div><div class="rdesc">CRC → CRA → Senior CRA. You're already in the right direction. 🌸</div></div></div>`;
+// ── ROADMAP CRUD ──
+// Default milestones (used if user has no custom ones yet)
+const ROADMAP_DEFAULTS = {
+  sanjana: [
+    {title:'Now → Aug 24, 2026', desc:'SAP, Python, SQL, Excel, Power BI — 5 hrs/day. English daily. Walk in ready.'},
+    {title:'Aug 24, 2026 — first day at EY GDS', desc:'SAP + data analytics role. All this preparation will make sense on that morning.'},
+    {title:'6–12 months in', desc:'Real project experience. SAP certification. English confidence growing at work.'},
+    {title:'Year 2+', desc:'Senior analyst → AI/ML → higher CTC. Already on track.'},
+  ],
+  sanjay: [
+    {title:'Right now — one goal at a time', desc:'Omega exam prep. 45 minutes daily is enough. Just show up.'},
+    {title:'PV learning (30 min/night)', desc:'AE vs SAE, GCP, CRF. Small daily habit. Big difference over 6 months.'},
+    {title:'4–6 months: PV / Clinical research path', desc:'Drug Safety Associate, PV Associate roles. Experience + PV = a profile that stands out.'},
+    {title:'Year 1–2: growing steadily', desc:'CRC → CRA → Senior CRA. You\'re already in the right direction. 🌸'},
+  ]
+};
+
+function getRoadmapSteps(who){
+  if(!state.roadmap) state.roadmap={};
+  if(!state.roadmap[who] || !state.roadmap[who].length){
+    state.roadmap[who] = ROADMAP_DEFAULTS[who].map((s,i)=>({id:'rm_'+who+'_'+i, title:s.title, desc:s.desc}));
   }
+  return state.roadmap[who];
+}
+
+function renderRoadmap(){
+  const p=activePerson; const isPink=p==='sanjana';
+  const ac=isPink?'var(--pink)':'var(--purple)';
+  const acd=isPink?'var(--pink-dim)':'var(--purple-dim)';
+  const c=document.getElementById('tab-roadmap'); c.innerHTML='';
+
+  const lbl=document.createElement('div'); lbl.className='sec-lbl';
+  lbl.textContent=isPink?'Sanjana\'s path ✦':'Sanjay\'s path ✦'; c.appendChild(lbl);
+
+  // ── ADD form ──
+  const addBox=document.createElement('div'); addBox.className='note-card'; addBox.style.marginBottom='10px';
+  addBox.innerHTML=`
+    <div class="note-lbl">+ Add milestone</div>
+    <input id="rm-title" class="form-input" placeholder="Milestone title…" style="margin-bottom:6px"/>
+    <textarea id="rm-desc" class="note-ta" rows="2" placeholder="Description…" style="margin-bottom:8px"></textarea>
+    <div class="btn-row"><button class="save-btn ${isPink?'p':'s'}" onclick="addRoadmapStep()">Add ✦</button></div>`;
+  c.appendChild(addBox);
+
+  // ── Steps ──
+  const steps=getRoadmapSteps(p);
+  if(!steps.length){
+    const empty=document.createElement('div');empty.style.cssText='text-align:center;padding:20px;color:var(--muted2);font-size:12px;font-style:italic';
+    empty.textContent='No milestones yet ✦';c.appendChild(empty);return;
+  }
+  const card=document.createElement('div'); card.className='roadmap-card';
+  steps.forEach((s,i)=>{
+    const row=document.createElement('div'); row.className='roadmap-step'; row.style.alignItems='flex-start';
+    if(s.editing){
+      row.innerHTML=`
+        <div class="rnum" style="background:${acd};color:${ac}">${i+1}</div>
+        <div style="flex:1">
+          <input id="rm-edit-title-${i}" class="form-input" value="${s.title.replace(/"/g,'&quot;')}" style="margin-bottom:5px"/>
+          <textarea id="rm-edit-desc-${i}" class="note-ta" rows="2" style="font-size:11px">${s.desc}</textarea>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="save-btn ${isPink?'p':'s'}" style="padding:5px 12px;font-size:10px" onclick="saveRoadmapStep(${i})">Save</button>
+            <button class="ghost-btn" style="padding:5px 12px;font-size:10px" onclick="cancelRoadmapEdit(${i})">Cancel</button>
+          </div>
+        </div>`;
+    } else {
+      row.innerHTML=`
+        <div class="rnum" style="background:${acd};color:${ac}">${i+1}</div>
+        <div style="flex:1"><div class="rtitle">${s.title}</div><div class="rdesc">${s.desc}</div></div>
+        <div style="display:flex;gap:3px;flex-shrink:0;margin-left:8px">
+          <button onclick="editRoadmapStep(${i})" style="background:transparent;border:1px solid var(--border);color:var(--muted2);padding:4px 8px;border-radius:6px;font-size:10px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='${ac}';this.style.color='${ac}'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">✎</button>
+          <button onclick="deleteRoadmapStep(${i})" style="background:transparent;border:1px solid var(--border);color:var(--muted2);padding:4px 8px;border-radius:6px;font-size:10px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#f87171';this.style.color='#f87171'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">🗑</button>
+        </div>`;
+    }
+    card.appendChild(row);
+  });
   c.appendChild(card);
+}
+
+function addRoadmapStep(){
+  const t=document.getElementById('rm-title').value.trim();
+  const d=document.getElementById('rm-desc').value.trim();
+  if(!t){showToast('Enter a title ✦',activePerson==='sanjana'?'tp':'ts');return;}
+  if(!state.roadmap)state.roadmap={};
+  getRoadmapSteps(activePerson); // ensure initialised
+  state.roadmap[activePerson].push({id:'rm_'+activePerson+'_'+Date.now(),title:t,desc:d||'—'});
+  setS(state).then(()=>{renderRoadmap();showToast('Milestone added ✦',activePerson==='sanjana'?'tp':'ts');});
+}
+function editRoadmapStep(i){
+  getRoadmapSteps(activePerson)[i].editing=true; renderRoadmap();
+}
+function saveRoadmapStep(i){
+  const t=document.getElementById('rm-edit-title-'+i).value.trim();
+  const d=document.getElementById('rm-edit-desc-'+i).value.trim();
+  if(!t){showToast('Title cannot be empty',activePerson==='sanjana'?'tp':'ts');return;}
+  const s=getRoadmapSteps(activePerson)[i];
+  s.title=t; s.desc=d||'—'; s.editing=false;
+  setS(state).then(()=>{renderRoadmap();showToast('Updated ✦',activePerson==='sanjana'?'tp':'ts');});
+}
+function cancelRoadmapEdit(i){
+  getRoadmapSteps(activePerson)[i].editing=false; renderRoadmap();
+}
+function deleteRoadmapStep(i){
+  if(!confirm('Delete this milestone?'))return;
+  getRoadmapSteps(activePerson).splice(i,1);
+  setS(state).then(()=>{renderRoadmap();showToast('Deleted',activePerson==='sanjana'?'tp':'ts');});
 }
 
 // ── FUTURE LETTERS ──
@@ -1951,5 +2499,66 @@ function showToast(msg,cls='tp'){
   };
 })();
 </script>
+
+<!-- TASK CRUD MODAL -->
+<div class="modal-overlay" id="task-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeTaskModal()">✕</button>
+    <div class="modal-title" id="modal-title">✦ Add New Task</div>
+    <div class="modal-sub" id="modal-sub">Creating a custom task</div>
+    <div class="form-group">
+      <label class="form-label">Task Name</label>
+      <input class="form-input" id="mt-title" type="text" placeholder="e.g. Python — OOP deep dive" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Time (optional)</label>
+      <div class="time-row">
+        <input class="form-input" id="mt-start" type="text" placeholder="Start (e.g. 9:00 AM)" />
+        <input class="form-input" id="mt-end" type="text" placeholder="End (e.g. 10:00 AM)" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Period</label>
+      <select class="form-select" id="mt-period">
+        <option value="Morning">☀️ Morning</option>
+        <option value="Afternoon">🌤 Afternoon</option>
+        <option value="Evening">✦ Evening</option>
+        <option value="Night">🌙 Night</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tag / Skill</label>
+      <select class="form-select" id="mt-tag">
+        <option value="SAP">SAP</option>
+        <option value="SQL">SQL</option>
+        <option value="Python">Python</option>
+        <option value="Excel">Excel</option>
+        <option value="Power BI">Power BI</option>
+        <option value="English">English</option>
+        <option value="PV">PV</option>
+        <option value="CDM">CDM</option>
+        <option value="Life">Life</option>
+        <option value="Rest">Rest</option>
+        <option value="Review">Review</option>
+        <option value="Fixed">Fixed</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Priority</label>
+      <div class="priority-row" id="prio-row">
+        <button class="priority-btn" data-p="none" onclick="selectPriority('none')">None</button>
+        <button class="priority-btn" data-p="low" onclick="selectPriority('low')">🔵 Low</button>
+        <button class="priority-btn" data-p="medium" onclick="selectPriority('medium')">🟡 Medium</button>
+        <button class="priority-btn" data-p="high" onclick="selectPriority('high')">🔴 High</button>
+        <button class="priority-btn" data-p="urgent" onclick="selectPriority('urgent')">🚨 Urgent</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeTaskModal()">Cancel</button>
+      <button class="btn-primary-p" id="modal-save-btn" onclick="saveTask()">Add Task ✦</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
