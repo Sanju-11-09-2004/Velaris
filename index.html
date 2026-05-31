@@ -908,8 +908,27 @@ input:checked+.toggle-track::before{transform:translateX(18px);background:#fff}
 // ── SUPABASE (plain fetch — no CDN dependency) ──
 const SUPABASE_URL = 'https://dvqplyfzhqftwjeiithd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cXBseWZ6aHFmdHdqZWlpdGhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzkyNjEsImV4cCI6MjA5NDA1NTI2MX0.NL6ckzPzm2EnvcDzFuE2_7giKUyE_6xfz4gpCnYB2R8';
-const DB_KEY = 'velaris_main';
+const DB_KEY  = 'velaris_main'; // kept for backward compat only
 const PIN_KEY = 'velaris_pin';
+
+// ── GRANULAR KEYS (one key per data type) ──
+const VK = {
+  checked:      'v_checked',      // {sanjana:{date:{taskId:bool}}, sanjay:{...}}
+  notes:        'v_notes',        // {sanjana:{date:text}, sanjay:{...}}
+  privateNote:  'v_privateNote',  // encrypted private notes
+  streakDays:   'v_streakDays',   // {sanjana:{date:bool}, sanjay:{...}}
+  skillDays:    'v_skillDays',    // skill streak tracking
+  messages:     'v_messages',     // [{id,text,author,date,...}]
+  futureLetters:'v_futureLetters',// [{id,body,openDate,...}]
+  roughDay:     'v_roughDay',     // {sanjana:date, sanjay:date}
+  whyTasks:     'v_whyTasks',     // [{id,text,...}]
+  roadmap:      'v_roadmap',      // {sanjana:[...], sanjay:[...]}
+  customTasks:  'v_customTasks',  // {sanjana:{Morning:[...],...}, sanjay:{...}}
+  taskPriority: 'v_taskPriority', // {crewId-taskId: priority}
+  taskOverrides:'v_taskOverrides',// {sanjana:{taskId:{...}}, sanjay:{...}}
+  deletedTasks: 'v_deletedTasks', // {sanjana:[taskId,...], sanjay:[...]}
+  lastSeen:     'v_lastSeen',     // {sanjana:ISO, sanjay:ISO}
+};
 
 async function sbGet(key) {
   try {
@@ -1034,16 +1053,31 @@ let syncInterval;
 function startAutoSync(){
   clearInterval(syncInterval);
   syncInterval = setInterval(async()=>{
-    const fresh = await sbGet(DB_KEY);
-    if(fresh){
-      const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
-      if(JSON.stringify(parsed)!==JSON.stringify(state)){
-        state = parsed;
-        ensureState();
-        render();
-        showToast('✦ Synced','ts');
-      }
+    // Only poll the slices that change frequently (not roadmap/letters/etc.)
+    const [freshChecked, freshMessages, freshRoughDay] = await Promise.all([
+      sbGet(VK.checked),
+      sbGet(VK.messages),
+      sbGet(VK.roughDay),
+    ]);
+    function parse(v){ try{ return v?JSON.parse(v):null; }catch(e){return null;} }
+
+    let changed = false;
+    const c = parse(freshChecked);
+    if(c){
+      const before = JSON.stringify({s:state.sanjana.checked, j:state.sanjay.checked});
+      if(c.sanjana) state.sanjana.checked = c.sanjana;
+      if(c.sanjay)  state.sanjay.checked  = c.sanjay;
+      if(JSON.stringify({s:state.sanjana.checked, j:state.sanjay.checked}) !== before) changed = true;
     }
+    const m = parse(freshMessages);
+    if(m && JSON.stringify(m) !== JSON.stringify(state.messages)){
+      state.messages = m; changed = true;
+    }
+    const rd = parse(freshRoughDay);
+    if(rd && JSON.stringify(rd) !== JSON.stringify(state.roughDay)){
+      state.roughDay = rd; changed = true;
+    }
+    if(changed){ ensureState(); render(); showToast('✦ Synced','ts'); }
     renderLastSeen();
   }, 30000);
 }
@@ -1068,17 +1102,19 @@ function startRealtimeSync() {
       try {
         const msg = JSON.parse(e.data);
         if(msg.event === 'INSERT' || msg.event === 'UPDATE') {
-          const fresh = await sbGet(DB_KEY);
-          if(fresh) {
-            const parsed = typeof fresh==='string'?JSON.parse(fresh):fresh;
-            if(JSON.stringify(parsed) !== JSON.stringify(state)) {
-              state = parsed;
-              ensureState();
-              render();
-              renderLastSeen();
-              showToast('✦ Synced live','ts');
-            }
-          }
+          // On live push, reload only changed slices
+          const [freshChecked, freshMessages, freshRoughDay] = await Promise.all([
+            sbGet(VK.checked), sbGet(VK.messages), sbGet(VK.roughDay)
+          ]);
+          function parseWS(v){ try{ return v?JSON.parse(v):null; }catch(e){return null;} }
+          let wsChanged = false;
+          const wsc = parseWS(freshChecked);
+          if(wsc){ if(wsc.sanjana) state.sanjana.checked=wsc.sanjana; if(wsc.sanjay) state.sanjay.checked=wsc.sanjay; wsChanged=true; }
+          const wsm = parseWS(freshMessages);
+          if(wsm && JSON.stringify(wsm)!==JSON.stringify(state.messages)){ state.messages=wsm; wsChanged=true; }
+          const wsrd = parseWS(freshRoughDay);
+          if(wsrd && JSON.stringify(wsrd)!==JSON.stringify(state.roughDay)){ state.roughDay=wsrd; wsChanged=true; }
+          if(wsChanged){ ensureState(); render(); renderLastSeen(); showToast('✦ Synced live','ts'); }
         }
       } catch(e) {}
     };
@@ -1262,13 +1298,36 @@ const LETTERS={
   miss:`Hi love 💗\n\nMissing you.\n\nDrink water. Eat something proper.\n\nFinish today's small goals if you can — and if you can't, that's fine too.\n\nJust rest.\n\nWe're going to be okay. 🫂`,
 };
 
-// ── STATE (Supabase synced) ──
-async function getS(){
-  const v = await sbGet(DB_KEY);
-  if(v) return typeof v === 'string' ? JSON.parse(v) : v;
-  return {};
+// ── GRANULAR STATE SAVE / LOAD ──
+// Each call only writes the specific slice that changed.
+// Reads on boot are parallelised so startup is fast.
+
+async function saveSlice(key, data){
+  await sbSet(key, JSON.stringify(data));
 }
-async function setS(s){ await sbSet(DB_KEY, s); }
+
+// Convenience wrappers — called at point of change:
+async function saveChecked()     { await saveSlice(VK.checked,       state.sanjana.checked && {sanjana:state.sanjana.checked, sanjay:state.sanjay.checked}); }
+async function saveNotes()       { await saveSlice(VK.notes,         {sanjana:state.sanjana.note, sanjay:state.sanjay.note}); }
+async function savePrivateNotes(){ await saveSlice(VK.privateNote,   {sanjana:state.sanjana.privateNote, sanjay:state.sanjay.privateNote}); }
+async function saveStreakDays()  { await saveSlice(VK.streakDays,    {sanjana:state.sanjana.streakDays, sanjay:state.sanjay.streakDays}); }
+async function saveSkillDays()   { await saveSlice(VK.skillDays,     {sanjana:state.sanjana.skillDays, sanjay:state.sanjay.skillDays}); }
+async function saveMessages()    { await saveSlice(VK.messages,      state.messages); }
+async function saveFutureLetters(){ await saveSlice(VK.futureLetters, state.futureLetters); }
+async function saveRoughDay()    { await saveSlice(VK.roughDay,      state.roughDay); }
+async function saveWhyTasks()    { await saveSlice(VK.whyTasks,      state.whyTasks); }
+async function saveRoadmap()     { await saveSlice(VK.roadmap,       state.roadmap); }
+async function saveCustomTasks() { await saveSlice(VK.customTasks,   state.customTasks); }
+async function saveTaskPriority(){ await saveSlice(VK.taskPriority,  state.taskPriority); }
+async function saveTaskOverrides(){ await saveSlice(VK.taskOverrides, state.taskOverrides); }
+async function saveDeletedTasks(){ await saveSlice(VK.deletedTasks,  state.deletedTasks); }
+
+// Legacy setS — now a no-op (granular saves used instead)
+// Kept so any remaining callsite doesn't crash, but logs a warning.
+async function setS(s){
+  console.warn('[VELARIS] setS() called — use granular save instead');
+}
+async function getS(){ return {}; } // unused, kept for safety
 
 function ensureState(){
   if(!state.sanjana)state.sanjana={checked:{},streakDays:{},skillDays:{},note:{},privateNote:{}};
@@ -1412,7 +1471,7 @@ function deleteTask(id, evt){
   }
   delete state.taskPriority[who+'-'+id];
   if(state.taskOverrides[who])delete state.taskOverrides[who][id];
-  setS(state).then(()=>{render();showToast('Task deleted ✦',who==='sanjana'?'tp':'ts');});
+  Promise.all([saveCustomTasks(),saveTaskOverrides(),saveDeletedTasks(),saveTaskPriority()]).then(()=>{render();showToast('Task deleted ✦',who==='sanjana'?'tp':'ts');});
 }
 
 function closeTaskModal(){
@@ -1462,14 +1521,14 @@ function saveTask(){
     }
     state.taskPriority[who+'-'+_editingTaskId]=_selectedPriority;
     activePeriod=period;
-    setS(state).then(()=>{render();showToast('Updated ✦',who==='sanjana'?'tp':'ts');});
+    Promise.all([saveCustomTasks(),saveTaskOverrides(),saveTaskPriority()]).then(()=>{render();showToast('Updated ✦',who==='sanjana'?'tp':'ts');});
   }else{
     const id='custom_'+who+'_'+Date.now();
     state.customTasks[who][period]=state.customTasks[who][period]||[];
     state.customTasks[who][period].push({id,name:title,title,time,tag,period,block:period});
     if(_selectedPriority!=='none')state.taskPriority[who+'-'+id]=_selectedPriority;
     activePeriod=period;
-    setS(state).then(()=>{render();showToast('Task added ✦',who==='sanjana'?'tp':'ts');});
+    Promise.all([saveCustomTasks(),saveTaskPriority()]).then(()=>{render();showToast('Task added ✦',who==='sanjana'?'tp':'ts');});
   }
   closeTaskModal();
 }
@@ -1477,10 +1536,61 @@ function saveTask(){
 let activePerson='sanjana';
 let activeTab='today';
 
-// Load state from Supabase on startup
+// ── LOAD STATE — all slices in parallel ──
 async function initApp(){
-  state = await getS();
-  ensureState();
+  ensureState(); // set defaults first
+  const [
+    checked, notes, privateNote, streakDays, skillDays,
+    messages, futureLetters, roughDay, whyTasks, roadmap,
+    customTasks, taskPriority, taskOverrides, deletedTasks
+  ] = await Promise.all([
+    sbGet(VK.checked),      sbGet(VK.notes),         sbGet(VK.privateNote),
+    sbGet(VK.streakDays),   sbGet(VK.skillDays),      sbGet(VK.messages),
+    sbGet(VK.futureLetters),sbGet(VK.roughDay),       sbGet(VK.whyTasks),
+    sbGet(VK.roadmap),      sbGet(VK.customTasks),    sbGet(VK.taskPriority),
+    sbGet(VK.taskOverrides),sbGet(VK.deletedTasks),
+  ]);
+
+  function parse(v){ try{ return v?JSON.parse(v):null; }catch(e){return null;} }
+
+  const c   = parse(checked);
+  const n   = parse(notes);
+  const pn  = parse(privateNote);
+  const sd  = parse(streakDays);
+  const skd = parse(skillDays);
+
+  if(c){
+    if(c.sanjana) state.sanjana.checked      = c.sanjana;
+    if(c.sanjay)  state.sanjay.checked       = c.sanjay;
+  }
+  if(n){
+    if(n.sanjana) state.sanjana.note         = n.sanjana;
+    if(n.sanjay)  state.sanjay.note          = n.sanjay;
+  }
+  if(pn){
+    if(pn.sanjana) state.sanjana.privateNote = pn.sanjana;
+    if(pn.sanjay)  state.sanjay.privateNote  = pn.sanjay;
+  }
+  if(sd){
+    if(sd.sanjana) state.sanjana.streakDays  = sd.sanjana;
+    if(sd.sanjay)  state.sanjay.streakDays   = sd.sanjay;
+  }
+  if(skd){
+    if(skd.sanjana) state.sanjana.skillDays  = skd.sanjana;
+    if(skd.sanjay)  state.sanjay.skillDays   = skd.sanjay;
+  }
+
+  const msgs  = parse(messages);       if(msgs)  state.messages       = msgs;
+  const fl    = parse(futureLetters);  if(fl)    state.futureLetters  = fl;
+  const rd    = parse(roughDay);       if(rd)    state.roughDay       = rd;
+  const wt    = parse(whyTasks);       if(wt)    state.whyTasks       = wt;
+  const rm    = parse(roadmap);        if(rm)    state.roadmap        = rm;
+  const ct    = parse(customTasks);    if(ct)    state.customTasks    = ct;
+  const tp    = parse(taskPriority);   if(tp)    state.taskPriority   = tp;
+  const to_   = parse(taskOverrides);  if(to_)   state.taskOverrides  = to_;
+  const dt    = parse(deletedTasks);   if(dt)    state.deletedTasks   = dt;
+
+  ensureState(); // fill any gaps
 }
 
 // ── STARFIELD ──
@@ -1872,7 +1982,7 @@ function toggleTask(id,skill){
     if(ev){const r=(ev.currentTarget||ev.target).getBoundingClientRect();velarisBurst(r.left+r.width/2,r.top+r.height/2);}
     showToast(activePerson==='sanjana'?'🩷 Done':'💜 Done',activePerson==='sanjana'?'tp':'ts');
   }
-  setS(state).then(()=>{
+  Promise.all([saveChecked(),saveStreakDays(),saveSkillDays()]).then(()=>{
     render();
     // re-pulse the just-completed task
     requestAnimationFrame(()=>{
@@ -1890,19 +2000,19 @@ function logMood(m){
 function saveNote(){
   const val=document.getElementById('my-note').value;
   state[activePerson].note[TODAY]=val;
-  setS(state).then(()=>showToast('Saved ✦',activePerson==='sanjana'?'tp':'ts'));
+  saveNotes().then(()=>showToast('Saved ✦',activePerson==='sanjana'?'tp':'ts'));
 }
 function resetDay(){
   if(!confirm("Reset today's ticks?"))return;
-  state[activePerson].checked[TODAY]={};setS(state).then(()=>render());
+  state[activePerson].checked[TODAY]={};saveChecked().then(()=>render());
 }
 function enableRoughDay(){
   state.roughDay[TODAY+'-sanjay']=true;
   state.sanjay.streakDays[TODAY]=true;
-  setS(state).then(()=>{render();showToast('🌸 Taking it slow.','ts');});
+  Promise.all([saveRoughDay(),saveStreakDays()]).then(()=>{render();showToast('🌸 Taking it slow.','ts');});
 }
 function goodNight(){
-  state.sanjay.streakDays[TODAY]=true;setS(state).then(()=>render());
+  state.sanjay.streakDays[TODAY]=true;saveStreakDays().then(()=>render());
   showToast('🌙 Good night. Today was enough.','ts');
 }
 function openLetter(type){
@@ -2084,7 +2194,7 @@ function savePrivateNote(){
   const val=document.getElementById('private-note-input').value;
   encryptNote(val).then(enc=>{
     state[activePerson].privateNote[TODAY]=enc;
-    setS(state).then(()=>showToast('Saved privately 🔒',activePerson==='sanjana'?'tp':'ts'));
+    savePrivateNotes().then(()=>showToast('Saved privately 🔒',activePerson==='sanjana'?'tp':'ts'));
   });
 }
 function sendMsg(){
@@ -2092,7 +2202,7 @@ function sendMsg(){
   if(!val)return;
   if(!state.messages)state.messages=[];
   state.messages.unshift({from:activePerson,text:val,time:new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}),date:TODAY});
-  setS(state).then(()=>{renderMessages();showToast('💌 Sent',activePerson==='sanjana'?'tp':'ts');});
+  saveMessages().then(()=>{renderMessages();showToast('💌 Sent',activePerson==='sanjana'?'tp':'ts');});
 }
 
 // ── WHY ──
@@ -2174,7 +2284,7 @@ function addWhyTask(){
   if(!state.whyTasks)state.whyTasks=[];
   state.whyTasks.unshift({text:val,editing:false});
   document.getElementById('why-task-input').value='';
-  setS(state).then(()=>{renderWhyTasks();showToast('Added ✦','tp');});
+  saveWhyTasks().then(()=>{renderWhyTasks();showToast('Added ✦','tp');});
 }
 function editWhyTask(i){
   if(!state.whyTasks)return;
@@ -2186,7 +2296,7 @@ function saveWhyTask(i){
   if(!val){showToast('Cannot be empty','tp');return;}
   state.whyTasks[i].text=val;
   state.whyTasks[i].editing=false;
-  setS(state).then(()=>{renderWhyTasks();showToast('Updated ✦','tp');});
+  saveWhyTasks().then(()=>{renderWhyTasks();showToast('Updated ✦','tp');});
 }
 function cancelEditWhyTask(i){
   state.whyTasks[i].editing=false;
@@ -2195,7 +2305,7 @@ function cancelEditWhyTask(i){
 function deleteWhyTask(i){
   if(!confirm('Delete this note?'))return;
   state.whyTasks.splice(i,1);
-  setS(state).then(()=>{renderWhyTasks();showToast('Deleted','tp');});
+  saveWhyTasks().then(()=>{renderWhyTasks();showToast('Deleted','tp');});
 }
 
 // ── ROADMAP ──
@@ -2283,7 +2393,7 @@ function addRoadmapStep(){
   if(!state.roadmap)state.roadmap={};
   getRoadmapSteps(activePerson); // ensure initialised
   state.roadmap[activePerson].push({id:'rm_'+activePerson+'_'+Date.now(),title:t,desc:d||'—'});
-  setS(state).then(()=>{renderRoadmap();showToast('Milestone added ✦',activePerson==='sanjana'?'tp':'ts');});
+  saveRoadmap().then(()=>{renderRoadmap();showToast('Milestone added ✦',activePerson==='sanjana'?'tp':'ts');});
 }
 function editRoadmapStep(i){
   getRoadmapSteps(activePerson)[i].editing=true; renderRoadmap();
@@ -2294,7 +2404,7 @@ function saveRoadmapStep(i){
   if(!t){showToast('Title cannot be empty',activePerson==='sanjana'?'tp':'ts');return;}
   const s=getRoadmapSteps(activePerson)[i];
   s.title=t; s.desc=d||'—'; s.editing=false;
-  setS(state).then(()=>{renderRoadmap();showToast('Updated ✦',activePerson==='sanjana'?'tp':'ts');});
+  saveRoadmap().then(()=>{renderRoadmap();showToast('Updated ✦',activePerson==='sanjana'?'tp':'ts');});
 }
 function cancelRoadmapEdit(i){
   getRoadmapSteps(activePerson)[i].editing=false; renderRoadmap();
@@ -2302,7 +2412,7 @@ function cancelRoadmapEdit(i){
 function deleteRoadmapStep(i){
   if(!confirm('Delete this milestone?'))return;
   getRoadmapSteps(activePerson).splice(i,1);
-  setS(state).then(()=>{renderRoadmap();showToast('Deleted',activePerson==='sanjana'?'tp':'ts');});
+  saveRoadmap().then(()=>{renderRoadmap();showToast('Deleted',activePerson==='sanjana'?'tp':'ts');});
 }
 
 // ── FUTURE LETTERS ──
@@ -2346,12 +2456,12 @@ function saveLetter(){
   if(!date){showToast('Pick a date 📅',activePerson==='sanjana'?'tp':'ts');return;}
   if(!state.futureLetters)state.futureLetters=[];
   state.futureLetters.push({id:Date.now().toString(),from:activePerson,text,openDate:date,createdOn:TODAY});
-  setS(state).then(()=>{renderFuture();showToast('Sealed with love 🔒',activePerson==='sanjana'?'tp':'ts');});
+  saveFutureLetters().then(()=>{renderFuture();showToast('Sealed with love 🔒',activePerson==='sanjana'?'tp':'ts');});
 }
 function deleteLetter(id){
   if(!confirm('Delete this letter?'))return;
   state.futureLetters=(state.futureLetters||[]).filter(l=>l.id!==id);
-  setS(state).then(()=>renderFuture());
+  saveFutureLetters().then(()=>renderFuture());
 }
 
 // ── SETTINGS ──
